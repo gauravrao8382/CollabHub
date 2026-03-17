@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Smooth Scrolling Enable karne ke liye */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #4F46E5, #9333EA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
