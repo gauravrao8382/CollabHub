@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Loader2, AlertCircle, Briefcase, GraduationCap, Code, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import axios from "axios";
 
-const ProjectDetails = ({ projects, onApply }) => {
+const ProjectDetails = ({ projects,user}) => {
+  const API = "http://localhost:5000";
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  const project = projects.find(p => p.id === parseInt(id));
-  
+
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [error, setError] = useState(null);
+
+  const project = projects.find(p => p._id === id);
+
+  useEffect(() => {
+    if(project && user) {
+      const alreadyApplied = project.applicants.some(applicant => String(applicant.userId) === String(user._id));
+      setHasApplied(alreadyApplied);
+    }
+  }, [project, user]);
+
   const [formData, setFormData] = useState({
     name: '',
     college: '',
     skills: '',
     passingYear: ''
   });
-  
-  const [isApplying, setIsApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
-  const [error, setError] = useState(null);
 
   if (!project) {
     return (
@@ -36,39 +45,47 @@ const ProjectDetails = ({ projects, onApply }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleApplyClick = async (e) => {
-    e.preventDefault();
-    if (!formData.name || !formData.college || !formData.skills || !formData.passingYear) {
-      setError("Please fill in all fields to apply.");
-      // Scroll to error on mobile
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
 
-    if (hasApplied) return;
+const handleApplyClick = async (e) => {
+  e.preventDefault();
 
-    setIsApplying(true);
-    setError(null);
+  if (!formData.name || !formData.college || !formData.skills || !formData.passingYear) {
+    setError("Please fill in all fields to apply.");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
 
-    setTimeout(() => {
-      try {
-        const applicationData = {
-          projectId: project.id,
-          ...formData,
-          appliedAt: new Date().toISOString()
-        };
+  if (hasApplied) return;
 
-        if (onApply) onApply(applicationData);
-        
-        setHasApplied(true);
-        setFormData({ name: '', college: '', skills: '', passingYear: '' });
-      } catch (err) {
-        setError("Failed to apply. Please try again.");
-      } finally {
-        setIsApplying(false);
+  setIsApplying(true);
+  setError(null);
+
+  try {
+    const applicationData = {
+      name: formData.name,
+      college: formData.college,
+      skills: formData.skills,
+      passingYear: formData.passingYear,
+    };
+
+    const res = await axios.post(`${API}/apply/${project._id}`, applicationData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
       }
-    }, 1500);
-  };
+      }
+    );
+    console.log("Response:", res.data.message);
+    setHasApplied(true);
+    setFormData({ name: '', college: '', skills: '', passingYear: '' });
+
+  } catch (err) {
+    console.error(err);
+    setError("Failed to apply. Please try again.");
+  } finally {
+    setIsApplying(false);
+  }
+};
 
   return (
     // MAIN CONTAINER
@@ -80,7 +97,7 @@ const ProjectDetails = ({ projects, onApply }) => {
       <div className="flex-none h-16 border-b border-gray-200 bg-white/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 z-20 sticky top-0 shadow-sm">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors font-medium bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm"
+          className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors font-medium bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm cursor-pointer"
         >
           <ArrowLeft size={18} /> Back
         </button>
@@ -254,7 +271,7 @@ const ProjectDetails = ({ projects, onApply }) => {
                   <button 
                     type="submit"
                     disabled={isApplying}
-                    className={`w-full py-3.5 rounded-lg font-bold text-sm text-white shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2
+                    className={`w-full py-3.5 rounded-lg font-bold text-sm text-white shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 cursor-pointer
                       ${isApplying 
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/30'

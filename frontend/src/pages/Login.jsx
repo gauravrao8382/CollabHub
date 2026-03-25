@@ -1,20 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
+import axios from 'axios'
 const Login = ({ onLogin }) => {
+  const API = "http://localhost:5000";
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [user,setUser]=useState(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Dummy Login Logic
-    if(email && password) {
-      onLogin({ name: "Demo User", email, college: "Demo College" });
-      navigate('/dashboard');
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post(`${API}/login`, { email: email });
+
+    if (res.data.user) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      onLogin(res.data.user);
+      console.log(res.data.user);
+      navigate('/dashboard', {
+        state: { user:res.data.user }
+      });
     }
-  };
+
+  } catch (err) {
+    // 🔥 YAHI PAR 400 ERROR HANDLE HOGA
+    alert(err.response?.data?.message || "Something went wrong");
+
+    setEmail('');
+    setPassword('');
+  }
+};
 
   return (
     // Main Container: Pure screen ko cover karega aur content ko center karega

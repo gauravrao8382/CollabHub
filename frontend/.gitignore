@@ -1,24 +1,79 @@
-# Logs
-logs
+# ==============================
+# 🔐 ENV (MOST IMPORTANT)
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# 📦 DEPENDENCIES
+# ==============================
+node_modules/
+jspm_packages/
+
+# ==============================
+# 🏗️ BUILD FILES
+# ==============================
+build/
+dist/
+.next/
+out/
+
+# ==============================
+# 📁 LOG FILES
+# ==============================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# ==============================
+# 💾 CACHE & TEMP FILES
+# ==============================
+.cache/
+.parcel-cache/
+.tmp/
+temp/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# ==============================
+# 🖥️ OS FILES
+# ==============================
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# ==============================
+# 🧠 IDE / EDITOR FILES
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# 🧪 TEST & COVERAGE
+# ==============================
+coverage/
+.nyc_output/
+
+# ==============================
+# 🔑 SECURITY FILES
+# ==============================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ==============================
+# 📊 DATABASE FILES (LOCAL)
+# ==============================
+*.sqlite
+*.db
+
+# ==============================
+# 🚀 MISC
+# ==============================
+*.tgz
+*.zip

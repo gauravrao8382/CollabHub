@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate ,useLocation} from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Filter, RefreshCw, Plus, Sparkles, 
@@ -8,112 +8,6 @@ import {
   Briefcase, University, ChevronDown, Users, ExternalLink, 
   Image as ImageIcon, CheckCircle2
 } from 'lucide-react';
-
-// --- DUMMY DATA GENERATION ---
-const dummyProjects = [
-  // --- OPEN PROJECTS (Status: Open) ---
-  {
-    id: 1,
-    title: "AI-Powered Study Planner",
-    type: "AI/ML",
-    status: "open",
-    description: "Building a smart planner that uses ML to optimize study schedules based on user habits and exam dates.",
-    college: "IIT Delhi",
-    owner: "Aryan K.",
-    techStack: ["Python", "TensorFlow", "React", "Node.js"],
-    team: [{ name: "Aryan" }, { name: "Sneha" }],
-    membersCount: 2
-  },
-  {
-    id: 2,
-    title: "Campus Food Delivery App",
-    type: "App Development",
-    status: "open",
-    description: "Hyper-local food delivery system exclusively for our university campus with real-time tracking.",
-    college: "NIT Trichy",
-    owner: "Rahul V.",
-    techStack: ["Flutter", "Firebase", "Google Maps API"],
-    team: [{ name: "Rahul" }],
-    membersCount: 1
-  },
-  {
-    id: 3,
-    title: "Decentralized Voting System",
-    type: "Blockchain",
-    status: "open",
-    description: "Secure and transparent voting platform using Ethereum smart contracts to prevent fraud.",
-    college: "IIIT Bangalore",
-    owner: "Priya M.",
-    techStack: ["Solidity", "Web3.js", "React", "Hardhat"],
-    team: [{ name: "Priya" }, { name: "Vikram" }, { name: "Anjali" }],
-    membersCount: 3
-  },
-
-  // --- COMPLETED PROJECTS (Status: Completed) ---
-  {
-    id: 4,
-    title: "EcoTrack - Carbon Footprint Calculator",
-    type: "Web Development",
-    status: "completed",
-    description: "A comprehensive web app that helps users track their daily carbon footprint and suggests eco-friendly alternatives.",
-    college: "VIT Vellore",
-    owner: "Team Green",
-    techStack: ["Next.js", "Tailwind", "Supabase", "Recharts"],
-    liveLink: "https://ecotrack-demo.vercel.app",
-    repoLink: "https://github.com/ecotrack",
-    screenshots: [
-      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800"
-    ],
-    team: [
-      { name: "Aditya" },
-      { name: "Neha" },
-      { name: "Rohan" }
-    ]
-  },
-  {
-    id: 5,
-    title: "MediConnect - Doctor Appointment Portal",
-    type: "App Development",
-    status: "completed",
-    description: "Full-stack mobile application connecting patients with specialists for instant video consultations and appointment booking.",
-    college: "Manipal Institute",
-    owner: "HealthTech Group",
-    techStack: ["React Native", "Node.js", "MongoDB", "WebRTC"],
-    liveLink: "https://mediconnect-app.store",
-    repoLink: "https://github.com/mediconnect",
-    screenshots: [
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1576091160550-217358c7e618?auto=format&fit=crop&q=80&w=800"
-    ],
-    team: [
-      { name: "Kavita" },
-      { name: "Sameer" }
-    ]
-  },
-  {
-    id: 6,
-    title: "CryptoSentinel - Market Analyzer",
-    type: "Data Science",
-    status: "completed",
-    description: "Real-time cryptocurrency market analysis tool with sentiment analysis from Twitter and news APIs.",
-    college: "ISI Kolkata",
-    owner: "Quant Squad",
-    techStack: ["Python", "Pandas", "Dash", "AWS Lambda"],
-    liveLink: "https://cryptosentinel.io",
-    repoLink: "https://github.com/cryptosentinel",
-    screenshots: [
-      "https://images.unsplash.com/photo-1621504450168-b8c437536155?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1605792657660-596af9009e82?auto=format&fit=crop&q=80&w=800"
-    ],
-    team: [
-      { name: "Arjun" },
-      { name: "Meera" },
-      { name: "Zoya" },
-      { name: "Danish" }
-    ]
-  }
-];
 
 // --- 1. Open Project Card Component ---
 const OpenProjectCard = ({ project, onApplyClick }) => (
@@ -159,8 +53,8 @@ const OpenProjectCard = ({ project, onApplyClick }) => (
         </div>
         
         <button 
-          onClick={() => onApplyClick(project.id)}
-          className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300 flex items-center gap-2 shadow-md"
+          onClick={() => onApplyClick(project._id)}
+          className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300 flex items-center gap-2 shadow-md cursor-pointer"
         >
           Apply <ArrowRight size={12} />
         </button>
@@ -284,18 +178,14 @@ const CompletedProjectCard = ({ project }) => {
 
 // --- Main Dashboard Component ---
 
-const Dashboard = () => {
+const Dashboard = ({user,projects,setProjects}) => {
   const navigate = useNavigate();
   
-  // Use Dummy Data
-  const projects = dummyProjects;
-  const user = { name: "Guest User" }; // Mock user
-  
-  // States
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [filterCollege, setFilterCollege] = useState('');
   const [activeTab, setActiveTab] = useState('open'); // 'open' or 'completed'
+
 
   const goToProjectDetails = (id) => {
     navigate(`/project/${id}`);
@@ -317,8 +207,8 @@ const Dashboard = () => {
     const matchesType = filterType === "All" || project.type === filterType;
     const matchesCollege = !filterCollege || project.college?.toLowerCase().includes(filterCollege.toLowerCase());
     
-    const isOpen = project.status === 'open' || !project.status;
-    const isCompleted = project.status === 'completed';
+    const isOpen = project.status === 'Open' || !project.status;
+    const isCompleted = project.status === 'Completed';
     
     const matchesTab = activeTab === 'open' ? isOpen : isCompleted;
 
@@ -437,7 +327,7 @@ const Dashboard = () => {
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                <CheckCircle2 size={16} className={activeTab === 'completed' ? 'fill-current' : ''} />
+                <CheckCircle2 size={16} className={activeTab === 'Completed' ? 'fill-current' : ''} />
                 Completed Showcase
               </button>
             </div>
@@ -505,7 +395,7 @@ const Dashboard = () => {
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project, index) => (
                 <motion.div
-                  key={project.id}
+                  key={project._id}
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

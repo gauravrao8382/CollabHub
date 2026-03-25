@@ -1,0 +1,39 @@
+import mongoose from "mongoose";
+
+const projectSchema = new mongoose.Schema({
+  owner: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User",
+    required: true 
+  },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  techStack: [{ type: String }],
+  teamSize: { type: Number, required: true, min: 1 },
+  college: { type: String },
+  applicants: [
+    {
+      userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "User" 
+      },
+      name: String,
+      college: String,
+      skills: [String],
+      passingYear: String,
+      appliedAt: { type: Date, default: Date.now }
+    }
+  ],
+  teamMembers: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User" 
+  }], 
+  status: { 
+    type: String, 
+    enum: ['Open', 'Completed', 'Closed'], 
+    default: 'Open' 
+  },
+  createdAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+export default mongoose.model("Project", projectSchema);
