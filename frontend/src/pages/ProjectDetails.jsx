@@ -10,7 +10,7 @@ const ProjectDetails = ({ projects, user }) => {
   const navigate = useNavigate();
 
   const [isApplying, setIsApplying] = useState(false);
-  const [applicationStatus, setApplicationStatus] = useState(null); // null, 'pending', 'accepted', 'rejected'
+  const [applicationStatus, setApplicationStatus] = useState(null);
   const [isTeamMember, setIsTeamMember] = useState(false);
   const [error, setError] = useState(null);
 
@@ -18,13 +18,11 @@ const ProjectDetails = ({ projects, user }) => {
 
   useEffect(() => {
     if (project && user) {
-      // Check if user is already a team member
       const teamMember = project.teamMembers?.some(member => 
         String(member.userId || member._id) === String(user._id)
       );
       setIsTeamMember(!!teamMember);
 
-      // Check application status if not a team member
       if (!teamMember && project.applicants?.length > 0) {
         const applicant = project.applicants.find(app => 
           String(app.userId || app._id) === String(user._id)
@@ -100,8 +98,69 @@ const ProjectDetails = ({ projects, user }) => {
     }
   };
 
-  // Helper to check if already applied
   const hasApplied = applicationStatus !== null && !isTeamMember;
+
+  // 🔹 Helper: Get member ID safely
+  const getMemberId = (member) => {
+    return String(member?.userId || member?._id || member?.id || '');
+  };
+
+  // 🔹 Build complete members list (owner + teamMembers)
+  const getAllMembers = () => {
+    let allMembers = [];
+    const currentUserId = String(user?._id || '');
+    
+    // Add owner if exists
+    if (project.owner) {
+      const ownerId = typeof project.owner === 'object' 
+        ? project.owner._id || project.owner.id 
+        : project.owner;
+      
+      const ownerName = typeof project.owner === 'object'
+        ? project.owner.name 
+        : project.ownerName || 'Project Owner';
+      
+      const ownerCollege = typeof project.owner === 'object'
+        ? project.owner.college
+        : project.ownerCollege || '';
+      
+      const ownerExists = project.teamMembers?.some(m => 
+        getMemberId(m) === String(ownerId)
+      );
+      
+      if (!ownerExists && ownerId) {
+        allMembers.push({
+          _id: ownerId,
+          userId: ownerId,
+          name: ownerName,
+          college: ownerCollege,
+          isOwner: true
+        });
+      }
+    }
+    
+    // Add team members
+    if (project.teamMembers?.length > 0) {
+      allMembers = [...allMembers, ...project.teamMembers.map(m => ({
+        ...m,
+        isOwner: m.role === 'owner' || 
+                 getMemberId(m) === String(typeof project.owner === 'object' ? project.owner._id : project.owner)
+      }))];
+    }
+    
+    return allMembers;
+  };
+
+  // 🔹 Handle member click - navigate to profile
+  const handleMemberClick = (memberId, e) => {
+    // Ignore if text is selected (for copy-paste)
+    if (window.getSelection().toString()) return;
+    
+    const currentUserId = String(user?._id || '');
+    if (memberId && memberId !== currentUserId) {
+      navigate(`/profile/${memberId}`);
+    }
+  };
 
   return (
     <div className="w-full bg-gray-50 flex flex-col lg:h-screen lg:overflow-hidden min-h-screen">
@@ -138,7 +197,7 @@ const ProjectDetails = ({ projects, user }) => {
               </div>
               <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 text-gray-600 text-sm">
                 <Briefcase size={16} className="text-blue-500" />
-                <span className="font-semibold">Owner: {project.owner}</span>
+                <span className="font-semibold">Owner: {typeof project.owner === 'object' ? project.owner.name : project.ownerName || project.owner}</span>
               </div>
               {project.teamMembers?.length > 0 && (
                 <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 text-gray-600 text-sm">
@@ -153,32 +212,93 @@ const ProjectDetails = ({ projects, user }) => {
               <p className="text-gray-600 text-sm leading-relaxed">{project.description}</p>
             </div>
 
-            {/* Team Members Section */}
-            {project.teamMembers?.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
-                  <Users size={16} className="text-green-600" />
-                  Team Members
-                </h3>
-                <div className="space-y-2">
-                  {project.teamMembers.map((member, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
-                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                        {member.name?.charAt(0).toUpperCase() || 'U'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{member.name || 'Anonymous'}</p>
-                        <p className="text-xs text-gray-500">{member.college || 'College not specified'}</p>
-                      </div>
-                      <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">
-                        Member
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* 👥 Team Members Section - CLICKABLE */}
+            <div className="mb-6">
+              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
+                <Users size={16} className="text-green-600" />
+                Team Members
+              </h3>
+              
+              {(() => {
+                const allMembers = getAllMembers();
+                const currentUserId = String(user?._id || '');
+                const otherMembers = allMembers.filter(member => 
+                  getMemberId(member) !== currentUserId
+                );
+                
+                if (allMembers.length === 0) {
+                  return (
+                    <p className="text-xs text-gray-400 italic pl-2 bg-gray-50 py-2 px-3 rounded-lg">
+                      No team members yet
+                    </p>
+                  );
+                }
+                
+                if (otherMembers.length === 0) {
+                  return (
+                    <p className="text-xs text-gray-400 italic pl-2 bg-indigo-50 py-2 px-3 rounded-lg text-indigo-700">
+                      {currentUserId ? "🎉 You are the only member!" : "👋 Login to join this project"}
+                    </p>
+                  );
+                }
+                
+                return (
+                  <div className="space-y-2">
+                    {otherMembers.map((member, index) => {
+                      const memberId = getMemberId(member);
+                      const isMemberOwner = member.isOwner || 
+                                           memberId === String(typeof project.owner === 'object' ? project.owner._id : project.owner);
+                      
+                      return (
+                        <div 
+                          key={memberId || index} 
+                          className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-200 hover:bg-indigo-50/30 transition-all cursor-pointer group"
+                          onClick={(e) => handleMemberClick(memberId, e)}
+                          title={`View ${member.name || 'Profile'}`}
+                        >
+                          {/* Avatar with hover effect */}
+                          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold relative flex-shrink-0 group-hover:scale-105 transition-transform">
+                            {(member.name?.charAt?.(0) || 'U').toUpperCase()}
+                            {isMemberOwner && (
+                              <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center text-[9px] text-white border-2 border-white" title="Project Owner">
+                                👑
+                              </span>
+                            )}
+                          </div>
+                          
+                          {/* Member Info */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-indigo-600 transition-colors flex items-center gap-2">
+                              {member.name || 'Anonymous'}
+                              {isMemberOwner && (
+                                <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-bold rounded uppercase flex-shrink-0">
+                                  Owner
+                                </span>
+                              )}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                              {member.college || 'College not specified'}
+                            </p>
+                          </div>
+                          
+                          {/* Role Badge */}
+                          <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase flex-shrink-0 ${
+                            isMemberOwner ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
+                          }`}>
+                            {isMemberOwner ? 'Owner' : 'Member'}
+                          </span>
+                          
+                          {/* Click Indicator */}
+                          <ArrowLeft size={14} className="text-gray-300 group-hover:text-indigo-500 transition-colors rotate-180 flex-shrink-0" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
 
+            {/* Tech Stack */}
             <div>
               <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
                 <Code size={16} className="text-indigo-600" />
@@ -221,7 +341,6 @@ const ProjectDetails = ({ projects, user }) => {
                   <span className="font-semibold text-indigo-600">{project.title}</span>.
                 </p>
                 
-                {/* Quick Actions for Team Members */}
                 <div className="space-y-3 mb-6">
                   <button 
                     onClick={() => navigate('/dashboard')}
@@ -279,7 +398,7 @@ const ProjectDetails = ({ projects, user }) => {
                 </p>
               </motion.div>
 
-            /* STATE 3: Application Rejected (Optional - for completeness) */
+            /* STATE 3: Application Rejected */
             ) : applicationStatus === 'rejected' ? (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}

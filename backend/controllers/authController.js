@@ -106,7 +106,8 @@ export const createProject = async (req, res) => {
   try {
     const { title, description, techStack, teamSize, college } = req.body;
     // 🔥 Create project securely
-    const owner = req.user.id; // Get user ID from auth middleware
+    const owner = req.user.id; 
+    const user = await User.findById(owner);
     console.log(req.user.id);
     const project = await Project.create({
       title,
@@ -116,11 +117,15 @@ export const createProject = async (req, res) => {
       college,
 
       owner: req.user.id,
-
-      teamMembers: [],
-
       status: "Open",
-      applicants: []
+      applicants: [],
+      teamMembers: [{
+          userId: user._id,
+          name: user.name,
+          college: user.college,
+          skills: user.skills,
+          passingYear: user.passingYear,
+      }]
     });
     await User.findByIdAndUpdate(owner, {
       $push: { createdProjects: project._id }
@@ -135,6 +140,8 @@ export const createProject = async (req, res) => {
     res.status(500).json({ message: "Error creating project" });
   }
 };
+
+
 export const getProjects = async (req, res) => {
   try {
     const projects = await Project.find();
