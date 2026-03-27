@@ -117,7 +117,7 @@ export const createProject = async (req, res) => {
 
       owner: req.user.id,
 
-      teamMembers: [req.user.id],
+      teamMembers: [],
 
       status: "Open",
       applicants: []
@@ -258,7 +258,7 @@ export const acceptApplicant = async (req, res) => {
       return res.status(404).json({ message: "Applicant not found" });
     }
 
-    project.teamMembers.push(userId);
+    project.teamMembers.push(applicant);
 
     project.applicants = project.applicants.filter(
       (a) => a.userId.toString() !== userId

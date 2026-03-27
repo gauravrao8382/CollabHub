@@ -218,7 +218,7 @@ const ManageProject = () => {
               <div>
                 <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
                   <Users size={16} className="text-emerald-600" />
-                  Team Members ({project.team?.length || 0})
+                  Team Members ({project.teamMembers?.length || 0})
                 </h3>
                 
                 {project.teamMembers?.length > 0 ? (

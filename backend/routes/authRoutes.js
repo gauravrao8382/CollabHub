@@ -13,6 +13,6 @@ router.post("/apply/:id", authMiddleware, applyToProject);
 router.get("/project/:id", authMiddleware, getProjectById);
 router.put("/project/:id/edit", authMiddleware, updateProject);
 router.get("/profile/:userId", authMiddleware, userProfile);
-router.patch("/accept/:id/:userId", authMiddleware, acceptApplicant);
-router.patch("/reject/:id/:userId", authMiddleware, rejectApplicant);
+router.patch("/accept/:projectId/:userId", authMiddleware, acceptApplicant);
+router.patch("/reject/:projectId/:userId", authMiddleware, rejectApplicant);
 export default router;

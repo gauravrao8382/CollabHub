@@ -1,24 +1,38 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Loader2, AlertCircle, Briefcase, GraduationCap, Code, Calendar } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Loader2, AlertCircle, Briefcase, GraduationCap, Code, Calendar, Users, Clock, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from "axios";
 
-const ProjectDetails = ({ projects,user}) => {
+const ProjectDetails = ({ projects, user }) => {
   const API = "http://localhost:5000";
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [isApplying, setIsApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(null); // null, 'pending', 'accepted', 'rejected'
+  const [isTeamMember, setIsTeamMember] = useState(false);
   const [error, setError] = useState(null);
 
   const project = projects.find(p => p._id === id);
 
   useEffect(() => {
-    if(project && user) {
-      const alreadyApplied = project.applicants.some(applicant => String(applicant.userId) === String(user._id));
-      setHasApplied(alreadyApplied);
+    if (project && user) {
+      // Check if user is already a team member
+      const teamMember = project.teamMembers?.some(member => 
+        String(member.userId || member._id) === String(user._id)
+      );
+      setIsTeamMember(!!teamMember);
+
+      // Check application status if not a team member
+      if (!teamMember && project.applicants?.length > 0) {
+        const applicant = project.applicants.find(app => 
+          String(app.userId || app._id) === String(user._id)
+        );
+        if (applicant) {
+          setApplicationStatus(applicant.status || 'pending');
+        }
+      }
     }
   }, [project, user]);
 
@@ -45,52 +59,51 @@ const ProjectDetails = ({ projects,user}) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleApplyClick = async (e) => {
+    e.preventDefault();
 
-const handleApplyClick = async (e) => {
-  e.preventDefault();
+    if (!formData.name || !formData.college || !formData.skills || !formData.passingYear) {
+      setError("Please fill in all fields to apply.");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
-  if (!formData.name || !formData.college || !formData.skills || !formData.passingYear) {
-    setError("Please fill in all fields to apply.");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return;
-  }
+    if (hasApplied || isTeamMember) return;
 
-  if (hasApplied) return;
+    setIsApplying(true);
+    setError(null);
 
-  setIsApplying(true);
-  setError(null);
+    try {
+      const applicationData = {
+        name: formData.name,
+        college: formData.college,
+        skills: formData.skills,
+        passingYear: formData.passingYear,
+      };
 
-  try {
-    const applicationData = {
-      name: formData.name,
-      college: formData.college,
-      skills: formData.skills,
-      passingYear: formData.passingYear,
-    };
+      const res = await axios.post(`${API}/apply/${project._id}`, applicationData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      
+      console.log("Response:", res.data.message);
+      setApplicationStatus('pending');
+      setFormData({ name: '', college: '', skills: '', passingYear: '' });
 
-    const res = await axios.post(`${API}/apply/${project._id}`, applicationData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("token")}`
-      }
-      }
-    );
-    console.log("Response:", res.data.message);
-    setHasApplied(true);
-    setFormData({ name: '', college: '', skills: '', passingYear: '' });
+    } catch (err) {
+      console.error(err);
+      setError("Failed to apply. Please try again.");
+    } finally {
+      setIsApplying(false);
+    }
+  };
 
-  } catch (err) {
-    console.error(err);
-    setError("Failed to apply. Please try again.");
-  } finally {
-    setIsApplying(false);
-  }
-};
+  // Helper to check if already applied
+  const hasApplied = applicationStatus !== null && !isTeamMember;
 
   return (
-    // MAIN CONTAINER
-    // Mobile: Normal flow (h-auto, overflow-y-auto) -> Single Scrollbar
-    // Desktop: Fixed height (h-screen, overflow-hidden) -> Split Scroll
     <div className="w-full bg-gray-50 flex flex-col lg:h-screen lg:overflow-hidden min-h-screen">
       
       {/* TOP BAR */}
@@ -105,13 +118,9 @@ const handleApplyClick = async (e) => {
       </div>
 
       {/* CONTENT WRAPPER */}
-      {/* Mobile: Static flex column */}
-      {/* Desktop: Flex row with internal scrolling */}
       <div className="flex flex-col lg:flex-row flex-1 w-full max-w-[1920px] mx-auto">
         
         {/* LEFT SIDE: Project Details */}
-        {/* Mobile: Normal div (part of main scroll) */}
-        {/* Desktop: Fixed height with internal scroll */}
         <div className="w-full lg:w-3/5 lg:h-full lg:overflow-y-auto custom-scrollbar bg-gradient-to-br from-white to-gray-50 lg:border-r border-gray-100 relative">
           <div className="p-5 sm:p-8 lg:p-10 max-w-3xl mx-auto">
             <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold tracking-wide uppercase mb-4">
@@ -131,12 +140,44 @@ const handleApplyClick = async (e) => {
                 <Briefcase size={16} className="text-blue-500" />
                 <span className="font-semibold">Owner: {project.owner}</span>
               </div>
+              {project.teamMembers?.length > 0 && (
+                <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 text-gray-600 text-sm">
+                  <Users size={16} className="text-green-500" />
+                  <span className="font-semibold">{project.teamMembers.length} Members</span>
+                </div>
+              )}
             </div>
 
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-900 mb-2">About Project</h3>
               <p className="text-gray-600 text-sm leading-relaxed">{project.description}</p>
             </div>
+
+            {/* Team Members Section */}
+            {project.teamMembers?.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
+                  <Users size={16} className="text-green-600" />
+                  Team Members
+                </h3>
+                <div className="space-y-2">
+                  {project.teamMembers.map((member, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
+                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                        {member.name?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{member.name || 'Anonymous'}</p>
+                        <p className="text-xs text-gray-500">{member.college || 'College not specified'}</p>
+                      </div>
+                      <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">
+                        Member
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div>
               <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
@@ -156,38 +197,112 @@ const handleApplyClick = async (e) => {
               </div>
             </div>
             
-            {/* Spacer for mobile visual separation */}
             <div className="h-6 lg:hidden"></div>
           </div>
         </div>
 
-        {/* RIGHT SIDE: Application Form */}
-        {/* Mobile: Normal div (part of main scroll, appears AFTER details) */}
-        {/* Desktop: Fixed height with internal scroll */}
+        {/* RIGHT SIDE: Application Form / Status */}
         <div className="w-full lg:w-2/5 lg:h-full lg:overflow-y-auto bg-white relative lg:shadow-xl z-10">
           <div className="min-h-full flex flex-col justify-center p-5 sm:p-8 lg:p-10">
             
-            {hasApplied ? (
+            {/* STATE 1: Already a Team Member */}
+            {isTeamMember ? (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="text-center py-6"
               >
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
-                  <CheckCircle size={40} className="text-green-600" />
+                  <UserCheck size={40} className="text-green-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Sent!</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">You're on the Team! 🎉</h2>
                 <p className="text-gray-600 mb-6 text-sm px-4">
-                  Thanks <strong>{formData.name}</strong>, we've received your details for <br/>
+                  You are already a member of <br/>
                   <span className="font-semibold text-indigo-600">{project.title}</span>.
                 </p>
+                
+                {/* Quick Actions for Team Members */}
+                <div className="space-y-3 mb-6">
+                  <button 
+                    onClick={() => navigate('/dashboard')}
+                    className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg text-sm flex items-center justify-center gap-2"
+                  >
+                    <Briefcase size={16} /> Go to Dashboard
+                  </button>
+                  <button 
+                    onClick={() => navigate(`/project/${project._id}/workspace`)}
+                    className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg text-sm flex items-center justify-center gap-2"
+                  >
+                    <Code size={16} /> Open Workspace
+                  </button>
+                </div>
+                
+                <p className="text-[10px] text-gray-400">
+                  Check your dashboard for project tasks and updates.
+                </p>
+              </motion.div>
+
+            /* STATE 2: Application Pending */
+            ) : applicationStatus === 'pending' ? (
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center py-6"
+              >
+                <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                  <Clock size={40} className="text-amber-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Pending</h2>
+                <p className="text-gray-600 mb-6 text-sm px-4">
+                  Thanks <strong>{formData.name || user?.name}</strong>, your application for <br/>
+                  <span className="font-semibold text-indigo-600">{project.title}</span> is under review.
+                </p>
+                
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-left">
+                  <p className="text-xs text-amber-800 font-medium mb-2">📋 Application Summary:</p>
+                  <ul className="text-[10px] text-amber-700 space-y-1">
+                    <li><strong>College:</strong> {formData.college || 'N/A'}</li>
+                    <li><strong>Passing Year:</strong> {formData.passingYear || 'N/A'}</li>
+                    <li><strong>Skills:</strong> {formData.skills || 'N/A'}</li>
+                  </ul>
+                </div>
+
                 <button 
                   onClick={() => navigate('/dashboard')}
                   className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg text-sm"
                 >
                   Back to Dashboard
                 </button>
+                
+                <p className="text-[10px] text-gray-400 mt-3">
+                  You'll be notified once the project owner reviews your application.
+                </p>
               </motion.div>
+
+            /* STATE 3: Application Rejected (Optional - for completeness) */
+            ) : applicationStatus === 'rejected' ? (
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center py-6"
+              >
+                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                  <AlertCircle size={40} className="text-red-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Not Selected</h2>
+                <p className="text-gray-600 mb-6 text-sm px-4">
+                  Sorry, your application for <br/>
+                  <span className="font-semibold text-indigo-600">{project.title}</span> was not selected this time.
+                </p>
+                <button 
+                  onClick={() => navigate('/projects')}
+                  className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg text-sm"
+                >
+                  Explore More Projects
+                </button>
+              </motion.div>
+
+            /* STATE 4: Not Applied - Show Form */
             ) : (
               <>
                 <div className="mb-6">
@@ -270,9 +385,9 @@ const handleApplyClick = async (e) => {
 
                   <button 
                     type="submit"
-                    disabled={isApplying}
+                    disabled={isApplying || hasApplied || isTeamMember}
                     className={`w-full py-3.5 rounded-lg font-bold text-sm text-white shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 cursor-pointer
-                      ${isApplying 
+                      ${isApplying || hasApplied || isTeamMember
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/30'
                       }`}

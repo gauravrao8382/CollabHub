@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Camera, Mail, Building, Briefcase, PlusCircle, ArrowRight, 
-  Users, CheckCircle, Clock, Edit3, LogOut, Award, LayoutGrid 
+  Users, CheckCircle, Clock, Edit3, LogOut, Award, UserCheck
 } from 'lucide-react';
 
 // --- Dummy Data ---
@@ -19,7 +19,6 @@ const dummyCreated = [
   { id: 101, title: "Campus Food Delivery", college: "Your College", type: "App Dev", applicants: 12, posted: "5 days ago" },
   { id: 102, title: "Peer to Peer Learning", college: "Your College", type: "Web Dev", applicants: 8, posted: "2 weeks ago" },
 ];
-
 
 const dummyCompleted = [
   { id: 201, title: "Alumni Connect Portal", college: "NSUT", type: "Web Dev", completedDate: "Jan 2024", role: "Frontend Lead" },
@@ -47,7 +46,6 @@ const Profile = ({ user, onLogout, projects }) => {
   const [createdProject, setCreatedProject] = useState([]);
   useEffect(() => {
     if (projects && user) {
-      console.log("Current User ID:", user);
       const filtered = projects.filter(
         p => String(p.owner) === String(user._id)
       );
@@ -55,32 +53,33 @@ const Profile = ({ user, onLogout, projects }) => {
     }
   }, [projects, user]);
 
-  const [appliedProject,setAppliedProject] = useState([]);
-  useEffect(()=>{
+  const [appliedProject, setAppliedProject] = useState([]);
+  useEffect(() => {
     if (projects && user) {
-      console.log("Current User ID:", user);
       const filtered = projects.filter(
         p => p.applicants && p.applicants.some(applicant => String(applicant.userId) === String(user._id))
       );
       setAppliedProject(filtered);
     }
-  },[projects,user])
+  }, [projects, user]);
 
-  // const [completedProject,setCompletedProject] = useState([]);
-  // useEffect(()=>{
-  //   const res =axios.get(`${API}/getcompletedprojects`);
-  //   setCompletedProject(res.data.completedProjects);
-  // },[])
+  const [selectedProject, setSelectedProject] = useState([]);
+  useEffect(() => {
+    if (projects && user) {
+      const filtered = projects.filter(
+        p => p.teamMembers && p.teamMembers.some(member => String(member.userId) === String(user._id))
+      );
+      setSelectedProject(filtered);
+    }
+  }, [projects, user]);
 
   const handleLogoutClick = () => {
     if (window.confirm("Are you sure you want to logout?")) {
-      
       if (onLogout) onLogout();
       navigate('/'); 
     }
   };
 
-  // Helper to handle clicking stats and switching tabs
   const handleStatClick = (tabName) => {
     setActiveTab(tabName);
     window.scrollTo({ top: 400, behavior: 'smooth' });
@@ -165,23 +164,23 @@ const Profile = ({ user, onLogout, projects }) => {
                 </button>
 
                 <button 
-                  onClick={() => handleStatClick('applied')} // Selected is a subset of Applied, so we show Applied tab but user can filter visually or we just show all applied
-                  className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl border border-white/50 text-center shadow-sm hover:shadow-md hover:bg-green-50/50 hover:border-green-200 transition-all cursor-pointer group"
+                  onClick={() => handleStatClick('selected')}
+                  className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl border border-white/50 text-center shadow-sm hover:shadow-md hover:bg-cyan-50/50 hover:border-cyan-200 transition-all cursor-pointer group"
                 >
-                  <p className="text-3xl font-bold text-green-600 group-hover:scale-110 transition-transform">
-                    {dummyApplied.filter(p => p.status === 'Accepted').length}
+                  <p className="text-3xl font-bold text-cyan-600 group-hover:scale-110 transition-transform">
+                    {selectedProject.length}
                   </p>
                   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mt-1">Selected</p>
                 </button>
 
                 <button 
-                  onClick={() => handleStatClick('created')} // Total applicants relates to created projects
-                  className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl border border-white/50 text-center shadow-sm hover:shadow-md hover:bg-blue-50/50 hover:border-blue-200 transition-all cursor-pointer group"
+                  onClick={() => handleStatClick('completed')}
+                  className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl border border-white/50 text-center shadow-sm hover:shadow-md hover:bg-emerald-50/50 hover:border-emerald-200 transition-all cursor-pointer group"
                 >
-                  <p className="text-3xl font-bold text-blue-600 group-hover:scale-110 transition-transform">
-                     {dummyCreated.reduce((acc, curr) => acc + curr.applicants, 0)}
+                  <p className="text-3xl font-bold text-emerald-600 group-hover:scale-110 transition-transform">
+                     {dummyCompleted.length}
                   </p>
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mt-1">Total Applicants</p>
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mt-1">Completed</p>
                 </button>
               </div>
             </div>
@@ -229,7 +228,24 @@ const Profile = ({ user, onLogout, projects }) => {
               )}
             </button>
 
-            {/* NEW COMPLETED TAB */}
+            {/* ✨ NEW SELECTED TAB */}
+            <button
+              onClick={() => setActiveTab('selected')}
+              className={`flex-1 min-w-[120px] py-5 text-center font-bold text-lg transition-all duration-300 relative ${
+                activeTab === 'selected' 
+                  ? 'text-cyan-600 bg-cyan-50/50' 
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <span className="flex items-center justify-center gap-2">
+                <UserCheck size={20} /> Selected
+              </span>
+              {activeTab === 'selected' && (
+                <motion.div layoutId="activeTabIndicator" className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-t-full" />
+              )}
+            </button>
+
+            {/* COMPLETED TAB */}
             <button
               onClick={() => setActiveTab('completed')}
               className={`flex-1 min-w-[120px] py-5 text-center font-bold text-lg transition-all duration-300 relative ${
@@ -263,7 +279,7 @@ const Profile = ({ user, onLogout, projects }) => {
                 >
                   {appliedProject.length > 0 ? (
                     appliedProject.map((project) => (
-                      <div key={project.id} className="group bg-white p-5 rounded-2xl border border-gray-100 hover:shadow-md hover:border-indigo-100 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div key={project.id || project._id} className="group bg-white p-5 rounded-2xl border border-gray-100 hover:shadow-md hover:border-indigo-100 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-1">
                             <h3 className="font-bold text-lg text-gray-800 group-hover:text-indigo-600 transition-colors">{project.title}</h3>
@@ -283,7 +299,7 @@ const Profile = ({ user, onLogout, projects }) => {
                             <span className="flex items-center gap-1"><Clock size={14}/> {project.date}</span>
                           </p>
                         </div>
-                        <Link to={`/project/${project.id}`} className="flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-800 whitespace-nowrap">
+                        <Link to={`/project/${project.id || project._id}`} className="flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-800 whitespace-nowrap">
                           View Details <ArrowRight size={16} />
                         </Link>
                       </div>
@@ -323,15 +339,12 @@ const Profile = ({ user, onLogout, projects }) => {
                           </p>
                         </div>
                         <div className="flex items-center gap-3">
-                           {/* Edit Button */}
                             <Link 
                               to={`/project/${project._id}/edit`}
                               className="px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
                             >
                               <Edit3 size={16} /> Edit
                             </Link>
-
-                            {/* Manage Button */}
                             <Link 
                               to={`/project/${project._id}/manage`}
                               className="px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex items-center gap-1"
@@ -347,7 +360,50 @@ const Profile = ({ user, onLogout, projects }) => {
                 </motion.div>
               )}
 
-              {/* --- COMPLETED CONTENT (NEW) --- */}
+              {/* ✨ --- SELECTED CONTENT (NEW SECTION) --- */}
+              {activeTab === 'selected' && (
+                <motion.div 
+                  key="selected"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
+                >
+                  {selectedProject.length > 0 ? (
+                    selectedProject.map((project) => (
+                      <div 
+                        key={project._id} 
+                        className="group bg-white p-5 rounded-2xl border border-gray-100 hover:shadow-lg hover:border-cyan-200 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer"
+                        onClick={() => navigate(`/project/${project._id}`)}
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h3 className="font-bold text-lg text-gray-800 group-hover:text-cyan-600 transition-colors">{project.title}</h3>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 flex items-center gap-1">
+                              <UserCheck size={12} /> Selected
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500 flex items-center gap-3">
+                            <span className="flex items-center gap-1"><Building size={14}/> {project.college}</span>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                            <span>{project.type}</span>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                            <span className="flex items-center gap-1 text-cyan-600 font-medium"><Users size={14}/> Team Member</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm font-semibold text-cyan-600 group-hover:text-cyan-800">
+                          View Project <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <EmptyState icon={UserCheck} msg="No selected projects yet." link="/projects" linkText="Apply to Projects" color="cyan" />
+                  )}
+                </motion.div>
+              )}
+
+              {/* --- COMPLETED CONTENT --- */}
               {activeTab === 'completed' && (
                 <motion.div 
                   key="completed"
@@ -397,7 +453,7 @@ const Profile = ({ user, onLogout, projects }) => {
   );
 };
 
-// Simple Empty State Component to reduce repetition
+// Simple Empty State Component
 const EmptyState = ({ icon: Icon, msg, link, linkText, color }) => (
   <div className="text-center py-12">
     <div className={`bg-${color}-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>

@@ -21,13 +21,20 @@ const projectSchema = new mongoose.Schema({
       college: String,
       skills: [String],
       passingYear: String,
-      appliedAt: { type: Date, default: Date.now }
     }
   ],
-  teamMembers: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: "User" 
-  }], 
+  teamMembers: [
+    {
+      userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "User" 
+      },
+      name: String,
+      college: String,
+      skills: [String],
+      passingYear: String,
+    }
+  ], 
   status: { 
     type: String, 
     enum: ['Open', 'Completed', 'Closed'], 
