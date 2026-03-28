@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate ,useLocation} from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Filter, RefreshCw, Plus, Sparkles, 
   Code, Layers, Cpu, Globe, Database, Shield, 
   Terminal, Cloud, Activity, Zap, ArrowRight, ArrowUpRight,
   Briefcase, University, ChevronDown, Users, ExternalLink, 
-  Image as ImageIcon, CheckCircle2
+  Image as ImageIcon, CheckCircle2, MessageSquare
 } from 'lucide-react';
 
 // --- 1. Open Project Card Component ---
@@ -63,12 +63,12 @@ const OpenProjectCard = ({ project, onApplyClick }) => (
   </motion.div>
 );
 
-// --- 2. Completed Project Card Component (UPDATED) ---
+// --- 2. Completed Project Card Component ---
 const CompletedProjectCard = ({ project }) => {
   const navigate = useNavigate();
 
   const handleViewDetails = () => {
-    navigate(`/completed-project/${project.id}`);
+    navigate(`/completed-project/${project.id || project._id}`);
   };
 
   return (
@@ -78,7 +78,7 @@ const CompletedProjectCard = ({ project }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col h-full group cursor-pointer"
-      onClick={handleViewDetails} // Pure card is clickable
+      onClick={handleViewDetails}
     >
       {/* Screenshot / Hero Image Area */}
       <div className="relative h-48 bg-gray-100 overflow-hidden">
@@ -177,15 +177,13 @@ const CompletedProjectCard = ({ project }) => {
 };
 
 // --- Main Dashboard Component ---
-
-const Dashboard = ({user,projects,setProjects}) => {
+const Dashboard = ({ user, projects, setProjects }) => {
   const navigate = useNavigate();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [filterCollege, setFilterCollege] = useState('');
-  const [activeTab, setActiveTab] = useState('open'); // 'open' or 'completed'
-
+  const [activeTab, setActiveTab] = useState('open');
 
   const goToProjectDetails = (id) => {
     navigate(`/project/${id}`);
@@ -200,7 +198,7 @@ const Dashboard = ({user,projects,setProjects}) => {
     { name: "Data Science", icon: Database },
   ];
 
-  // Filtering Logic
+  // 🔍 Filtering Logic with Owner Exclusion
   const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.title?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           project.college?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -209,10 +207,12 @@ const Dashboard = ({user,projects,setProjects}) => {
     
     const isOpen = project.status === 'Open' || !project.status;
     const isCompleted = project.status === 'Completed';
-    
     const matchesTab = activeTab === 'open' ? isOpen : isCompleted;
 
-    return matchesSearch && matchesType && matchesCollege && matchesTab;
+    // 🚫 Exclude projects where current user is the owner
+    const isOwner = project.owner === user?._id ;
+                  
+    return matchesSearch && matchesType && matchesCollege && matchesTab && !isOwner;
   });
 
   const handleReset = () => {
@@ -249,7 +249,24 @@ const Dashboard = ({user,projects,setProjects}) => {
                  <h1 className="text-xl font-bold text-gray-800">Hi, {user?.name?.split(' ')[0]}!</h1>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+
+            {/* Header Right Actions */}
+            <div className="flex items-center gap-2">
+              
+              {/* 📨 Messages Button - NEW */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/messages')}
+                className="relative p-2.5 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                title="Messages"
+              >
+                <MessageSquare size={22} />
+                {/* Unread badge - optional */}
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
+              </motion.button>
+
+              {/* Create Project Button */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -259,10 +276,12 @@ const Dashboard = ({user,projects,setProjects}) => {
                 <Plus size={18} strokeWidth={3} />
                 <span>Create Project</span>
               </motion.button>
+              
+              {/* Profile Link */}
               <Link to="/profile" className="relative group">
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 p-0.5 group-hover:scale-110 transition-transform duration-300">
                   <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                    <span className="text-lg font-bold text-indigo-600">G</span>
+                    <span className="text-lg font-bold text-indigo-600">{user?.name?.charAt(0) || 'U'}</span>
                   </div>
                 </div>
                 <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
@@ -327,7 +346,7 @@ const Dashboard = ({user,projects,setProjects}) => {
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                <CheckCircle2 size={16} className={activeTab === 'Completed' ? 'fill-current' : ''} />
+                <CheckCircle2 size={16} className={activeTab === 'completed' ? 'fill-current' : ''} />
                 Completed Showcase
               </button>
             </div>
@@ -395,7 +414,7 @@ const Dashboard = ({user,projects,setProjects}) => {
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project, index) => (
                 <motion.div
-                  key={project._id}
+                  key={project._id || project.id}
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

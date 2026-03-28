@@ -14,6 +14,10 @@ import Profile from './pages/Profile';
 import EditProject from './pages/EditProject';
 import ManageProject from './pages/ManageProject';
 import UserProfile from './pages/UserProfile';
+import Messages from './pages/Messages';
+import ProjectChat from './pages/ProjectChat';
+
+
 
 function App() {
   const API = "http://localhost:5000";
@@ -123,6 +127,8 @@ useEffect(() => {
           <Route path="/project/:projectId/edit" element={user ? <EditProject />:<Navigate to="/login" />} />
           <Route path="/project/:projectId/manage" element={user ? <ManageProject />:<Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile />:<Navigate to="/login" />} />
+          <Route path="/messages" element={<Messages user={user} projects={projects} />} /> 
+          <Route path="/messages/:projectId" element={<ProjectChat user={user} projects={projects} />} />
           {/* Semi Public */}
           
           <Route path="/project/:id" element={user ? <ProjectDetails projects={projects} user={user} />:<Navigate to="/login" />} />
