@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowLeft, Send, Users, Code, Globe, Cpu, Database, 
-  Shield, ExternalLink, User, MessageSquare, Sparkles,
-  Paperclip, Smile, MoreVertical, Phone, Video
+  ArrowLeft, Send, MessageSquare, Sparkles,
+  Paperclip, Smile, ExternalLink
 } from 'lucide-react';
 
 const ProjectChat = ({ user, projects }) => {
@@ -12,7 +11,6 @@ const ProjectChat = ({ user, projects }) => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [showDetails, setShowDetails] = useState(true); // Toggle sidebar
   const messagesEndRef = useRef(null);
 
   // Find current project
@@ -72,20 +70,12 @@ const ProjectChat = ({ user, projects }) => {
     );
   }
 
-  const techIcons = {
-    'Web Development': <Globe size={14} />,
-    'App Development': <Code size={14} />,
-    'AI/ML': <Cpu size={14} />,
-    'Data Science': <Database size={14} />,
-    'Blockchain': <Shield size={14} />,
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       
       {/* Header */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center gap-3">
+        <div className="max-w-4xl mx-auto flex items-center gap-3">
           <button 
             onClick={() => navigate('/messages')}
             className="p-2 hover:bg-gray-100 rounded-xl transition"
@@ -93,40 +83,45 @@ const ProjectChat = ({ user, projects }) => {
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
           
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-sm">
+          {/* Clickable Project Title - Navigate to Project Details */}
+          <button 
+            onClick={() => navigate(`/project/${project._id}`)}
+            className="flex items-center gap-3 flex-1 min-w-0 hover:bg-gray-50 rounded-xl px-2 py-1.5 transition text-left"
+            title="View Project Details"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0">
               {project.title?.charAt(0)}
             </div>
             <div className="min-w-0">
-              <h1 className="font-bold text-gray-800 truncate">{project.title}</h1>
+              <h1 className="font-bold text-gray-800 truncate hover:text-indigo-600 transition">
+                {project.title}
+              </h1>
               <p className="text-xs text-gray-500 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                {project.team?.length || 1} members online
+                {project.team?.length || 1} members online • Click for details
               </p>
             </div>
-          </div>
+          </button>
 
-          {/* Header Actions */}
-          <div className="flex items-center gap-1">
-            <button 
-              onClick={() => setShowDetails(!showDetails)}
-              className={`p-2 rounded-xl transition ${showDetails ? 'bg-indigo-100 text-indigo-600' : 'hover:bg-gray-100 text-gray-600'}`}
-              title="Toggle Details"
+          {/* Optional: Quick link to live project */}
+          {project.liveLink && (
+            <a 
+              href={project.liveLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-xl transition"
+              title="Open Live Project"
             >
-              <Users size={20} />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-xl transition text-gray-600">
-              <MoreVertical size={20} />
-            </button>
-          </div>
+              <ExternalLink size={20} />
+            </a>
+          )}
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 max-w-6xl mx-auto w-full flex gap-4 p-4 overflow-hidden">
+      {/* Chat Area - Full Width */}
+      <div className="flex-1 max-w-4xl mx-auto w-full flex flex-col p-4 overflow-hidden">
         
-        {/* Chat Area */}
-        <div className={`flex-1 flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all ${showDetails ? 'lg:mr-0' : ''}`}>
+        <div className="flex-1 flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
@@ -205,107 +200,6 @@ const ProjectChat = ({ user, projects }) => {
             </div>
           </form>
         </div>
-
-        {/* Sidebar: Project Details + Team */}
-        <AnimatePresence>
-          {showDetails && (
-            <motion.aside
-              initial={{ opacity: 0, x: 20, width: 0 }}
-              animate={{ opacity: 1, x: 0, width: 320 }}
-              exit={{ opacity: 0, x: 20, width: 0 }}
-              className="hidden lg:flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-            >
-              {/* Project Details */}
-              <div className="p-5 border-b border-gray-100">
-                <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <Sparkles size={16} className="text-indigo-500" />
-                  Project Details
-                </h3>
-                
-                <p className="text-sm text-gray-600 mb-4 line-clamp-3">{project.description}</p>
-                
-                {/* Tech Stack */}
-                {project.techStack?.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Tech Stack</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.techStack.map((tech, i) => (
-                        <span key={i} className="px-2.5 py-1 bg-gray-50 text-gray-600 text-[10px] font-medium rounded border border-gray-200 flex items-center gap-1">
-                          {techIcons[project.type] || <Code size={10} />}
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Quick Actions */}
-                <div className="flex gap-2">
-                  {project.liveLink && (
-                    <a 
-                      href={project.liveLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition"
-                    >
-                      <ExternalLink size={14} /> Live
-                    </a>
-                  )}
-                  {project.repoLink && (
-                    <a 
-                      href={project.repoLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg transition"
-                    >
-                      <Code size={14} /> Code
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Team Members */}
-              <div className="p-5 flex-1 overflow-y-auto">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Users size={16} className="text-indigo-500" />
-                  Team Members
-                </h3>
-                
-                <div className="space-y-3">
-                  {project.team?.map((member, i) => {
-                    const isCurrentUser = member._id === user._id || member.email === user.email;
-                    return (
-                      <div key={i} className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition">
-                        <div className="relative">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-sm">
-                            {member.name?.charAt(0) || 'U'}
-                          </div>
-                          <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium truncate ${isCurrentUser ? 'text-indigo-600' : 'text-gray-800'}`}>
-                            {member.name} {isCurrentUser && '(You)'}
-                          </p>
-                          <p className="text-[10px] text-gray-400 truncate">{member.role || 'Member'}</p>
-                        </div>
-                        <button className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
-                          <MessageSquare size={14} />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Add Member Button (Owner only) */}
-                {(project.owner === user._id || project.createdBy === user._id) && (
-                  <button className="w-full mt-4 py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 text-sm font-medium hover:border-indigo-300 hover:text-indigo-500 transition">
-                    + Add Member
-                  </button>
-                )}
-              </div>
-            </motion.aside>
-          )}
-        </AnimatePresence>
 
       </div>
     </div>

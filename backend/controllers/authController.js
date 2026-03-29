@@ -318,3 +318,24 @@ export const rejectApplicant = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+export const toggleHiringStatus = async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const { status } = req.body;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    project.status = status;
+    await project.save();
+    res.json({ message: "Project status updated successfully", project });
+  }
+  catch (err) {
+    console.error("Error updating project status:", err);
+    res.status(500).json({ message: "Error updating project status" });
+  }
+}

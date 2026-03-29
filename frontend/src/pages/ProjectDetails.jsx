@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Loader2, AlertCircle, Briefcase, GraduationCap, Code, Calendar, Users, Clock, UserCheck } from 'lucide-react';
+import { 
+  ArrowLeft, CheckCircle, Loader2, AlertCircle, Briefcase, 
+  GraduationCap, Code, Calendar, Users, Clock, UserCheck, Lock 
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from "axios";
 
@@ -41,6 +44,9 @@ const ProjectDetails = ({ projects, user }) => {
     passingYear: ''
   });
 
+  // 🔹 Check if hiring is closed
+  const isHiringClosed = project?.status === 'Close' || project?.hiringClosed === true;
+
   if (!project) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
@@ -59,6 +65,11 @@ const ProjectDetails = ({ projects, user }) => {
 
   const handleApplyClick = async (e) => {
     e.preventDefault();
+
+    if (isHiringClosed) {
+      setError("Applications are closed for this project.");
+      return;
+    }
 
     if (!formData.name || !formData.college || !formData.skills || !formData.passingYear) {
       setError("Please fill in all fields to apply.");
@@ -153,7 +164,6 @@ const ProjectDetails = ({ projects, user }) => {
 
   // 🔹 Handle member click - navigate to profile
   const handleMemberClick = (memberId, e) => {
-    // Ignore if text is selected (for copy-paste)
     if (window.getSelection().toString()) return;
     
     const currentUserId = String(user?._id || '');
@@ -182,9 +192,20 @@ const ProjectDetails = ({ projects, user }) => {
         {/* LEFT SIDE: Project Details */}
         <div className="w-full lg:w-3/5 lg:h-full lg:overflow-y-auto custom-scrollbar bg-gradient-to-br from-white to-gray-50 lg:border-r border-gray-100 relative">
           <div className="p-5 sm:p-8 lg:p-10 max-w-3xl mx-auto">
-            <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold tracking-wide uppercase mb-4">
-              {project.type || 'Project Opportunity'}
-            </span>
+            
+            {/* Header with Status Badge */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold tracking-wide uppercase">
+                {project.type || 'Project Opportunity'}
+              </span>
+              
+              {/* Closed Status Badge */}
+              {isHiringClosed && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold uppercase">
+                  <Lock size={10} /> Hiring Closed
+                </span>
+              )}
+            </div>
             
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-5 leading-tight">
               {project.title}
@@ -325,8 +346,55 @@ const ProjectDetails = ({ projects, user }) => {
         <div className="w-full lg:w-2/5 lg:h-full lg:overflow-y-auto bg-white relative lg:shadow-xl z-10">
           <div className="min-h-full flex flex-col justify-center p-5 sm:p-8 lg:p-10">
             
-            {/* STATE 1: Already a Team Member */}
-            {isTeamMember ? (
+            {/* 🔒 NEW: Project Hiring Closed */}
+            {isHiringClosed ? (
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-center py-6"
+              >
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                  <Lock size={40} className="text-gray-500" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Hiring Closed 🔒</h2>
+                <p className="text-gray-600 mb-6 text-sm px-4">
+                  Applications for <br/>
+                  <span className="font-semibold text-gray-700">{project.title}</span> are now closed.
+                </p>
+                
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-left">
+                  <p className="text-xs text-gray-600 font-medium mb-2">📌 Project Status:</p>
+                  <ul className="text-[10px] text-gray-500 space-y-1">
+                    <li><strong>Closed On:</strong> {project.closedDate ? new Date(project.closedDate).toLocaleDateString() : 'N/A'}</li>
+                    <li><strong>Team Size:</strong> {project.teamMembers?.length || 0} members</li>
+                    <li><strong>Position:</strong> Filled</li>
+                  </ul>
+                </div>
+
+                <div className="space-y-3">
+                  <button 
+                    onClick={() => navigate('/projects')}
+                    className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg text-sm"
+                  >
+                    Explore More Projects
+                  </button>
+                  {isTeamMember && (
+                    <button 
+                      onClick={() => navigate(`/project/${project._id}/workspace`)}
+                      className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors text-sm"
+                    >
+                      Open Workspace
+                    </button>
+                  )}
+                </div>
+                
+                <p className="text-[10px] text-gray-400 mt-3">
+                  Check back later for new opportunities!
+                </p>
+              </motion.div>
+
+            /* STATE 1: Already a Team Member */
+            ) : isTeamMember ? (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -504,9 +572,9 @@ const ProjectDetails = ({ projects, user }) => {
 
                   <button 
                     type="submit"
-                    disabled={isApplying || hasApplied || isTeamMember}
+                    disabled={isApplying || hasApplied || isTeamMember || isHiringClosed}
                     className={`w-full py-3.5 rounded-lg font-bold text-sm text-white shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 mt-2 cursor-pointer
-                      ${isApplying || hasApplied || isTeamMember
+                      ${isApplying || hasApplied || isTeamMember || isHiringClosed
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-indigo-500/30'
                       }`}
@@ -516,6 +584,8 @@ const ProjectDetails = ({ projects, user }) => {
                         <Loader2 className="animate-spin" size={16} />
                         Sending...
                       </>
+                    ) : isHiringClosed ? (
+                      "Hiring Closed"
                     ) : (
                       "Submit Application"
                     )}

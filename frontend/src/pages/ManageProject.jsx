@@ -91,17 +91,25 @@ const ManageProject = () => {
     }
   };
 
-  const toggleHiring = async () => {
+  // ✅ Toggle project status between 'open' and 'closed'
+  const toggleProjectStatus = async () => {
     try {
-      await axios.put(`${API}/toggle-hiring/${projectId}`, {}, {
+      const newStatus = project.status === 'Open' ? 'Closed' : 'Open';
+      
+      await axios.put(`${API}/toggle-hiring/${project._id}`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      showToast(project.hiringOpen ? "Hiring closed" : "Hiring opened!", "success");
+      
+      showToast(newStatus === 'Closed' ? "Project closed for applications" : "Project opened for applications!", "success");
       fetchProject();
-    } catch {
-      showToast("Failed to update hiring status", "error");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to update project status", "error");
     }
   };
+
+  // ✅ Helper: Check if project is open
+  const isProjectOpen = project?.status === 'Open';
 
   if (loading) {
     return (
@@ -137,27 +145,30 @@ const ManageProject = () => {
         
         <div className="flex items-center gap-3">
           <span className="text-xs font-bold text-gray-400 hidden sm:inline-block">MANAGE PROJECT</span>
+          
+          {/* ✅ Status-based Toggle Button */}
           <button
-            onClick={toggleHiring}
+            onClick={toggleProjectStatus}
+            disabled={actionLoading === "toggle"}
             className={`px-4 py-2 rounded-lg text-white flex items-center gap-2 text-sm font-semibold transition-all shadow-md ${
-              project.hiringOpen 
-                ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700" 
-                : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-            }`}
+              isProjectOpen 
+                ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-400 disabled:to-red-500" 
+                : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500"
+            } disabled:cursor-not-allowed`}
           >
             {actionLoading === "toggle" ? (
               <Loader2 className="animate-spin" size={16}/>
-            ) : project.hiringOpen ? (
+            ) : isProjectOpen ? (
               <Lock size={16}/>
             ) : (
               <Unlock size={16}/>
             )}
-            {project.hiringOpen ? "Close Hiring" : "Open Hiring"}
+            {isProjectOpen ? "Close Project" : "Open Project"}
           </button>
         </div>
       </div>
 
-      {/* CONTENT WRAPPER - Fixed flex structure */}
+      {/* CONTENT WRAPPER */}
       <div className="flex flex-col lg:flex-row flex-1 w-full max-w-[1920px] mx-auto min-h-0">
         
         {/* LEFT SIDE: Project Details */}
@@ -181,13 +192,15 @@ const ManageProject = () => {
                   <Briefcase size={16} className="text-blue-500" />
                   <span className="font-semibold">Owner: {project.owner}</span>
                 </div>
+                
+                {/* ✅ Status Badge based on project.status */}
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-sm border text-sm font-semibold ${
-                  project.hiringOpen 
+                  isProjectOpen 
                     ? 'bg-green-50 border-green-200 text-green-700' 
                     : 'bg-red-50 border-red-200 text-red-700'
                 }`}>
-                  {project.hiringOpen ? <Unlock size={16}/> : <Lock size={16}/>}
-                  {project.hiringOpen ? 'Accepting Applications' : 'Hiring Closed'}
+                  {isProjectOpen ? <Unlock size={16}/> : <Lock size={16}/>}
+                  {isProjectOpen ? 'Accepting Applications' : 'Hiring Closed'}
                 </div>
               </div>
 
@@ -214,7 +227,7 @@ const ManageProject = () => {
                 </div>
               </div>
               
-              {/* 👥 TEAM MEMBERS Section - Scrollable */}
+              {/* 👥 TEAM MEMBERS Section */}
               <div>
                 <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2 uppercase tracking-wide">
                   <Users size={16} className="text-emerald-600" />
@@ -370,7 +383,9 @@ const ManageProject = () => {
                     <Users size={24} className="text-gray-400"/>
                   </div>
                   <p className="text-gray-500 text-sm">No applicants yet</p>
-                  <p className="text-gray-400 text-xs mt-1">Share the project link to get applications</p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    {isProjectOpen ? "Share the project link to get applications" : "Open the project to start accepting applications"}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -401,7 +416,7 @@ const ManageProject = () => {
         )}
       </AnimatePresence>
       
-      {/* ✅ Custom Scrollbar CSS - Hidden by default, visible on hover */}
+      {/* Custom Scrollbar CSS */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 5px;
@@ -420,7 +435,6 @@ const ManageProject = () => {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background-color: #cbd5e1;
         }
-        /* Firefox */
         .custom-scrollbar {
           scrollbar-width: thin;
           scrollbar-color: transparent transparent;
