@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   ArrowLeft, Send, MessageSquare, Sparkles,
-  Paperclip, Smile, ExternalLink
+  Paperclip, Smile, ExternalLink, MoreVertical,
+  Phone, Video, Info
 } from 'lucide-react';
 
 const ProjectChat = ({ user, projects }) => {
@@ -11,16 +12,22 @@ const ProjectChat = ({ user, projects }) => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   // Find current project
   const project = projects.find(p => p._id === projectId || p.id === projectId);
 
-  // Mock: Messages load karna (Backend se fetch karein actual me)
+  // Mock: Load messages (replace with actual API fetch)
   useEffect(() => {
     if (project) {
       // fetch(`/api/messages/${projectId}`)...
       // setMessages(fetchedMessages);
+      
+      // Simulate typing indicator for demo
+      const timer = setTimeout(() => setIsTyping(false), 2000);
+      return () => clearTimeout(timer);
     }
   }, [projectId, project]);
 
@@ -48,160 +55,410 @@ const ProjectChat = ({ user, projects }) => {
     // Optimistic update
     setMessages(prev => [...prev, messageData]);
     setNewMessage('');
+    setIsTyping(false);
 
-    // Socket emit ya API call yahan
+    // Socket emit or API call here
     // socket.emit('send_message', { ...messageData, projectId });
+    
+    // Focus input after send
+    inputRef.current?.focus();
+  };
+
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+  };
+
+  const messageVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1, 
+      transition: { type: "spring", stiffness: 300, damping: 25 } 
+    }
   };
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles size={64} className="mx-auto mb-4 text-gray-300" />
-          <h2 className="text-xl font-bold text-gray-700 mb-2">Project not found</h2>
-          <button 
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex items-center justify-center px-4">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center"
+        >
+          <div className="w-20 h-20 rounded-2xl bg-gray-800/50 border border-gray-700/50 flex items-center justify-center mx-auto mb-6">
+            <Sparkles size={40} className="text-violet-400/50" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Project not found</h2>
+          <p className="text-gray-400 mb-6 text-sm">The chat you're looking for doesn't exist.</p>
+          <button
             onClick={() => navigate('/messages')}
-            className="text-indigo-600 font-semibold hover:underline"
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
+                     text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                     transition-all duration-300 shadow-lg shadow-violet-500/25 
+                     flex items-center gap-2 mx-auto"
           >
-            ← Back to Messages
+            <ArrowLeft size={18} /> Back to Messages
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 flex flex-col relative overflow-hidden">
       
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 py-3">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <button 
-            onClick={() => navigate('/messages')}
-            className="p-2 hover:bg-gray-100 rounded-xl transition"
-          >
-            <ArrowLeft size={20} className="text-gray-600" />
-          </button>
-          
-          {/* Clickable Project Title - Navigate to Project Details */}
-          <button 
-            onClick={() => navigate(`/project/${project._id}`)}
-            className="flex items-center gap-3 flex-1 min-w-0 hover:bg-gray-50 rounded-xl px-2 py-1.5 transition text-left"
-            title="View Project Details"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-sm flex-shrink-0">
-              {project.title?.charAt(0)}
-            </div>
-            <div className="min-w-0">
-              <h1 className="font-bold text-gray-800 truncate hover:text-indigo-600 transition">
-                {project.title}
-              </h1>
-              <p className="text-xs text-gray-500 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                {project.team?.length || 1} members online • Click for details
-              </p>
-            </div>
-          </button>
-
-          {/* Optional: Quick link to live project */}
-          {project.liveLink && (
-            <a 
-              href={project.liveLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-xl transition"
-              title="Open Live Project"
-            >
-              <ExternalLink size={20} />
-            </a>
-          )}
-        </div>
+      {/* ===== Background Decorative Elements ===== */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <motion.div 
+          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ scale: [1.15, 1, 1.15], opacity: [0.1, 0.25, 0.1] }}
+          transition={{ duration: 12, repeat: Infinity }}
+          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+        />
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
-      {/* Chat Area - Full Width */}
-      <div className="flex-1 max-w-4xl mx-auto w-full flex flex-col p-4 overflow-hidden">
-        
-        <div className="flex-1 flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      {/* ===== Header ===== */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-900/70 border-b border-gray-800/50">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-3">
+            {/* Back Button */}
+            <motion.button
+              whileHover={{ scale: 1.05, x: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/messages')}
+              className="p-2.5 rounded-xl bg-gray-800/50 border border-gray-700/50 
+                       hover:bg-gray-800 hover:border-violet-500/30 transition-all"
+              aria-label="Back to messages"
+            >
+              <ArrowLeft size={20} className="text-gray-300 hover:text-violet-400 transition-colors" />
+            </motion.button>
+
+            {/* Clickable Project Title */}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              onClick={() => navigate(`/project/${project._id}`)}
+              className="flex items-center gap-3 flex-1 min-w-0 hover:bg-gray-800/50 rounded-xl px-2 py-1.5 transition text-left group"
+              title="View Project Details"
+            >
+              {/* Project Avatar */}
+              <div className="relative flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 
+                              flex items-center justify-center text-white font-bold shadow-lg">
+                  {project.title?.charAt(0)?.toUpperCase() || 'P'}
+                </div>
+                {/* Online Status */}
+                <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 
+                               border-2 border-gray-900 rounded-full animate-pulse" />
+              </div>
+              
+              {/* Project Info */}
+              <div className="min-w-0 flex-1">
+                <h1 className="font-bold text-gray-100 truncate group-hover:text-violet-300 transition-colors">
+                  {project.title}
+                </h1>
+                <p className="text-xs text-gray-400 flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                    {project.team?.length || 1} online
+                  </span>
+                  <span className="text-gray-600">•</span>
+                  <span className="text-violet-400 group-hover:underline transition-colors">View details</span>
+                </p>
+              </div>
+            </motion.button>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1">
+              {project.liveLink && (
+                <a
+                  href={project.liveLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 text-gray-400 hover:text-violet-400 hover:bg-gray-800/50 
+                           rounded-xl transition-all"
+                  title="Open Live Project"
+                >
+                  <ExternalLink size={18} />
+                </a>
+              )}
+              <button 
+                className="p-2.5 text-gray-400 hover:text-violet-400 hover:bg-gray-800/50 
+                         rounded-xl transition-all"
+                title="Project Info"
+              >
+                <Info size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ===== Chat Area ===== */}
+      <main className="flex-1 max-w-4xl mx-auto w-full flex flex-col p-3 lg:p-4 overflow-hidden relative z-10">
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex-1 flex flex-col rounded-3xl bg-gray-800/40 border border-gray-700/50 
+                   backdrop-blur-xl shadow-2xl overflow-hidden"
+        >
           
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            <AnimatePresence>
+          {/* Messages Container */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+            <AnimatePresence mode="popLayout">
               {messages.length > 0 ? (
-                messages.map((msg) => {
-                  const isOwn = msg.senderId === user._id;
-                  return (
+                <motion.div 
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="space-y-4"
+                >
+                  {/* Date Separator Example */}
+                  {messages[0] && (
+                    <div className="flex justify-center my-2">
+                      <span className="px-3 py-1 rounded-full bg-gray-700/50 text-xs text-gray-400 border border-gray-600/50">
+                        {formatDate(messages[0].timestamp)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {messages.map((msg, index) => {
+                    const isOwn = msg.senderId === user._id;
+                    const showAvatar = !isOwn && (index === 0 || messages[index - 1]?.senderId !== msg.senderId);
+                    
+                    return (
+                      <motion.div
+                        key={msg._id}
+                        variants={messageVariants}
+                        layout
+                        className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div className={`flex items-end gap-2.5 max-w-[85%] sm:max-w-[75%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+                          
+                          {/* Avatar - Only show for first message from each user */}
+                          {!isOwn && showAvatar && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 
+                                       flex items-center justify-center text-white text-xs font-bold 
+                                       shadow-lg flex-shrink-0 border-2 border-gray-800"
+                            >
+                              {msg.senderName?.charAt(0)?.toUpperCase() || 'U'}
+                            </motion.div>
+                          )}
+                          {!isOwn && !showAvatar && <div className="w-8" />}
+
+                          {/* Message Bubble */}
+                          <motion.div 
+                            whileHover={{ scale: 1.01 }}
+                            className={`px-4 py-2.5 rounded-2xl text-sm shadow-lg ${
+                              isOwn
+                                ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white rounded-br-md shadow-violet-500/20'
+                                : 'bg-gray-900/50 text-gray-100 border border-gray-700/50 rounded-bl-md backdrop-blur-sm'
+                            }`}
+                          >
+                            {/* Sender Name for received messages */}
+                            {!isOwn && showAvatar && (
+                              <p className="text-[10px] font-semibold text-violet-300 mb-1">
+                                {msg.senderName}
+                              </p>
+                            )}
+                            
+                            {/* Message Text */}
+                            <p className="leading-relaxed whitespace-pre-wrap break-words">
+                              {msg.text}
+                            </p>
+                            
+                            {/* Timestamp */}
+                            <p className={`text-[9px] mt-1.5 text-right ${
+                              isOwn ? 'text-violet-200/70' : 'text-gray-500'
+                            }`}>
+                              {formatTime(msg.timestamp)}
+                              {isOwn && msg.readBy?.length > 0 && (
+                                <span className="ml-1 text-emerald-300">✓✓</span>
+                              )}
+                            </p>
+                          </motion.div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                  
+                  {/* Typing Indicator */}
+                  {isTyping && (
                     <motion.div
-                      key={msg._id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                      className="flex justify-start"
                     >
-                      <div className={`flex items-end gap-2 max-w-[85%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-                        {/* Avatar */}
-                        {!isOwn && (
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-700 border-2 border-white">
-                            {msg.senderName?.charAt(0) || 'U'}
+                      <div className="flex items-end gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 
+                                      flex items-center justify-center text-white text-xs font-bold shadow-lg" />
+                        <div className="px-4 py-3 rounded-2xl bg-gray-900/50 border border-gray-700/50 backdrop-blur-sm">
+                          <div className="flex gap-1">
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                           </div>
-                        )}
-                        
-                        {/* Message Bubble */}
-                        <div className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm ${
-                          isOwn 
-                            ? 'bg-indigo-600 text-white rounded-br-none' 
-                            : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'
-                        }`}>
-                          {!isOwn && <p className="text-[10px] font-bold text-gray-400 mb-0.5">{msg.senderName}</p>}
-                          <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                          <p className={`text-[9px] mt-1 text-right ${isOwn ? 'text-indigo-200' : 'text-gray-400'}`}>
-                            {new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
-                          </p>
                         </div>
                       </div>
                     </motion.div>
-                  );
-                })
+                  )}
+                </motion.div>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                  <MessageSquare size={56} className="mb-3 text-indigo-200" />
-                  <p className="text-sm font-medium">No messages yet</p>
-                  <p className="text-xs">Start the conversation with your team!</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="h-full flex flex-col items-center justify-center text-center px-4"
+                >
+                  <div className="w-20 h-20 rounded-2xl bg-gray-700/50 border border-gray-600/50 
+                                flex items-center justify-center mb-5">
+                    <MessageSquare size={40} className="text-violet-400/50" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-100 mb-2">No messages yet</h3>
+                  <p className="text-gray-400 text-sm max-w-xs">
+                    Start the conversation with your team and collaborate on {project.title}!
+                  </p>
+                </motion.div>
               )}
             </AnimatePresence>
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <form onSubmit={sendMessage} className="p-4 bg-white border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <button type="button" className="p-2 text-gray-400 hover:text-indigo-600 transition rounded-full hover:bg-gray-50">
-                <Paperclip size={20} />
-              </button>
-              
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-full px-5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
-              />
-              
-              <button type="button" className="p-2 text-gray-400 hover:text-yellow-500 transition rounded-full hover:bg-gray-50">
-                <Smile size={20} />
-              </button>
-              
-              <button 
-                type="submit" 
-                disabled={!newMessage.trim()}
-                className="p-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Send size={18} />
-              </button>
+          {/* Typing Status */}
+          {isTyping && messages.length > 0 && (
+            <div className="px-4 pb-2">
+              <p className="text-xs text-gray-500 flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                Someone is typing...
+              </p>
             </div>
-          </form>
-        </div>
+          )}
 
-      </div>
+          {/* Input Area */}
+          <form onSubmit={sendMessage} className="p-4 bg-gray-900/30 border-t border-gray-700/50">
+            <div className="flex items-center gap-2">
+              {/* Attach Button */}
+              <motion.button 
+                type="button" 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2.5 text-gray-400 hover:text-violet-400 hover:bg-gray-800/50 
+                         rounded-xl transition-all"
+                title="Attach file"
+              >
+                <Paperclip size={18} />
+              </motion.button>
+
+              {/* Message Input */}
+              <div className="flex-1 relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => {
+                    setNewMessage(e.target.value);
+                    setIsTyping(e.target.value.length > 0);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage(e);
+                    }
+                  }}
+                  placeholder="Type a message..."
+                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-2xl 
+                           px-5 py-3 text-sm text-gray-100 placeholder-gray-500 
+                           focus:outline-none focus:ring-2 focus:ring-violet-500/50 
+                           focus:border-violet-500 transition-all duration-300"
+                />
+              </div>
+
+              {/* Emoji Button */}
+              <motion.button 
+                type="button" 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2.5 text-gray-400 hover:text-amber-400 hover:bg-gray-800/50 
+                         rounded-xl transition-all"
+                title="Add emoji"
+              >
+                <Smile size={18} />
+              </motion.button>
+
+              {/* Send Button */}
+              <motion.button
+                type="submit"
+                disabled={!newMessage.trim()}
+                whileHover={{ scale: newMessage.trim() ? 1.05 : 1 }}
+                whileTap={{ scale: newMessage.trim() ? 0.95 : 1 }}
+                className={`p-3 rounded-xl transition-all shadow-lg flex items-center justify-center ${
+                  newMessage.trim()
+                    ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white hover:from-violet-500 hover:to-cyan-500 shadow-violet-500/25 hover:shadow-violet-500/40'
+                    : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <Send size={18} className={newMessage.trim() ? 'ml-0.5' : ''} />
+              </motion.button>
+            </div>
+            
+            {/* Input Helper Text */}
+            <p className="text-[10px] text-gray-500 text-center mt-2">
+              Press <kbd className="px-1.5 py-0.5 bg-gray-700/50 rounded text-gray-400">Enter</kbd> to send, <kbd className="px-1.5 py-0.5 bg-gray-700/50 rounded text-gray-400">Shift+Enter</kbd> for new line
+            </p>
+          </form>
+        </motion.div>
+
+      </main>
+
+      {/* Custom Scrollbar CSS for Dark Mode */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #374151 transparent; }
+        
+        /* Smooth focus outline */
+        input:focus, button:focus {
+          outline: none;
+        }
+        
+        /* Prevent text selection on interactive elements */
+        .cursor-pointer, button {
+          user-select: none;
+          -webkit-user-select: none;
+        }
+      `}</style>
     </div>
   );
 };

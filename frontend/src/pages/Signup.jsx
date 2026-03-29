@@ -1,16 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Building, GraduationCap, Tags, CheckCircle, ArrowRight, Loader2, Home } from 'lucide-react';
+import { 
+  Mail, Lock, User, Building, GraduationCap, Tags, CheckCircle, 
+  ArrowRight, Loader2, Home, ArrowLeft, Key, Sparkles 
+} from 'lucide-react';
 import axios from "axios";
+
 const Signup = ({ onLogin }) => {
   const API = "http://localhost:5000";
+  const navigate = useNavigate();
 
-  const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Details
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
-  
+  const [error, setError] = useState('');
+
   const [formData, setFormData] = useState({
     email: '',
     otp: '',
@@ -20,7 +26,6 @@ const Signup = ({ onLogin }) => {
     skills: ''
   });
 
-  const navigate = useNavigate();
   const otpInputRef = useRef(null);
 
   // Timer for OTP resend
@@ -32,331 +37,600 @@ const Signup = ({ onLogin }) => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleSendOtp = async(e) => {
+  // Auto-focus OTP input when step changes to 2
+  useEffect(() => {
+    if (step === 2 && otpInputRef.current) {
+      setTimeout(() => otpInputRef.current?.focus(), 100);
+    }
+  }, [step]);
+
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(formData.email);
-    const res = await axios.post(`${API}/signup`,{
-      email:formData.email
-    })
-    setTimeout(() => {
-      setLoading(false);
+    setError('');
+
+    try {
+      const res = await axios.post(`${API}/signup`, { email: formData.email });
+      
       setOtpSent(true);
-      setTimer(30); // 30 seconds cooldown
+      setTimer(30);
       setStep(2);
-      // Auto-focus OTP input in next render
+      
+      // Show success message
       setTimeout(() => otpInputRef.current?.focus(), 100);
-    }, 1500);
-    alert(res.data.message)
-  };
-
-  const handleVerifyOtp = async (e) => {
-  e.preventDefault();
-
-  if (formData.otp.length < 4) {
-    alert("Please enter a valid OTP");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const res = await axios.post(`${API}/verify-otp`, {
-      email: formData.email,
-      otp: formData.otp
-    });
-
-    alert(res.data.message);
-
-    setStep(3); 
-
-  } catch (err) {
-    alert(err.response?.data?.message || "Invalid OTP");
-    
-  }
-
-  setLoading(false);
-};
-
-  const handleFinalSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!formData.name || !formData.college || !formData.passingYear || !formData.skills) {
-    alert("Please fill all details");
-    return;
-  }
-  setLoading(true);
-  try {
-    await axios.post(`${API}/complete-signup`, {
-      name: formData.name,
-      email: formData.email,
-      college: formData.college,
-      passingYear: formData.passingYear,
-      skills: formData.skills.split(',').map(s => s.trim()),
-    });
-    const res = await axios.post(`${API}/login`, {
-      email: formData.email
-    });
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    onLogin(res.data.user);
-    navigate('/dashboard');
-
-  } catch (err) {
-    alert(err.response?.data?.message || "Signup failed");
-  }
-
-  setLoading(false);
-};
-
-  const handleResendOtp = () => {
-    if (timer === 0) {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setTimer(30);
-        alert("OTP sent again!");
-      }, 1000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="flex justify-center items-center min-h-screen w-full px-4 bg-gray-50 py-12">
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (formData.otp.length < 4) {
+      setError("Please enter a valid 4-digit OTP");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await axios.post(`${API}/verify-otp`, {
+        email: formData.email,
+        otp: formData.otp
+      });
+
+      setStep(3);
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFinalSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!formData.name || !formData.college || !formData.passingYear || !formData.skills) {
+      setError("Please fill all required fields");
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      await axios.post(`${API}/complete-signup`, {
+        name: formData.name,
+        email: formData.email,
+        college: formData.college,
+        passingYear: formData.passingYear,
+        skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
+      });
+
+      const res = await axios.post(`${API}/login`, { email: formData.email });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      onLogin(res.data.user);
+      navigate('/dashboard');
+
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (timer === 0) {
+      setLoading(true);
+      setError('');
       
-      <motion.div 
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="glass p-8 md:p-10 rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden border border-white/60 bg-white/80 backdrop-blur-xl"
+      try {
+        await axios.post(`${API}/signup`, { email: formData.email });
+        setTimer(30);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to resend OTP");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1, 
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 } 
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
+  const stepVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 30 : -30,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => ({
+      x: direction < 0 ? 30 : -30,
+      opacity: 0
+    })
+  };
+
+  const [[page, direction], setPage] = useState([0, 0]);
+
+  const paginate = (newDirection) => {
+    setPage([page + newDirection, newDirection]);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      
+      {/* ===== Background Decorative Elements ===== */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Animated Gradient Blobs */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.15, 1],
+            opacity: [0.2, 0.35, 0.2],
+            x: [0, 20, 0]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-10 -left-10 w-80 h-80 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ 
+            scale: [1.15, 1, 1.15],
+            opacity: [0.15, 0.25, 0.15],
+            x: [0, -15, 0]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-10 -right-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+        />
+        
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        
+        {/* Radial Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-gray-950/30" />
+      </div>
+
+      {/* ===== Signup Card ===== */}
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="relative w-full max-w-lg z-10"
       >
-        {/* Background Decor */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-
-        {/* Header */}
-        <div className="relative z-10 text-center mb-8">
-          <Link to="/" className="absolute top-0 left-0 p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-full hover:bg-gray-100">
-            <Home size={20} />
-          </Link>
+        {/* Glassmorphism Card */}
+        <div className="p-6 md:p-10 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl">
           
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            {step === 1 && "Create Account"}
-            {step === 2 && "Verify Email"}
-            {step === 3 && "Complete Profile"}
-          </h2>
-          <p className="text-sm text-gray-500">
-            {step === 1 && "Enter your email to get started"}
-            {step === 2 && `We sent a code to ${formData.email}`}
-            {step === 3 && "Tell us more about yourself"}
-          </p>
+          {/* Card Glow Effect */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 pointer-events-none" />
           
-          {/* Progress Bar */}
-          <div className="flex gap-2 justify-center mt-4">
-            {[1, 2, 3].map((s) => (
-              <div 
-                key={s} 
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  s <= step ? 'w-8 bg-indigo-600' : 'w-2 bg-gray-200'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <AnimatePresence mode="wait">
-          
-          {/* --- STEP 1: EMAIL --- */}
-          {step === 1 && (
-            <motion.form
-              key="step1"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              onSubmit={handleSendOtp}
-              className="space-y-6 relative z-10"
+          {/* Header */}
+          <div className="relative z-10 text-center mb-8">
+            {/* Back to Home */}
+            <Link 
+              to="/" 
+              className="absolute -top-2 left-0 p-2 text-gray-400 hover:text-violet-400 transition-colors rounded-lg hover:bg-gray-700/50"
+              aria-label="Back to home"
             >
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 text-gray-400" size={20} />
-                  <input 
-                    type="email" 
-                    placeholder="student@college.edu" 
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 transition-all" 
-                    required 
-                    value={formData.email}
-                    onChange={e => setFormData({...formData, email: e.target.value})} 
-                  />
-                </div>
-              </div>
-              
-              <button 
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
-                 rounded-xl font-bold cursor-pointer shadow-lg shadow-indigo-500/30
-                 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] 
-                 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : "Send OTP"}
-                {!loading && <ArrowRight size={20} />}
-              </button>
-            </motion.form>
-          )}
+              <Home size={20} />
+            </Link>
 
-          {/* --- STEP 2: OTP --- */}
-          {step === 2 && (
-            <motion.form
-              key="step2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              onSubmit={handleVerifyOtp}
-              className="space-y-6 relative z-10"
-            >
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 ml-1">Enter OTP</label>
-                <input 
-                  ref={otpInputRef}
-                  type="text" 
-                  placeholder="1234" 
-                  maxLength={4}
-                  className="w-full text-center tracking-[0.5em] text-2xl font-bold py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white/50 transition-all" 
-                  required 
-                  value={formData.otp}
-                  onChange={e => {
-                    const val = e.target.value.replace(/[^0-9]/g, '');
-                    setFormData({...formData, otp: val});
-                  }} 
-                />
-              </div>
-
-              <div className="text-center text-sm">
-                {timer > 0 ? (
-                  <p className="text-gray-400">Resend code in <span className="font-bold text-indigo-600">{timer}s</span></p>
-                ) : (
-                  <button type="button" onClick={handleResendOtp} className="text-indigo-600 font-semibold hover:underline">
-                    Resend OTP
-                  </button>
-                )}
-              </div>
-              
-              <button 
-                
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
-                 rounded-xl font-bold cursor-pointer shadow-lg shadow-indigo-500/30
-                 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] 
-                 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : "Verify & Continue"}
-                {!loading && <CheckCircle size={20} />}
-              </button>
-              
-              <button 
-                type="button" 
-                onClick={() => setStep(1)}
-                className="w-full text-sm text-gray-500 hover:text-gray-700 underline"
-              >
-                Change Email
-              </button>
-            </motion.form>
-          )}
-
-          {/* --- STEP 3: DETAILS --- */}
-          {step === 3 && (
-            <motion.form
-              key="step3"
-              initial={{ opacity: 0, y: 20 }}
+            {/* Step Indicator */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              onSubmit={handleFinalSubmit}
-              className="space-y-4 relative z-10"
+              className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-violet-500/10 border border-violet-500/20"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-600 uppercase ml-1">Full Name</label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 text-gray-400" size={18} />
-                    <input 
-                      type="text" 
-                      placeholder="John Doe" 
-                      className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50" 
-                      required 
-                      value={formData.name}
-                      onChange={e => setFormData({...formData, name: e.target.value})} 
+              <Sparkles className="w-4 h-4 text-violet-400" />
+              <span className="text-xs font-medium text-violet-300">
+                Step {step} of 3
+              </span>
+            </motion.div>
+
+            {/* Title */}
+            <h2 className="text-2xl md:text-3xl font-extrabold mb-2">
+              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                {step === 1 && "Create Account"}
+                {step === 2 && "Verify Email"}
+                {step === 3 && "Complete Profile"}
+              </span>
+            </h2>
+            
+            {/* Subtitle */}
+            <p className="text-sm text-gray-400">
+              {step === 1 && "Enter your college email to get started"}
+              {step === 2 && `We sent a verification code to ${formData.email}`}
+              {step === 3 && "Tell us more about yourself to personalize your experience"}
+            </p>
+
+            {/* Progress Bar */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {[1, 2, 3].map((s) => (
+                <React.Fragment key={s}>
+                  <motion.div
+                    initial={false}
+                    animate={{ 
+                      width: s <= step ? '2rem' : '0.5rem',
+                      backgroundColor: s <= step ? '#8b5cf6' : '#374151'
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className={`h-1.5 rounded-full ${s <= step ? 'bg-violet-500' : 'bg-gray-600'}`}
+                  />
+                  {s < 3 && (
+                    <div className={`w-8 h-1.5 rounded-full ${s < step ? 'bg-violet-500/50' : 'bg-gray-700'}`} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3"
+              >
+                <ArrowRight className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5 rotate-180" />
+                <p className="text-sm text-red-300">{error}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Form Steps */}
+          <AnimatePresence mode="wait" custom={direction}>
+            
+            {/* ===== STEP 1: EMAIL ===== */}
+            {step === 1 && (
+              <motion.form
+                key="step1"
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                onSubmit={handleSendOtp}
+                className="space-y-6 relative z-10"
+              >
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-2">
+                  <motion.label variants={itemVariants} className="block text-sm font-medium text-gray-300">
+                    College Email Address
+                  </motion.label>
+                  <motion.div variants={itemVariants} className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      type="email"
+                      placeholder="student@college.edu"
+                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                               focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                               outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                               hover:border-gray-600"
+                      required
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                      disabled={loading}
                     />
-                  </div>
-                </div>
+                  </motion.div>
+                  <motion.p variants={itemVariants} className="text-xs text-gray-500">
+                    We'll send a verification code to this email
+                  </motion.p>
+                </motion.div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-600 uppercase ml-1">Passing Year</label>
-                  <div className="relative">
-                    <GraduationCap className="absolute left-3 top-3 text-gray-400" size={18} />
-                    <select 
-                      className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50 appearance-none" 
-                      required 
-                      value={formData.passingYear}
-                      onChange={e => setFormData({...formData, passingYear: e.target.value})} 
+                <motion.div variants={itemVariants}>
+                  <button
+                    type="submit"
+                    disabled={loading || !formData.email}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                             transition-all duration-300 shadow-lg shadow-violet-500/25 
+                             hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+                             flex items-center justify-center gap-2 group relative overflow-hidden"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sending OTP...
+                      </>
+                    ) : (
+                      <>
+                        Send Verification Code
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </button>
+                </motion.div>
+              </motion.form>
+            )}
+
+            {/* ===== STEP 2: OTP ===== */}
+            {step === 2 && (
+              <motion.form
+                key="step2"
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                onSubmit={handleVerifyOtp}
+                className="space-y-6 relative z-10"
+              >
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-2">
+                  <motion.label variants={itemVariants} className="block text-sm font-medium text-gray-300 text-center">
+                    Enter Verification Code
+                  </motion.label>
+                  <motion.div variants={itemVariants} className="relative">
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      ref={otpInputRef}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="••••"
+                      maxLength={4}
+                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                               focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                               outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                               text-center text-2xl tracking-[0.5em] font-mono font-bold
+                               hover:border-gray-600"
+                      required
+                      value={formData.otp}
+                      onChange={e => {
+                        const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                        setFormData({ ...formData, otp: val });
+                      }}
+                      disabled={loading}
+                    />
+                  </motion.div>
+                </motion.div>
+
+                {/* Resend OTP */}
+                <motion.div variants={itemVariants} className="text-center">
+                  {timer > 0 ? (
+                    <p className="text-sm text-gray-400">
+                      Resend code in <span className="font-semibold text-violet-400">{timer}s</span>
+                    </p>
+                  ) : (
+                    <button 
+                      type="button" 
+                      onClick={handleResendOtp}
+                      disabled={loading}
+                      className="text-sm text-violet-400 font-medium hover:text-violet-300 
+                               transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="">Select Year</option>
-                      {[2024, 2025, 2026, 2027, 2028].map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
+                      Resend verification code
+                    </button>
+                  )}
+                </motion.div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-600 uppercase ml-1">College Name</label>
-                <div className="relative">
-                  <Building className="absolute left-3 top-3 text-gray-400" size={18} />
-                  <input 
-                    type="text" 
-                    placeholder="e.g. IIT Delhi, DTU, etc." 
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50" 
-                    required 
-                    value={formData.college}
-                    onChange={e => setFormData({...formData, college: e.target.value})} 
-                  />
-                </div>
-              </div>
+                {/* Action Buttons */}
+                <motion.div variants={itemVariants} className="space-y-3">
+                  <button
+                    type="submit"
+                    disabled={loading || formData.otp.length < 4}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                             transition-all duration-300 shadow-lg shadow-violet-500/25 
+                             hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+                             flex items-center justify-center gap-2 group"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      <>
+                        Verify & Continue
+                        <CheckCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      </>
+                    )}
+                  </button>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-600 uppercase ml-1">Skills (Comma separated)</label>
-                <div className="relative">
-                  <Tags className="absolute left-3 top-3 text-gray-400" size={18} />
-                  <input 
-                    type="text" 
-                    placeholder="React, Node.js, Python, UI/UX" 
-                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white/50" 
-                    required 
-                    value={formData.skills}
-                    onChange={e => setFormData({...formData, skills: e.target.value})} 
-                  />
-                </div>
-                <p className="text-[10px] text-gray-400 ml-1">Example: React, Firebase, Tailwind</p>
-              </div>
-              
-              <button 
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 mt-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
-                 rounded-xl font-bold cursor-pointer shadow-lg shadow-indigo-500/30
-                 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] 
-                 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70">
-                {loading ? <Loader2 className="animate-spin" size={20} /> : "Create Account"}
-                {!loading && <ArrowRight size={20} />}
-              </button>
-            </motion.form>
-          )}
+                  <button
+                    type="button"
+                    onClick={() => { paginate(-1); setStep(1); }}
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
+                             text-gray-300 font-medium hover:bg-gray-700 hover:border-violet-500/30 
+                             transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Change Email
+                  </button>
+                </motion.div>
+              </motion.form>
+            )}
 
-        </AnimatePresence>
+            {/* ===== STEP 3: PROFILE DETAILS ===== */}
+            {step === 3 && (
+              <motion.form
+                key="step3"
+                custom={direction}
+                variants={stepVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                onSubmit={handleFinalSubmit}
+                className="space-y-5 relative z-10"
+              >
+                <motion.div variants={containerVariants} initial="hidden" animate="visible">
+                  {/* Name & Passing Year Row */}
+                  <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-300">Full Name</label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <input
+                          type="text"
+                          placeholder="John Doe"
+                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                                   focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                                   outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                                   hover:border-gray-600"
+                          required
+                          value={formData.name}
+                          onChange={e => setFormData({ ...formData, name: e.target.value })}
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
 
-        <div className="mt-8 text-center relative z-10">
-          <p className="text-sm text-gray-500">
-            Already have an account? <Link to="/login" className="text-indigo-600 font-bold hover:underline">Login</Link>
-          </p>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-300">Passing Year</label>
+                      <div className="relative">
+                        <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                        <select
+                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                                   focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                                   outline-none transition-all duration-300 text-gray-100 appearance-none
+                                   hover:border-gray-600 cursor-pointer"
+                          required
+                          value={formData.passingYear}
+                          onChange={e => setFormData({ ...formData, passingYear: e.target.value })}
+                          disabled={loading}
+                        >
+                          <option value="" className="bg-gray-800">Select Year</option>
+                          {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map(year => (
+                            <option key={year} value={year} className="bg-gray-800">{year}</option>
+                          ))}
+                        </select>
+                        <ArrowRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 rotate-90 pointer-events-none" />
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* College */}
+                  <motion.div variants={itemVariants} className="space-y-2 mt-4">
+                    <label className="block text-sm font-medium text-gray-300">College Name</label>
+                    <div className="relative">
+                      <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                      <input
+                        type="text"
+                        placeholder="e.g. IIT Delhi, DTU, NSUT..."
+                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                                 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                                 outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                                 hover:border-gray-600"
+                        required
+                        value={formData.college}
+                        onChange={e => setFormData({ ...formData, college: e.target.value })}
+                        disabled={loading}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Skills */}
+                  <motion.div variants={itemVariants} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-300">Skills</label>
+                    <div className="relative">
+                      <Tags className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                      <input
+                        type="text"
+                        placeholder="React, Node.js, Python, UI/UX..."
+                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                                 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
+                                 outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                                 hover:border-gray-600"
+                        required
+                        value={formData.skills}
+                        onChange={e => setFormData({ ...formData, skills: e.target.value })}
+                        disabled={loading}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500">Separate multiple skills with commas</p>
+                  </motion.div>
+                </motion.div>
+
+                {/* Action Buttons */}
+                <motion.div variants={itemVariants} className="space-y-3 pt-2">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                             transition-all duration-300 shadow-lg shadow-violet-500/25 
+                             hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+                             flex items-center justify-center gap-2 group"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      <>
+                        Create My Account
+                        <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { paginate(-1); setStep(2); }}
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
+                             text-gray-300 font-medium hover:bg-gray-700 hover:border-violet-500/30 
+                             transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Verification
+                  </button>
+                </motion.div>
+              </motion.form>
+            )}
+
+          </AnimatePresence>
+
+          {/* Login Link */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 pt-6 border-t border-gray-700/50 text-center relative z-10"
+          >
+            <p className="text-sm text-gray-400">
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className="text-violet-400 font-semibold hover:text-violet-300 transition-colors hover:underline"
+              >
+                Sign in instead
+              </Link>
+            </p>
+          </motion.div>
         </div>
+
+        {/* Footer Note */}
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-xs text-gray-500 mt-6"
+        >
+          By creating an account, you agree to our{' '}
+          <Link to="/terms" className="text-violet-400 hover:underline">Terms</Link>
+          {' '}and{' '}
+          <Link to="/privacy" className="text-violet-400 hover:underline">Privacy Policy</Link>
+        </motion.p>
       </motion.div>
     </div>
   );

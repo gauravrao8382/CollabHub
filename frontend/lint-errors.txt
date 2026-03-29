@@ -1,0 +1,113 @@
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\App.jsx:53 Error: Cannot access variable before it is declared
+
+`handleLogout` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+  51 |
+  52 |       if (decoded.exp * 1000 < Date.now()) {
+> 53 |         handleLogout();
+     |         ^^^^^^^^^^^^ `handleLogout` accessed before it is declared
+  54 |       } else {
+  55 |         // ✅ Valid token
+  56 |         setUser(JSON.parse(storedUser));
+
+  71 |
+  72 |   // ✅ Logout handler
+> 73 |   const handleLogout = () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |     localStorage.removeItem("token");
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |     localStorage.removeItem("user");
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |     setUser(null);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |   };
+     | ^^^^^ `handleLogout` is declared here
+  78 |
+  79 |   // ✅ Add project
+  80 |   const handleAddProject = (newProject) => {
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\App.jsx:59 'err' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\components\Navbar.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\components\ProjectCard.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\components\ui\Button.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\About.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\CompletedProjectDetails.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Contact.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\CreateProject.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\CreateProject.jsx:17 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\CreateProject.jsx:57 'onAddProject' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Dashboard.jsx:1 'useEffect' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Dashboard.jsx:2 'useLocation' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Dashboard.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Dashboard.jsx:180 'setProjects' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\EditProject.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\EditProject.jsx:19 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\EditProject.jsx:93 'err' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Home.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Login.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Login.jsx:11 'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Login.jsx:11 'setUser' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ManageProject.jsx:19 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ManageProject.jsx:34 React Hook useEffect has a missing dependency: 'fetchProject'. Either include it or remove the dependency array.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Messages.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:2 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:4 'axios' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:11 'dummyApplied' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:18 'dummyCreated' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:52 Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  50 |         p => String(p.owner) === String(user._id)
+  51 |       );
+> 52 |       setCreatedProject(filtered);
+     |       ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  53 |     }
+  54 |   }, [projects, user]);
+  55 |
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:62 Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  60 |         p => p.applicants && p.applicants.some(applicant => String(applicant.userId) === String(user._id))
+  61 |       );
+> 62 |       setAppliedProject(filtered);
+     |       ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  63 |     }
+  64 |   }, [projects, user]);
+  65 |
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:72 Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  70 |         p => p.teamMembers && p.teamMembers.some(member => String(member.userId) === String(user._id))
+  71 |       );
+> 72 |       setSelectedProject(filtered);
+     |       ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  73 |     }
+  74 |   }, [projects, user]);
+  75 |
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Profile.jsx:457 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ProjectChat.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ProjectDetails.jsx:7 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ProjectDetails.jsx:122 'currentUserId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\ProjectDetails.jsx:166 'e' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Signup.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\Signup.jsx:12 'otpSent' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:3 'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:38 React Hook useEffect has a missing dependency: 'fetchUserProfile'. Either include it or remove the dependency array.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:445 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:457 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:470 'Icon' is defined but never used.
+C:\Users\gaura\OneDrive\Desktop\CollabHub\frontend\src\pages\UserProfile.jsx:481 'Icon' is defined but never used.

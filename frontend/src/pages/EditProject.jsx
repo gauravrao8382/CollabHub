@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -10,51 +10,89 @@ import {
   Code, 
   Building, 
   Sparkles,
-  Loader2
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Save
 } from 'lucide-react';
 
 const API = "http://localhost:5000";
 
-// ✅ SAME LabeledInput (unchanged)
-const LabeledInput = ({ label, icon: Icon, type = "text", placeholder, value, onChange, isTextArea = false, required = true, onKeyDown }) => (
+// ===== Dark Theme LabeledInput Component =====
+const LabeledInput = ({ 
+  label, 
+  icon: Icon, 
+  type = "text", 
+  placeholder, 
+  value, 
+  onChange, 
+  isTextArea = false, 
+  required = true, 
+  onKeyDown,
+  error,
+  disabled = false
+}) => (
   <motion.div 
     initial={{ opacity: 0, x: -10 }}
     animate={{ opacity: 1, x: 0 }}
-    className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-start md:items-center py-2 md:py-3 border-b border-gray-100 last:border-0"
+    className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center py-4 border-b border-gray-700/50 last:border-0"
   >
-    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-gray-700 flex items-center gap-1 md:gap-2 md:justify-end text-right">
-      <Icon className="text-indigo-600 w-4 h-4 hidden md:inline" /> 
-      <span>{label}</span>
-      {required && <span className="text-red-500">*</span>}
+    {/* Label */}
+    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-gray-300 flex items-center gap-2 md:justify-end text-right">
+      <Icon className="text-violet-400 w-4 h-4 flex-shrink-0" /> 
+      <span className="hidden md:inline">{label}</span>
+      <span className="md:hidden">{label}</span>
+      {required && <span className="text-rose-400 text-[10px] md:text-sm">*</span>}
     </label>
 
+    {/* Input */}
     <div className="md:col-span-9">
       {isTextArea ? (
         <textarea
-          className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none"
+          className={`w-full px-4 py-3 rounded-xl bg-gray-900/50 border ${
+            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gray-700 focus:ring-violet-500/50 focus:border-violet-500'
+          } outline-none transition-all duration-300 text-gray-100 placeholder-gray-500 resize-none hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder}
           rows={4}
           required={required}
           value={value}
           onChange={onChange}
+          disabled={disabled}
         />
       ) : (
         <input
           type={type}
-          className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none"
+          className={`w-full px-4 py-3 rounded-xl bg-gray-900/50 border ${
+            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gray-700 focus:ring-violet-500/50 focus:border-violet-500'
+          } outline-none transition-all duration-300 text-gray-100 placeholder-gray-500 hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder}
           required={required}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
+          disabled={disabled}
         />
       )}
+      
+      {/* Error Message */}
+      <AnimatePresence>
+        {error && (
+          <motion.p 
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="mt-1.5 text-xs text-rose-400 flex items-center gap-1"
+          >
+            <AlertCircle size={12} /> {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   </motion.div>
 );
 
 const EditProject = () => {
-  const {  projectId } = useParams();
+  const { projectId } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ 
@@ -67,8 +105,10 @@ const EditProject = () => {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState('');
 
-  // ✅ Fetch existing project
+  // ===== Fetch existing project =====
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -79,7 +119,6 @@ const EditProject = () => {
         });
 
         const data = res.data.project;
-
         setFormData({
           title: data.title || '',
           description: data.description || '',
@@ -91,8 +130,8 @@ const EditProject = () => {
         });
 
       } catch (err) {
-        alert("Failed to load project");
-        navigate('/profile');
+        setErrors({ fetch: err.response?.data?.message || "Failed to load project" });
+        setTimeout(() => navigate('/profile'), 2000);
       } finally {
         setLoading(false);
       }
@@ -101,17 +140,35 @@ const EditProject = () => {
     fetchProject();
   }, [projectId, navigate]);
 
-  // ✅ Update project
+  // ===== Form Validation =====
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.title.trim()) newErrors.title = "Project name is required";
+    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (formData.description.trim().length < 20) newErrors.description = "Description should be at least 20 characters";
+    if (!formData.techStack.trim()) newErrors.techStack = "Please add at least one skill";
+    if (!formData.college.trim()) newErrors.college = "College name is required";
+    if (!formData.teamSize || Number(formData.teamSize) < 1) newErrors.teamSize = "Team size must be at least 1";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ===== Update project =====
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (saving) return;
 
+    if (!validateForm()) return;
+    
     setSaving(true);
+    setSuccess('');
+    setErrors(prev => ({ ...prev, submit: '' }));
 
     try {
       const updatedProject = {
         ...formData,
-        techStack: formData.techStack.split(',').map(s => s.trim()),
+        techStack: formData.techStack.split(',').map(s => s.trim()).filter(s => s),
         teamSize: Number(formData.teamSize)
       };
 
@@ -121,11 +178,15 @@ const EditProject = () => {
         }
       });
 
-      alert("Project updated successfully 🚀");
-      navigate(`/project/${projectId}`);
+      setSuccess("Project updated successfully! 🚀");
+      
+      // Small delay for success animation before redirect
+      setTimeout(() => {
+        navigate(`/project/${projectId}`);
+      }, 1500);
 
     } catch (err) {
-      alert(err.response?.data?.message || "Update failed");
+      setErrors(prev => ({ ...prev, submit: err.response?.data?.message || "Update failed" }));
     } finally {
       setSaving(false);
     }
@@ -139,116 +200,291 @@ const EditProject = () => {
     }
   };
 
-  // ✅ Loader
+  // ===== Animation variants =====
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
+  // ===== Loading State =====
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600"/>
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex items-center justify-center">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="relative"
+        >
+          <div className="w-14 h-14 rounded-full border-4 border-violet-500/20 border-t-violet-500" />
+          <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-transparent border-r-cyan-500 animate-spin" style={{ animationDuration: '0.8s' }} />
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 px-3 md:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 py-8 px-4 relative overflow-hidden">
+      
+      {/* ===== Background Decorative Elements ===== */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <motion.div 
+          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ scale: [1.15, 1, 1.15], opacity: [0.1, 0.25, 0.1] }}
+          transition={{ duration: 12, repeat: Infinity }}
+          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+        />
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto"
+        className="max-w-4xl mx-auto relative z-10"
       >
 
-        {/* Header */}
-        <div className="bg-white/60 backdrop-blur-md p-5 rounded-2xl mb-5 shadow">
-          <div className="flex items-center gap-3">
-            <button onClick={handleBack}>
-              <ArrowLeft />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-indigo-600">
-                Edit Project
+        {/* ===== Header Card ===== */}
+        <motion.div
+          variants={itemVariants}
+          className="p-5 md:p-7 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl mb-6 relative overflow-hidden group"
+        >
+          {/* Glow Effect */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          
+          <div className="relative z-10 flex items-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05, x: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleBack}
+              type="button"
+              className="p-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 hover:bg-gray-700 hover:border-violet-500/30 transition-all flex items-center justify-center"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="text-gray-300 hover:text-violet-400 transition-colors w-5 h-5" />
+            </motion.button>
+            
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl md:text-2xl font-extrabold">
+                <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                  Edit Project
+                </span>
               </h1>
-              <p className="text-gray-500 text-sm">
-                Update your project details
-              </p>
+              <p className="text-gray-400 text-sm mt-0.5">Update your project details</p>
+            </div>
+            
+            {/* Status Badge */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20">
+              <Sparkles className="w-4 h-4 text-violet-400" />
+              <span className="text-xs font-medium text-violet-300">Quick Edit</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Form */}
-        <motion.form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow">
+        {/* ===== Form Card ===== */}
+        <motion.form
+          onSubmit={handleSubmit}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="p-5 md:p-7 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl relative overflow-hidden"
+        >
+          {/* Card Glow */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/3 to-cyan-500/3 pointer-events-none" />
+          
+          {/* Success Message */}
+          <AnimatePresence>
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3"
+              >
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-emerald-300">{success}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <LabeledInput 
-            label="Project Name"
-            icon={Briefcase}
-            value={formData.title}
-            onChange={e => setFormData({...formData, title: e.target.value})}
-          />
+          {/* Fetch Error */}
+          <AnimatePresence>
+            {errors.fetch && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-rose-300">{errors.fetch}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <LabeledInput 
-            label="Description"
-            icon={FileText}
-            isTextArea
-            value={formData.description}
-            onChange={e => setFormData({...formData, description: e.target.value})}
-          />
+          {/* Submit Error */}
+          <AnimatePresence>
+            {errors.submit && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-rose-300">{errors.submit}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <LabeledInput 
-            label="Skills Required"
-            icon={Code}
-            value={formData.techStack}
-            onChange={e => setFormData({...formData, techStack: e.target.value})}
-          />
+          {/* Form Fields */}
+          <div className="space-y-2 relative z-10">
+            <LabeledInput
+              label="Project Name"
+              icon={Briefcase}
+              placeholder="e.g., AI Based Attendance System"
+              value={formData.title}
+              onChange={e => {
+                setFormData({ ...formData, title: e.target.value });
+                if (errors.title) setErrors({ ...errors, title: '' });
+              }}
+              error={errors.title}
+              disabled={saving}
+            />
 
-          <LabeledInput 
-            label="College Name"
-            icon={Building}
-            value={formData.college}
-            onChange={e => setFormData({...formData, college: e.target.value})}
-          />
+            <LabeledInput
+              label="Description"
+              icon={FileText}
+              isTextArea={true}
+              placeholder="Describe your project idea, goals, and what you want to build..."
+              value={formData.description}
+              onChange={e => {
+                setFormData({ ...formData, description: e.target.value });
+                if (errors.description) setErrors({ ...errors, description: '' });
+              }}
+              error={errors.description}
+              disabled={saving}
+            />
 
-          <LabeledInput 
-            label="Team Size"
-            icon={Users}
-            type="number"
-            value={formData.teamSize}
-            onChange={e => setFormData({...formData, teamSize: e.target.value})}
-            onKeyDown={handleKeyDown}
-          />
+            <LabeledInput
+              label="Skills Required"
+              icon={Code}
+              placeholder="React, Node.js, Python (comma separated)"
+              value={formData.techStack}
+              onChange={e => {
+                setFormData({ ...formData, techStack: e.target.value });
+                if (errors.techStack) setErrors({ ...errors, techStack: '' });
+              }}
+              error={errors.techStack}
+              disabled={saving}
+            />
 
-          {/* Buttons */}
-          <div className="flex justify-between mt-6">
-            <button
+            <LabeledInput
+              label="College Name"
+              icon={Building}
+              placeholder="e.g., DTU, IIT Bombay, NSUT..."
+              value={formData.college}
+              onChange={e => {
+                setFormData({ ...formData, college: e.target.value });
+                if (errors.college) setErrors({ ...errors, college: '' });
+              }}
+              error={errors.college}
+              disabled={saving}
+            />
+
+            <LabeledInput
+              label="Team Size"
+              icon={Users}
+              type="number"
+              placeholder="e.g., 3"
+              min="1"
+              max="10"
+              value={formData.teamSize}
+              onChange={e => {
+                setFormData({ ...formData, teamSize: e.target.value });
+                if (errors.teamSize) setErrors({ ...errors, teamSize: '' });
+              }}
+              onKeyDown={handleKeyDown}
+              error={errors.teamSize}
+              disabled={saving}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-8 pt-6 border-t border-gray-700/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={handleBack}
-              className="w-full sm:w-auto px-5 py-2.5 text-indigo-600 border border-indigo-600 rounded-3xl 
-                       hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 
-                       hover:text-white transition-all duration-300 ease-in-out font-semibold 
-                       flex items-center justify-center gap-2 cursor-pointer text-sm md:text-base"
+              disabled={saving}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
+                       text-gray-300 font-semibold hover:bg-gray-700 hover:border-violet-500/30 
+                       transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              Back
-            </button>
+              <ArrowLeft size={18} /> Back
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: saving ? 1 : 1.02 }}
+              whileTap={{ scale: saving ? 1 : 0.98 }}
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto py-2.5 px-7 bg-gradient-to-r from-indigo-600 to-purple-600 text-white 
-                       border-2 border-transparent rounded-3xl font-semibold cursor-pointer
-                       hover:scale-105 hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 
-                       transition-all duration-300 ease-in-out flex items-center justify-center gap-2
-                       disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm md:text-base"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
+                       text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                       transition-all duration-300 shadow-lg shadow-violet-500/25 
+                       hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+                       flex items-center justify-center gap-2 group relative overflow-hidden"
             >
+              {/* Button Glow */}
+              <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
               {saving ? (
                 <>
-                  <Loader2 className="animate-spin w-4 h-4"/> Saving...
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Saving Changes...
                 </>
               ) : (
                 <>
-                  <Sparkles size={16}/> Update
+                  <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                  Update Project
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
-
         </motion.form>
+
+        {/* ===== Helper Tips ===== */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
+        >
+          {[
+            { icon: Code, text: "Use comma-separated values for skills (e.g., React, Node.js)" },
+            { icon: FileText, text: "Keep descriptions clear and concise for better visibility" }
+          ].map((tip, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 + idx * 0.1 }}
+              className="flex items-center gap-3 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50"
+            >
+              <tip.icon className="w-4 h-4 text-violet-400 flex-shrink-0" />
+              <p className="text-xs text-gray-400">{tip.text}</p>
+            </motion.div>
+          ))}
+        </motion.div>
 
       </motion.div>
     </div>
