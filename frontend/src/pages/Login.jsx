@@ -14,6 +14,8 @@ import {
   Github,
   Chrome
 } from 'lucide-react';
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 const Login = ({ onLogin }) => {
   const API = "http://localhost:5000";
@@ -23,32 +25,52 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  // ✅ REMOVED: const [error, setError] = useState('');
+  // ✅ REMOVED: const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // ✅ Basic client-side validation
+    if (!email.trim() || !password.trim()) {
+      showError('Please enter both email and password');
+      return;
+    }
+
     setLoading(true);
-    setError('');
-    setSuccess('');
+
+    // ✅ Show loading toast
+    const toastId = showLoading('Signing you in...');
 
     try {
       const res = await axios.post(`${API}/login`, { email, password });
 
       if (res.data.user) {
-        setSuccess('Login successful! Redirecting...');
+        // ✅ Save auth data
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         
-        // Small delay for success animation
+        // ✅ Update loading toast to success
+        updateToastSuccess(toastId, 'Login successful! Welcome back 🎉');
+        
+        // ✅ Optional: Show extra info
+        showInfo('Redirecting to dashboard...');
+        
+        // Small delay for toast visibility
         setTimeout(() => {
           onLogin(res.data.user);
           navigate('/dashboard', { state: { user: res.data.user } });
-        }, 1000);
+        }, 1200);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials. Please try again.");
-      // Shake animation trigger could go here
+      console.error('Login error:', err);
+      
+      // ✅ Update loading toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Invalid credentials. Please try again."
+      );
+      
     } finally {
       setLoading(false);
     }
@@ -129,33 +151,7 @@ const Login = ({ onLogin }) => {
             <p className="text-gray-400 mt-2 text-sm">Sign in to continue to CollabHub</p>
           </motion.div>
 
-          {/* Alert Messages */}
-          <AnimatePresence mode="wait">
-            {error && (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-300">{error}</p>
-              </motion.div>
-            )}
-            {success && (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3"
-              >
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-emerald-300">{success}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* ✅ REMOVED: Inline error/success message blocks - toasts handle these now */}
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -271,6 +267,7 @@ const Login = ({ onLogin }) => {
           >
             <button
               type="button"
+              onClick={() => showInfo('Google login coming soon! 🔜')}
               className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-700/50 
                        border border-gray-600/50 text-gray-300 font-medium hover:bg-gray-700 
                        hover:border-violet-500/30 transition-all duration-300"
@@ -280,6 +277,7 @@ const Login = ({ onLogin }) => {
             </button>
             <button
               type="button"
+              onClick={() => showInfo('GitHub login coming soon! 🔜')}
               className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-700/50 
                        border border-gray-600/50 text-gray-300 font-medium hover:bg-gray-700 
                        hover:border-violet-500/30 transition-all duration-300"

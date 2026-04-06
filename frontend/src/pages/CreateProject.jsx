@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 // ===== Dark Theme LabeledInput Component =====
 const LabeledInput = ({ 
@@ -93,7 +95,7 @@ const CreateProject = ({ onAddProject }) => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState('');
+  // ✅ Removed: const [success, setSuccess] = useState(''); - toasts handle this now
 
   const validateForm = () => {
     const newErrors = {};
@@ -112,10 +114,15 @@ const CreateProject = ({ onAddProject }) => {
     e.preventDefault();
     if (loading) return;
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      showError('Please fix the errors above'); // ✅ Toast for validation failure
+      return;
+    }
     
     setLoading(true);
-    setSuccess('');
+
+    // ✅ Show loading toast
+    const toastId = showLoading('Creating your project...');
 
     const newProject = {
       title: formData.title.trim(),
@@ -134,16 +141,28 @@ const CreateProject = ({ onAddProject }) => {
       });
       
       if (res.data.project || res.data.success) {
-        setSuccess("Project created successfully! 🚀 Redirecting...");
-        setFormData({ title: '', description: '', techStack: '', teamSize: '', college: '' });
+        // ✅ Update loading toast to success
+        updateToastSuccess(toastId, 'Project created successfully! 🚀');
         
-        // Small delay for success animation
+        // ✅ Show extra info toast
+        showInfo('Redirecting to dashboard...');
+        
+        // Reset form
+        setFormData({ title: '', description: '', techStack: '', teamSize: '', college: '' });
+        setErrors({});
+        
+        // Small delay for toast visibility
         setTimeout(() => {
           navigate('/dashboard');
         }, 1500);
       }
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || "Something went wrong. Please try again." });
+      console.error('Create project error:', err);
+      // ✅ Update loading toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -245,35 +264,8 @@ const CreateProject = ({ onAddProject }) => {
           {/* Card Glow */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/3 to-cyan-500/3 pointer-events-none" />
           
-          {/* Success Message */}
-          <AnimatePresence>
-            {success && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3"
-              >
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-emerald-300">{success}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Submit Error */}
-          <AnimatePresence>
-            {errors.submit && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-rose-300">{errors.submit}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* ✅ REMOVED: Inline success/error messages - toasts handle these now */}
+          {/* Keep only field-level errors (handled inside LabeledInput) */}
 
           {/* Form Fields */}
           <div className="space-y-2 relative z-10">

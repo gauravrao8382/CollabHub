@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Save, X, Plus, Trash2, Sparkles, Check } from 'lucide-react';
 import axios from 'axios';
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError } from '../utils/toast';
 
-const EditProfile = ({ user: propUser, onUserUpdate }) => {
+const EditProfile = ({ user, onUserUpdate }) => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const initialUser = propUser || location.state?.user || {};
+  const initialUser = user || location.state?.user || {};
   
   const [formData, setFormData] = useState({
     name: initialUser.name || '',
@@ -19,8 +20,6 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
   
   const [newSkill, setNewSkill] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
   // ===== Validation =====
@@ -39,7 +38,6 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({ ...prev, [name]: '' }));
     }
-    setError('');
   };
 
   const handleAddSkill = () => {
@@ -47,6 +45,9 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
     if (skill && !formData.skills.includes(skill)) {
       setFormData(prev => ({ ...prev, skills: [...prev.skills, skill] }));
       setNewSkill('');
+      showSuccess(`Skill "${skill}" added! ✨`);
+    } else if (!skill) {
+      showError('Please enter a skill name');
     }
   };
 
@@ -55,6 +56,7 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
       ...prev,
       skills: prev.skills.filter(s => s !== skillToRemove)
     }));
+    showInfo(`Skill "${skillToRemove}" removed`);
   };
 
   const handleSkillKeyDown = (e) => {
@@ -69,20 +71,20 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
     e.preventDefault();
     
     if (!validate()) {
-      setError('Please fill in all required fields');
+      showError('Please fill in all required fields');
       return;
     }
     
     setLoading(true);
-    setError('');
-    setSuccess('');
+
+    // ✅ Show loading toast
+    const toastId = showLoading('Saving your profile...');
 
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = 'http://localhost:5000';
       
-      const response = await axios.put(
-        `${apiUrl}/api/user/profile`,
+      const res = await axios.put(`${apiUrl}/updateProfile/${initialUser._id}`,
         formData,
         {
           headers: {
@@ -92,25 +94,36 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
         }
       );
 
-      setSuccess('Profile updated successfully! 🎉');
+      // ✅ FIXED: Use 'res' instead of undefined 'response'
+      const updatedUser = res.data.user;
       
-      // Update localStorage
-      if (response.data.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+      // ✅ Update localStorage with new data
+      if (updatedUser) {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
       }
       
-      // Update parent component
-      if (onUserUpdate) {
-        onUserUpdate(response.data.user);
+      // ✅ Update parent component state
+      if (onUserUpdate && updatedUser) {
+        onUserUpdate(updatedUser);
       }
+      
+      // ✅ Update loading toast to success
+      updateToastSuccess(toastId, 'Profile updated successfully! 🎉');
       
       // Redirect back after short delay
       setTimeout(() => {
         navigate('/profile', { state: { updated: true } });
-      }, 1200);
+      }, 1500);
 
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile');
+      console.error('Update error:', err);
+      
+      // ✅ Update loading toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || 'Failed to update profile. Please try again.'
+      );
+      
     } finally {
       setLoading(false);
     }
@@ -171,32 +184,7 @@ const EditProfile = ({ user: propUser, onUserUpdate }) => {
           className="p-6 md:p-8 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl space-y-6"
         >
           
-          {/* Status Messages */}
-          <AnimatePresence>
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, x: -10, height: 0 }}
-                animate={{ opacity: 1, x: 0, height: 'auto' }}
-                exit={{ opacity: 0, x: -10, height: 0 }}
-                className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm"
-              >
-                {error}
-              </motion.div>
-            )}
-            
-            {success && (
-              <motion.div 
-                initial={{ opacity: 0, x: -10, height: 0 }}
-                animate={{ opacity: 1, x: 0, height: 'auto' }}
-                exit={{ opacity: 0, x: -10, height: 0 }}
-                className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm flex items-center gap-2"
-              >
-                <Sparkles size={16} /> {success}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Responsive Split Layout: Preview Left, Form Right on Desktop */}
+          {/* Responsive Split Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             
             {/* Form Fields - Right side on desktop */}

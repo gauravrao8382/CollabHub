@@ -20,6 +20,8 @@ import {
   Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 const API = "http://localhost:5000";
 
@@ -30,7 +32,7 @@ const ManageProject = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
-  const [toast, setToast] = useState(null);
+  // ✅ REMOVED: const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetchProject();
@@ -46,17 +48,15 @@ const ManageProject = () => {
       setProject(res.data.project);
     } catch (err) {
       console.error(err);
-      showToast("Failed to load project", "error");
+      // ✅ Use toast utility instead of inline toast
+      showError("Failed to load project");
       navigate("/dashboard");
     } finally {
       setLoading(false);
     }
   };
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  // ✅ REMOVED: Local showToast function - using imported utilities instead
 
   const viewUserProfile = (userId) => {
     if (userId) {
@@ -70,10 +70,13 @@ const ManageProject = () => {
       await axios.patch(`${API}/accept/${projectId}/${userId}`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      showToast("Application accepted!", "success");
+      // ✅ Use toast utility
+      showSuccess("Application accepted! 🎉");
       fetchProject();
-    } catch {
-      showToast("Failed to accept application", "error");
+    } catch (err) {
+      console.error('Accept error:', err);
+      // ✅ Use toast utility
+      showError("Failed to accept application");
     } finally {
       setActionLoading(null);
     }
@@ -85,10 +88,13 @@ const ManageProject = () => {
       await axios.patch(`${API}/reject/${projectId}/${userId}`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      showToast("Application rejected", "success");
+      // ✅ Use toast utility
+      showSuccess("Application rejected");
       fetchProject();
-    } catch {
-      showToast("Failed to reject application", "error");
+    } catch (err) {
+      console.error('Reject error:', err);
+      // ✅ Use toast utility
+      showError("Failed to reject application");
     } finally {
       setActionLoading(null);
     }
@@ -97,6 +103,10 @@ const ManageProject = () => {
   // Toggle project status between 'open' and 'closed'
   const toggleProjectStatus = async () => {
     setActionLoading("toggle");
+    
+    // ✅ Show loading toast for async action
+    const toastId = showLoading('Updating project status...');
+    
     try {
       const newStatus = project.status === 'Open' ? 'Closed' : 'Open';
 
@@ -104,11 +114,18 @@ const ManageProject = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
 
-      showToast(newStatus === 'Closed' ? "Project closed for applications" : "Project opened for applications!", "success");
+      // ✅ Update toast based on result
+      const message = newStatus === 'Closed' 
+        ? "Project closed for applications 🔒" 
+        : "Project opened for applications! 🚀";
+      
+      updateToastSuccess(toastId, message);
+      
       fetchProject();
     } catch (err) {
       console.error(err);
-      showToast("Failed to update project status", "error");
+      // ✅ Update toast to error
+      updateToastError(toastId, "Failed to update project status");
     } finally {
       setActionLoading(null);
     }
@@ -539,29 +556,7 @@ const ManageProject = () => {
         </motion.div>
       </div>
 
-      {/* ===== Toast Notification ===== */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className={`fixed bottom-6 right-6 px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 z-50 text-sm font-medium border ${
-              toast.type === 'error'
-                ? 'bg-rose-500/10 border-rose-500/30 text-rose-300 backdrop-blur-xl'
-                : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 backdrop-blur-xl'
-            }`}
-          >
-            {toast.type === 'error' ? (
-              <AlertCircle size={18} className="text-rose-400" />
-            ) : (
-              <CheckCircle size={18} className="text-emerald-400" />
-            )}
-            {toast.message}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ✅ REMOVED: Inline Toast Notification Block - react-hot-toast handles this globally via <Toaster /> in App.js */}
 
       {/* Custom Scrollbar CSS for Dark Mode */}
       <style>{`

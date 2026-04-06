@@ -6,6 +6,8 @@ import {
   ArrowRight, Loader2, Home, ArrowLeft, Key, Sparkles 
 } from 'lucide-react';
 import axios from "axios";
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 const Signup = ({ onLogin }) => {
   const API = "http://localhost:5000";
@@ -15,7 +17,7 @@ const Signup = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [error, setError] = useState('');
+  // ✅ REMOVED: const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -44,37 +46,67 @@ const Signup = ({ onLogin }) => {
     }
   }, [step]);
 
+  // ===== STEP 1: Send OTP =====
   const handleSendOtp = async (e) => {
     e.preventDefault();
+    
+    // ✅ Basic validation
+    if (!formData.email.trim()) {
+      showError('Please enter your college email');
+      return;
+    }
+    
+    // ✅ Email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showError('Please enter a valid email address');
+      return;
+    }
+
     setLoading(true);
-    setError('');
+
+    // ✅ Show loading toast
+    const toastId = showLoading('Sending verification code...');
 
     try {
       const res = await axios.post(`${API}/signup`, { email: formData.email });
+      
+      // ✅ Update toast to success
+      updateToastSuccess(toastId, 'Verification code sent! Check your inbox 📧');
       
       setOtpSent(true);
       setTimer(30);
       setStep(2);
       
-      // Show success message
+      // Auto-focus OTP input
       setTimeout(() => otpInputRef.current?.focus(), 100);
+      
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP. Please try again.");
+      console.error('Send OTP error:', err);
+      // ✅ Update toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Failed to send OTP. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // ===== STEP 2: Verify OTP =====
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    setError('');
 
+    // ✅ OTP validation
     if (formData.otp.length < 4) {
-      setError("Please enter a valid 4-digit OTP");
+      showError('Please enter the 4-digit verification code');
       return;
     }
 
     setLoading(true);
+    
+    // ✅ Show loading toast for verification
+    const toastId = showLoading('Verifying code...');
 
     try {
       const res = await axios.post(`${API}/verify-otp`, {
@@ -82,26 +114,55 @@ const Signup = ({ onLogin }) => {
         otp: formData.otp
       });
 
+      // ✅ Update toast to success
+      updateToastSuccess(toastId, 'Email verified! ✅');
+      
+      // Optional: Show next step info
+      showInfo('Now complete your profile...');
+      
       setStep(3);
+      
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+      console.error('Verify OTP error:', err);
+      // ✅ Update toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Invalid code. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // ===== STEP 3: Complete Profile & Create Account =====
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (!formData.name || !formData.college || !formData.passingYear || !formData.skills) {
-      setError("Please fill all required fields");
+    
+    // ✅ Final validation
+    if (!formData.name.trim()) {
+      showError('Please enter your full name');
+      return;
+    }
+    if (!formData.college.trim()) {
+      showError('Please enter your college name');
+      return;
+    }
+    if (!formData.passingYear) {
+      showError('Please select your passing year');
+      return;
+    }
+    if (!formData.skills.trim()) {
+      showError('Please add at least one skill');
       return;
     }
 
     setLoading(true);
     
+    // ✅ Show loading toast for account creation
+    const toastId = showLoading('Creating your account...');
+
     try {
+      // Step 1: Complete signup
       await axios.post(`${API}/complete-signup`, {
         name: formData.name,
         email: formData.email,
@@ -110,32 +171,69 @@ const Signup = ({ onLogin }) => {
         skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
       });
 
-      const res = await axios.post(`${API}/login`, { email: formData.email });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      onLogin(res.data.user);
-      navigate('/dashboard');
+      // Step 2: Auto-login after signup
+      const loginRes = await axios.post(`${API}/login`, { 
+        email: formData.email 
+      });
+      
+      // Save auth data
+      localStorage.setItem("token", loginRes.data.token);
+      localStorage.setItem("user", JSON.stringify(loginRes.data.user));
+      
+      // ✅ Update toast to final success
+      updateToastSuccess(toastId, 'Account created successfully! Welcome aboard 🎉');
+      
+      // Optional: Show redirect info
+      showInfo('Redirecting to your dashboard...');
+      
+      // Call parent onLogin and navigate
+      if (onLogin) onLogin(loginRes.data.user);
+      
+      // Small delay for toast visibility
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1200);
 
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      console.error('Signup error:', err);
+      // ✅ Update toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // ===== Resend OTP =====
   const handleResendOtp = async () => {
     if (timer === 0) {
       setLoading(true);
-      setError('');
+      
+      // ✅ Show loading toast for resend
+      const toastId = showLoading('Resending code...');
       
       try {
         await axios.post(`${API}/signup`, { email: formData.email });
+        
+        // ✅ Update toast to success
+        updateToastSuccess(toastId, 'New code sent! Check your inbox 📧');
+        
         setTimer(30);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to resend OTP");
+        console.error('Resend OTP error:', err);
+        // ✅ Update toast to error
+        updateToastError(
+          toastId, 
+          err.response?.data?.message || "Failed to resend code"
+        );
       } finally {
         setLoading(false);
       }
+    } else {
+      // ✅ Show info if user tries to resend too early
+      showInfo(`Please wait ${timer}s before resending`);
     }
   };
 
@@ -279,20 +377,7 @@ const Signup = ({ onLogin }) => {
             </div>
           </div>
 
-          {/* Error Message */}
-          <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-3"
-              >
-                <ArrowRight className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5 rotate-180" />
-                <p className="text-sm text-red-300">{error}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* ✅ REMOVED: Inline error message block - toasts handle global messages now */}
 
           {/* Form Steps */}
           <AnimatePresence mode="wait" custom={direction}>

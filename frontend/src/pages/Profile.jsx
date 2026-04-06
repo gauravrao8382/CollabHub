@@ -7,6 +7,8 @@ import {
   Users, CheckCircle, Clock, Edit3, LogOut, Award, UserCheck,
   Sparkles, ChevronRight, Shield, TrendingUp, GraduationCap, Calendar
 } from 'lucide-react';
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 // ===== Dark Theme EmptyState Component =====
 const EmptyState = ({ icon: Icon, msg, subMsg, link, linkText, color = 'violet' }) => {
@@ -153,9 +155,12 @@ const Profile = ({ user, onLogout, projects }) => {
   const [selectedProject, setSelectedProject] = useState([]);
   const [completedProject, setCompletedProject] = useState([]);
 
-  // ===== Check for updates from edit page =====
+  // ===== Check for updates from edit page with toast =====
   useEffect(() => {
     if (location.state?.updated && user) {
+      // Show welcome back toast if coming from successful edit
+      showInfo('Profile updated! Welcome back ✨');
+      
       // Refresh user data from localStorage if updated
       const savedUser = localStorage.getItem('user');
       if (savedUser) {
@@ -203,33 +208,98 @@ const Profile = ({ user, onLogout, projects }) => {
     }
   }, [projects, localUser]);
 
-  // ===== Image upload handler =====
-  const handleImageChange = (e) => {
+  // ===== Image upload handler with toast feedback =====
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+
+    // ✅ Validate file type
+    if (!file.type.startsWith('image/')) {
+      showError('Please select a valid image file');
+      return;
+    }
+
+    // ✅ Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showError('Image size should be less than 5MB');
+      return;
+    }
+
+    // ✅ Show loading toast for upload
+    const toastId = showLoading('Uploading profile picture...');
+
+    try {
+      // Read file for preview
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-        // Optional: Upload to server here
+      
+      reader.onloadend = async () => {
+        const imageDataUrl = reader.result;
+        setProfileImage(imageDataUrl);
+
+        // ✅ Optional: Upload to server
+        try {
+          const formData = new FormData();
+          formData.append('profileImage', file);
+          
+          await axios.post('http://localhost:5000/upload-profile-image', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          
+          // ✅ Update toast to success after server upload
+          updateToastSuccess(toastId, 'Profile picture updated! 🎨');
+          
+          // ✅ Update localStorage with new image if backend returns updated user
+          const savedUser = localStorage.getItem('user');
+          if (savedUser) {
+            const parsedUser = JSON.parse(savedUser);
+            setLocalUser({ ...parsedUser, profileImage: imageDataUrl });
+            localStorage.setItem('user', JSON.stringify({ ...parsedUser, profileImage: imageDataUrl }));
+          }
+          
+        } catch (uploadErr) {
+          console.error('Upload error:', uploadErr);
+          // ✅ Still show success for local preview, but warn about server sync
+          updateToastSuccess(toastId, 'Picture updated locally! (Server sync failed)');
+          showError('Failed to sync with server. Please try again.');
+        }
       };
+      
       reader.readAsDataURL(file);
+
+    } catch (err) {
+      console.error('Image read error:', err);
+      // ✅ Update toast to error
+      updateToastError(toastId, 'Failed to process image. Please try again.');
     }
   };
 
   const triggerFileInput = () => fileInputRef.current?.click();
 
-  // ===== Logout handler =====
+  // ===== Logout handler with toast =====
   const handleLogoutClick = () => {
     if (window.confirm("Are you sure you want to logout?")) {
+      // ✅ Show info toast before redirect
+      showInfo('Logging out... See you soon! 👋');
+      
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      
       if (onLogout) onLogout();
-      navigate('/');
+      
+      // Small delay for toast visibility
+      setTimeout(() => {
+        navigate('/');
+      }, 800);
     }
   };
 
   // ===== Edit navigation handler =====
   const handleEditClick = () => {
+    // ✅ Optional: Show info toast when navigating to edit
+    // showInfo('Editing your profile...');
     navigate('/profile/edit', { 
       state: { user: { ...localUser, skills: localUser?.skills || [] } } 
     });
@@ -238,6 +308,8 @@ const Profile = ({ user, onLogout, projects }) => {
   // ===== Tab navigation with smooth scroll =====
   const handleStatClick = (tabName) => {
     setActiveTab(tabName);
+    // ✅ Optional: Show subtle feedback on tab change
+    // showInfo(`Showing ${tabName} projects`);
     window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
@@ -314,6 +386,7 @@ const Profile = ({ user, onLogout, projects }) => {
               whileHover={{ scale: 1.03 }}
               className="relative group cursor-pointer order-1 lg:order-1" 
               onClick={triggerFileInput}
+              title="Click to change profile picture"
             >
               {/* Animated Ring */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />

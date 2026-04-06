@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
+import { Toaster } from 'react-hot-toast';
 import { jwtDecode } from "jwt-decode";
 
 import Home from './pages/Home';
@@ -99,6 +100,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster toastOptions={{duration: 3000,style: {background: '#1f2937',color: '#f3f4f6',border: '1px solid #374151',borderRadius: '12px',},}} position="top-right" reverseOrder={false}/>
       <div className="min-h-screen text-gray-800">
 
         <Routes>

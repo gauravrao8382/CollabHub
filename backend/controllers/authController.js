@@ -243,6 +243,31 @@ export const userProfile = async (req, res) => {
     }
 }
 
+export const updateProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log("Updating profile for user ID:", userId);
+    const { name, college, passingYear, skills } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } 
+    if (user._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+    user.name = name;
+    user.college = college;
+    user.passingYear = passingYear;
+    user.skills = skills;
+    await user.save();
+    res.json({ message: "Profile updated successfully", user });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Error updating profile" });
+  }
+}
+
 export const acceptApplicant = async (req, res) => {
   try {
     const { projectId, userId } = req.params;

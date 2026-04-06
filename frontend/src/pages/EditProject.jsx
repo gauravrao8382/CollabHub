@@ -15,6 +15,8 @@ import {
   AlertCircle,
   Save
 } from 'lucide-react';
+// ✅ Import toast utilities
+import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 const API = "http://localhost:5000";
 
@@ -74,7 +76,7 @@ const LabeledInput = ({
         />
       )}
       
-      {/* Error Message */}
+      {/* Error Message - Keep field-level errors inline */}
       <AnimatePresence>
         {error && (
           <motion.p 
@@ -106,7 +108,7 @@ const EditProject = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState('');
+  // ✅ REMOVED: const [success, setSuccess] = useState(''); - toasts handle this
 
   // ===== Fetch existing project =====
   useEffect(() => {
@@ -130,7 +132,10 @@ const EditProject = () => {
         });
 
       } catch (err) {
-        setErrors({ fetch: err.response?.data?.message || "Failed to load project" });
+        // ✅ Use toast for fetch error instead of inline message
+        showError(err.response?.data?.message || "Failed to load project");
+        
+        // Still navigate back after error
         setTimeout(() => navigate('/profile'), 2000);
       } finally {
         setLoading(false);
@@ -159,11 +164,15 @@ const EditProject = () => {
     e.preventDefault();
     if (saving) return;
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      showError('Please fix the errors above'); // ✅ Toast for validation failure
+      return;
+    }
     
     setSaving(true);
-    setSuccess('');
-    setErrors(prev => ({ ...prev, submit: '' }));
+
+    // ✅ Show loading toast
+    const toastId = showLoading('Saving project changes...');
 
     try {
       const updatedProject = {
@@ -178,15 +187,24 @@ const EditProject = () => {
         }
       });
 
-      setSuccess("Project updated successfully! 🚀");
+      // ✅ Update loading toast to success
+      updateToastSuccess(toastId, 'Project updated successfully! 🚀');
       
-      // Small delay for success animation before redirect
+      // ✅ Optional: Show extra info
+      showInfo('Redirecting to project page...');
+      
+      // Small delay for toast visibility before redirect
       setTimeout(() => {
         navigate(`/project/${projectId}`);
       }, 1500);
 
     } catch (err) {
-      setErrors(prev => ({ ...prev, submit: err.response?.data?.message || "Update failed" }));
+      console.error('Update error:', err);
+      // ✅ Update loading toast to error
+      updateToastError(
+        toastId, 
+        err.response?.data?.message || "Update failed. Please try again."
+      );
     } finally {
       setSaving(false);
     }
@@ -300,50 +318,8 @@ const EditProject = () => {
           {/* Card Glow */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/3 to-cyan-500/3 pointer-events-none" />
           
-          {/* Success Message */}
-          <AnimatePresence>
-            {success && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3"
-              >
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-emerald-300">{success}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Fetch Error */}
-          <AnimatePresence>
-            {errors.fetch && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-rose-300">{errors.fetch}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Submit Error */}
-          <AnimatePresence>
-            {errors.submit && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-rose-300">{errors.submit}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* ✅ REMOVED: Inline success/error message blocks - toasts handle these now */}
+          {/* Field-level errors still show inside LabeledInput components */}
 
           {/* Form Fields */}
           <div className="space-y-2 relative z-10">

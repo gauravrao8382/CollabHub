@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, verifyOtp, completeSignup, login, createProject, getProjects, applyToProject, getProjectById, updateProject, userProfile, acceptApplicant, rejectApplicant, toggleHiringStatus} from "../controllers/authController.js";
+import { signup, verifyOtp, completeSignup, login, createProject, getProjects, applyToProject, getProjectById, updateProject,updateProfile, userProfile, acceptApplicant, rejectApplicant, toggleHiringStatus} from "../controllers/authController.js";
 import {authMiddleware} from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.get("/getprojects", getProjects);
 router.post("/apply/:id", authMiddleware, applyToProject);
 router.get("/project/:id", authMiddleware, getProjectById);
 router.put("/project/:id/edit", authMiddleware, updateProject);
+router.put("/updateProfile/:userId", authMiddleware, updateProfile);
 router.get("/profile/:userId", authMiddleware, userProfile);
 router.patch("/accept/:projectId/:userId", authMiddleware, acceptApplicant);
 router.patch("/reject/:projectId/:userId", authMiddleware, rejectApplicant);
