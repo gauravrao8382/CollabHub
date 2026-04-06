@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {
   Camera, Mail, Building, Briefcase, PlusCircle, ArrowRight,
   Users, CheckCircle, Clock, Edit3, LogOut, Award, UserCheck,
-  Sparkles, ChevronRight, Shield, TrendingUp
+  Sparkles, ChevronRight, Shield, TrendingUp, GraduationCap, Calendar
 } from 'lucide-react';
 
 // ===== Dark Theme EmptyState Component =====
@@ -58,7 +58,9 @@ const ProjectCard = ({ project, type, color, onAction }) => {
   const statusColors = {
     Accepted: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
     Rejected: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
-    Pending: 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+    Pending: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+    Completed: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+    Active: 'bg-violet-500/10 text-violet-300 border-violet-500/20'
   };
 
   return (
@@ -67,7 +69,7 @@ const ProjectCard = ({ project, type, color, onAction }) => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -4, scale: 1.01 }}
       className={`group p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl 
                 ${colors.hover} transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4`}
     >
@@ -138,20 +140,40 @@ const ProjectCard = ({ project, type, color, onAction }) => {
 
 const Profile = ({ user, onLogout, projects }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('applied');
   const [profileImage, setProfileImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [localUser, setLocalUser] = useState(user);
   const fileInputRef = useRef(null);
 
   // ===== State for filtered projects =====
   const [createdProject, setCreatedProject] = useState([]);
   const [appliedProject, setAppliedProject] = useState([]);
   const [selectedProject, setSelectedProject] = useState([]);
+  const [completedProject, setCompletedProject] = useState([]);
+
+  // ===== Check for updates from edit page =====
+  useEffect(() => {
+    if (location.state?.updated && user) {
+      // Refresh user data from localStorage if updated
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        setLocalUser(parsedUser);
+      }
+    }
+  }, [location.state, user]);
+
+  // ===== Update localUser when prop user changes =====
+  useEffect(() => {
+    setLocalUser(user);
+  }, [user]);
 
   // ===== Filter projects based on user =====
   useEffect(() => {
-    if (projects && user?._id) {
-      const userId = String(user._id);
+    if (projects && localUser?._id) {
+      const userId = String(localUser._id);
       
       // Created projects (user is owner)
       const created = projects.filter(p => String(p.owner) === userId);
@@ -168,15 +190,28 @@ const Profile = ({ user, onLogout, projects }) => {
         p.teamMembers?.some(member => String(member.userId) === userId)
       );
       setSelectedProject(selected);
+      
+      // Completed projects
+      const completed = projects.filter(p => 
+        p.status === 'Completed' && (
+          String(p.owner) === userId || 
+          p.applicants?.some(a => String(a.userId) === userId && a.status === 'Accepted') ||
+          p.teamMembers?.some(m => String(m.userId) === userId)
+        )
+      );
+      setCompletedProject(completed);
     }
-  }, [projects, user]);
+  }, [projects, localUser]);
 
   // ===== Image upload handler =====
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setProfileImage(reader.result);
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+        // Optional: Upload to server here
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -191,6 +226,13 @@ const Profile = ({ user, onLogout, projects }) => {
       if (onLogout) onLogout();
       navigate('/');
     }
+  };
+
+  // ===== Edit navigation handler =====
+  const handleEditClick = () => {
+    navigate('/profile/edit', { 
+      state: { user: { ...localUser, skills: localUser?.skills || [] } } 
+    });
   };
 
   // ===== Tab navigation with smooth scroll =====
@@ -210,10 +252,26 @@ const Profile = ({ user, onLogout, projects }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
-  const tabVariants = {
-    enter: (direction) => ({ x: direction > 0 ? 30 : -30, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (direction) => ({ x: direction < 0 ? 30 : -30, opacity: 0 })
+  // ===== Get current tab projects =====
+  const getCurrentProjects = () => {
+    switch(activeTab) {
+      case 'applied': return appliedProject;
+      case 'created': return createdProject;
+      case 'selected': return selectedProject;
+      case 'completed': return completedProject;
+      default: return appliedProject;
+    }
+  };
+
+  // ===== Get tab color =====
+  const getTabColor = (tabId) => {
+    const colors = {
+      applied: 'violet',
+      created: 'purple', 
+      selected: 'cyan',
+      completed: 'emerald'
+    };
+    return colors[tabId] || 'violet';
   };
 
   return (
@@ -246,15 +304,15 @@ const Profile = ({ user, onLogout, projects }) => {
         >
           {/* Glow Effect */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          
           <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-r from-violet-600/10 to-cyan-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
+          {/* Responsive Layout: Image Left/Top, Details Right/Bottom */}
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 relative z-10">
 
             {/* Profile Picture */}
             <motion.div 
               whileHover={{ scale: 1.03 }}
-              className="relative group cursor-pointer" 
+              className="relative group cursor-pointer order-1 lg:order-1" 
               onClick={triggerFileInput}
             >
               {/* Animated Ring */}
@@ -265,7 +323,7 @@ const Profile = ({ user, onLogout, projects }) => {
                   <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                    {user?.name?.[0]?.toUpperCase() || 'U'}
+                    {localUser?.name?.[0]?.toUpperCase() || 'U'}
                   </span>
                 )}
               </div>
@@ -282,8 +340,8 @@ const Profile = ({ user, onLogout, projects }) => {
               <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
             </motion.div>
 
-            {/* User Details & Actions */}
-            <div className="flex-1 text-center lg:text-left w-full">
+            {/* User Details & Actions - Right side on desktop */}
+            <div className="flex-1 text-center lg:text-left w-full order-2 lg:order-2">
               <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-4">
                 <div>
                   <motion.h1 
@@ -292,7 +350,7 @@ const Profile = ({ user, onLogout, projects }) => {
                     className="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight"
                   >
                     <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                      {user?.name}
+                      {localUser?.name || 'User'}
                     </span>
                   </motion.h1>
                   
@@ -303,9 +361,10 @@ const Profile = ({ user, onLogout, projects }) => {
                     className="flex flex-wrap justify-center lg:justify-start gap-2.5 text-sm font-medium"
                   >
                     {[
-                      { icon: Mail, text: user?.email, color: "text-cyan-400" },
-                      { icon: Building, text: user?.college, color: "text-violet-400" }
-                    ].map((item, idx) => (
+                      { icon: Mail, text: localUser?.email, color: "text-cyan-400" },
+                      { icon: Building, text: localUser?.college, color: "text-violet-400" },
+                      { icon: GraduationCap, text: localUser?.passingYear ? `Passing: ${localUser.passingYear}` : null, color: "text-emerald-400" }
+                    ].filter(item => item.text).map((item, idx) => (
                       <span 
                         key={idx}
                         className="flex items-center gap-2 px-4 py-2 rounded-full 
@@ -317,6 +376,32 @@ const Profile = ({ user, onLogout, projects }) => {
                       </span>
                     ))}
                   </motion.div>
+
+                  {/* Skills Tags */}
+                  {localUser?.skills?.length > 0 && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="flex flex-wrap justify-center lg:justify-start gap-2 mt-3"
+                    >
+                      {localUser.skills.slice(0, 5).map((skill, idx) => (
+                        <span 
+                          key={idx}
+                          className="px-3 py-1 rounded-full text-xs font-medium 
+                                   bg-gradient-to-r from-violet-500/20 to-cyan-500/20 
+                                   border border-violet-500/30 text-violet-300"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {localUser.skills.length > 5 && (
+                        <span className="px-2 py-1 text-xs text-gray-500">
+                          +{localUser.skills.length - 5} more
+                        </span>
+                      )}
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -324,15 +409,15 @@ const Profile = ({ user, onLogout, projects }) => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 order-3 lg:order-3"
                 >
                   <button 
-                    onClick={() => setIsEditing(!isEditing)}
+                    onClick={handleEditClick}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 
                              text-gray-300 font-semibold hover:bg-gray-700 hover:border-violet-500/30 
                              transition-all duration-300"
                   >
-                    <Edit3 size={18} /> {isEditing ? 'Cancel' : 'Edit'}
+                    <Edit3 size={18} /> Edit
                   </button>
                   <button
                     onClick={handleLogoutClick}
@@ -357,7 +442,7 @@ const Profile = ({ user, onLogout, projects }) => {
                   { label: 'Applied', value: appliedProject.length, color: 'violet', icon: Briefcase, tab: 'applied' },
                   { label: 'Created', value: createdProject.length, color: 'purple', icon: PlusCircle, tab: 'created' },
                   { label: 'Selected', value: selectedProject.length, color: 'cyan', icon: UserCheck, tab: 'selected' },
-                  { label: 'Completed', value: projects?.filter(p => p.status === 'Completed')?.length || 0, color: 'emerald', icon: Award, tab: 'completed' }
+                  { label: 'Completed', value: completedProject.length, color: 'emerald', icon: Award, tab: 'completed' }
                 ].map((stat, idx) => (
                   <motion.button
                     key={stat.label}
@@ -427,152 +512,69 @@ const Profile = ({ user, onLogout, projects }) => {
           {/* Tab Content Area */}
           <div className="p-5 md:p-8 min-h-[400px]">
             <AnimatePresence mode="wait">
-
-              {/* ===== APPLIED TAB ===== */}
-              {activeTab === 'applied' && (
-                <motion.div
-                  key="applied"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  {appliedProject.length > 0 ? (
-                    appliedProject.map((project) => (
-                      <ProjectCard
-                        key={project._id || project.id}
-                        project={project}
-                        type="applied"
-                        color="indigo"
-                        onAction={{
-                          primary: { link: `/project/${project._id || project.id}`, label: 'View Details' }
-                        }}
+              {['applied', 'created', 'selected', 'completed'].map((tabId) => (
+                activeTab === tabId && (
+                  <motion.div
+                    key={tabId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4"
+                  >
+                    {getCurrentProjects().length > 0 ? (
+                      getCurrentProjects().map((project) => (
+                        <ProjectCard
+                          key={project._id || project.id}
+                          project={{ 
+                            ...project, 
+                            status: tabId === 'created' ? 'Active' : 
+                                    tabId === 'selected' ? 'Selected' : 
+                                    tabId === 'completed' ? 'Completed' : project.status 
+                          }}
+                          type={tabId}
+                          color={getTabColor(tabId)}
+                          onAction={{
+                            primary: { 
+                              link: tabId === 'created' ? `/project/${project._id}/manage` : `/project/${project._id || project.id}`, 
+                              label: tabId === 'created' ? 'Manage' : 'View Details' 
+                            },
+                            secondary: tabId === 'created' ? { 
+                              label: 'Edit', 
+                              icon: <Edit3 size={14} />,
+                              onClick: () => navigate(`/project/${project._id}/edit`)
+                            } : undefined
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <EmptyState 
+                        icon={{ applied: Briefcase, created: PlusCircle, selected: UserCheck, completed: Award }[tabId]}
+                        msg={{ 
+                          applied: "No applications yet",
+                          created: "No projects created yet", 
+                          selected: "Not selected yet",
+                          completed: "No completed projects yet"
+                        }[tabId]}
+                        subMsg={{
+                          applied: "Browse projects and apply to join exciting teams",
+                          created: "Share your idea and find talented teammates to build with",
+                          selected: "Keep applying! Your perfect team match is out there",
+                          completed: "Finish a project to showcase your achievements here"
+                        }[tabId]}
+                        link="/dashboard"
+                        linkText={{
+                          applied: "Browse Projects",
+                          created: "Create Project",
+                          selected: "Find Projects", 
+                          completed: "Find Projects"
+                        }[tabId]}
+                        color={getTabColor(tabId)}
                       />
-                    ))
-                  ) : (
-                    <EmptyState 
-                      icon={Briefcase}
-                      msg="No applications yet"
-                      subMsg="Browse projects and apply to join exciting teams"
-                      link="/dashboard"
-                      linkText="Browse Projects"
-                      color="violet"
-                    />
-                  )}
-                </motion.div>
-              )}
-
-              {/* ===== CREATED TAB ===== */}
-              {activeTab === 'created' && (
-                <motion.div
-                  key="created"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  {createdProject.length > 0 ? (
-                    createdProject.map((project) => (
-                      <ProjectCard
-                        key={project._id}
-                        project={{ ...project, status: 'Active' }}
-                        type="created"
-                        color="purple"
-                        onAction={{
-                          primary: { link: `/project/${project._id}/manage`, label: 'Manage' },
-                          secondary: { 
-                            label: 'Edit', 
-                            icon: <Edit3 size={14} />,
-                            onClick: () => navigate(`/project/${project._id}/edit`)
-                          }
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <EmptyState 
-                      icon={PlusCircle}
-                      msg="No projects created yet"
-                      subMsg="Share your idea and find talented teammates to build with"
-                      link="/create-project"
-                      linkText="Create Project"
-                      color="purple"
-                    />
-                  )}
-                </motion.div>
-              )}
-
-              {/* ===== SELECTED TAB ===== */}
-              {activeTab === 'selected' && (
-                <motion.div
-                  key="selected"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  {selectedProject.length > 0 ? (
-                    selectedProject.map((project) => (
-                      <ProjectCard
-                        key={project._id}
-                        project={{ ...project, status: 'Selected' }}
-                        type="selected"
-                        color="cyan"
-                        onAction={{
-                          primary: { link: `/project/${project._id}`, label: 'View Project' }
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <EmptyState 
-                      icon={UserCheck}
-                      msg="Not selected yet"
-                      subMsg="Keep applying! Your perfect team match is out there"
-                      link="/dashboard"
-                      linkText="Find Projects"
-                      color="cyan"
-                    />
-                  )}
-                </motion.div>
-              )}
-
-              {/* ===== COMPLETED TAB ===== */}
-              {activeTab === 'completed' && (
-                <motion.div
-                  key="completed"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  {projects?.filter(p => p.status === 'Completed')?.length > 0 ? (
-                    projects.filter(p => p.status === 'Completed').map((project) => (
-                      <ProjectCard
-                        key={project._id}
-                        project={{ ...project, status: 'Completed' }}
-                        type="completed"
-                        color="emerald"
-                        onAction={{
-                          primary: { link: `/project/${project._id}`, label: 'View Certificate' }
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <EmptyState 
-                      icon={Award}
-                      msg="No completed projects yet"
-                      subMsg="Finish a project to showcase your achievements here"
-                      link="/dashboard"
-                      linkText="Find Projects"
-                      color="emerald"
-                    />
-                  )}
-                </motion.div>
-              )}
-
+                    )}
+                  </motion.div>
+                )
+              ))}
             </AnimatePresence>
           </div>
         </motion.div>
@@ -585,35 +587,50 @@ const Profile = ({ user, onLogout, projects }) => {
           className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           {[
-            { icon: Shield, title: "Profile Completeness", value: "85%", desc: "Add skills to reach 100%", color: "violet" },
-            { icon: TrendingUp, title: "Profile Views", value: "124", desc: "+12 this week", color: "cyan" }
-          ].map((stat, idx) => (
-            <motion.div
-              key={idx}
-              whileHover={{ y: -4 }}
-              className="p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-r from-${stat.color}-500/20 to-${stat.color}-600/20 
-                             flex items-center justify-center`}>
-                  <stat.icon className={`text-${stat.color}-400 w-5 h-5`} />
+            { 
+              icon: Shield, 
+              title: "Profile Completeness", 
+              value: `${Math.min(100, 60 + (localUser?.skills?.length || 0) * 8 + (localUser?.college ? 15 : 0) + (localUser?.passingYear ? 7 : 0))}%`, 
+              desc: "Add skills & details to reach 100%", 
+              color: "violet" 
+            },
+            { 
+              icon: TrendingUp, 
+              title: "Profile Views", 
+              value: "124", 
+              desc: "+12 this week", 
+              color: "cyan" 
+            }
+          ].map((stat, idx) => {
+            const percentage = parseInt(stat.value);
+            return (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -4 }}
+                className="p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-r from-${stat.color}-500/20 to-${stat.color}-600/20 
+                               flex items-center justify-center`}>
+                    <stat.icon className={`text-${stat.color}-400 w-5 h-5`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-200">{stat.title}</p>
+                    <p className="text-xs text-gray-400">{stat.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-200">{stat.title}</p>
-                  <p className="text-xs text-gray-400">{stat.desc}</p>
+                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${percentage}%` }}
+                    transition={{ duration: 0.8, delay: 0.5 + idx * 0.1 }}
+                    className={`h-full bg-gradient-to-r from-${stat.color}-500 to-${stat.color}-400 rounded-full`}
+                  />
                 </div>
-              </div>
-              <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: stat.value }}
-                  transition={{ duration: 0.8, delay: 0.5 + idx * 0.1 }}
-                  className={`h-full bg-gradient-to-r from-${stat.color}-500 to-${stat.color}-400 rounded-full`}
-                />
-              </div>
-              <p className="text-right text-xs text-gray-400 mt-1">{stat.value}</p>
-            </motion.div>
-          ))}
+                <p className="text-right text-xs text-gray-400 mt-1">{stat.value}</p>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
       </div>

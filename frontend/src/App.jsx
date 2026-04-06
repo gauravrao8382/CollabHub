@@ -11,6 +11,7 @@ import CreateProject from './pages/CreateProject';
 import ProjectDetails from './pages/ProjectDetails';
 import CompletedProjectDetails from './pages/CompletedProjectDetails';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 import EditProject from './pages/EditProject';
 import ManageProject from './pages/ManageProject';
 import UserProfile from './pages/UserProfile';
@@ -81,6 +82,12 @@ function App() {
     setProjects([newProject, ...projects]);
   };
 
+  // App.jsx - handleUserUpdate function add karein
+  const handleUserUpdate = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   // 🔥 Loader jab tak auth check ho raha
   if (loading) {
     return (
@@ -127,6 +134,7 @@ function App() {
           <Route path="/project/:projectId/edit" element={user ? <EditProject /> : <Navigate to="/login" />} />
           <Route path="/project/:projectId/manage" element={user ? <ManageProject /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate to="/login" />} />
+          <Route path="/profile/edit" element={<EditProfile user={user}  onUserUpdate={handleUserUpdate}/>} />
           <Route path="/messages" element={<Messages user={user} projects={projects} />} />
           <Route path="/messages/:projectId" element={<ProjectChat user={user} projects={projects} />} />
           {/* Semi Public */}
