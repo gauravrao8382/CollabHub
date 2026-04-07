@@ -13,6 +13,7 @@ import ProjectDetails from './pages/ProjectDetails';
 import CompletedProjectDetails from './pages/CompletedProjectDetails';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import Settings from './pages/Settings';
 import EditProject from './pages/EditProject';
 import ManageProject from './pages/ManageProject';
 import UserProfile from './pages/UserProfile';
@@ -137,6 +138,7 @@ function App() {
           <Route path="/project/:projectId/manage" element={user ? <ManageProject /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate to="/login" />} />
           <Route path="/profile/edit" element={<EditProfile user={user}  onUserUpdate={handleUserUpdate}/>} />
+          <Route path="/settings" element={<Settings user={user} onUpdateUser={handleUserUpdate} />} />
           <Route path="/messages" element={<Messages user={user} projects={projects} />} />
           <Route path="/messages/:projectId" element={<ProjectChat user={user} projects={projects} />} />
           {/* Semi Public */}
