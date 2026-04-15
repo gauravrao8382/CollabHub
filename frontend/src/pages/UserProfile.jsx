@@ -68,14 +68,14 @@ const UserProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="relative"
         >
           <div className="w-16 h-16 rounded-full border-4 border-violet-500/20 border-t-violet-500" />
-          <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-r-cyan-500 animate-spin" style={{ animationDuration: '0.8s' }} />
+          <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-r-fuchsia-500 animate-spin" style={{ animationDuration: '0.8s' }} />
         </motion.div>
       </div>
     );
@@ -83,7 +83,7 @@ const UserProfile = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-center px-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -92,12 +92,12 @@ const UserProfile = () => {
           <div className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
             <AlertCircle size={40} className="text-red-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-100 mb-2">User not found</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">User not found</h2>
           <p className="text-gray-400 mb-6">The profile you're looking for doesn't exist or has been removed.</p>
           <button 
             onClick={() => navigate(-1)} 
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                     text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                     text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                      transition-all duration-300 shadow-lg shadow-violet-500/25 
                      flex items-center gap-2 mx-auto"
           >
@@ -109,48 +109,48 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 pt-20 px-4 pb-12">
-      {/* Background Decorative Elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-gray-100 pt-20 px-4 pb-12">
+      {/* Background Decorative Elements - Old Theme */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-violet-600/20 to-cyan-600/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.08, 0.12, 0.08] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 rounded-full blur-3xl"
         />
         <motion.div 
-          animate={{ scale: [1.1, 1, 1.1], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-r from-emerald-600/15 to-blue-600/15 rounded-full blur-3xl"
+          animate={{ scale: [1.1, 1, 1.1], opacity: [0.06, 0.1, 0.06] }}
+          transition={{ duration: 12, repeat: Infinity }}
+          className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-r from-fuchsia-600/10 to-violet-600/10 rounded-full blur-3xl"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         
-        {/* Back Button */}
+        {/* Back Button - Old Theme */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 text-gray-400 hover:text-violet-400 font-medium transition-colors group"
+          className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white font-medium transition-colors group"
         >
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
           <span>Back</span>
         </motion.button>
 
-        {/* Profile Header - Premium Glass Card */}
+        {/* Profile Header - Old Theme Glass Card */}
         <motion.div 
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative p-6 md:p-10 rounded-3xl bg-gray-800/40 border border-gray-700/50 
-                   backdrop-blur-xl shadow-2xl mb-8 overflow-hidden group"
+          className="relative p-6 md:p-10 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 
+                   backdrop-blur-sm shadow-2xl mb-8 overflow-hidden group"
         >
-          {/* Hover Glow Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          {/* Hover Glow Effect - Violet/Fuchsia */}
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
           
           {/* Decorative Blur */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-r from-violet-600/10 to-cyan-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 relative z-10">
             {/* Avatar with Ring Animation */}
@@ -158,9 +158,9 @@ const UserProfile = () => {
               whileHover={{ scale: 1.05 }}
               className="relative"
             >
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gray-700/50 
-                           shadow-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white/10 
+                           shadow-xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
                            flex items-center justify-center">
                 {user.avatar ? (
                   <img 
@@ -170,13 +170,13 @@ const UserProfile = () => {
                     loading="lazy"
                   />
                 ) : (
-                  <span className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                  <span className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                     {user.name?.[0]?.toUpperCase() || 'U'}
                   </span>
                 )}
               </div>
               {/* Online Status */}
-              <span className="absolute bottom-2 right-2 w-4 h-4 bg-emerald-500 border-4 border-gray-900 rounded-full" />
+              <span className="absolute bottom-2 right-2 w-4 h-4 bg-emerald-500 border-4 border-slate-900 rounded-full" />
             </motion.div>
 
             {/* User Info */}
@@ -187,7 +187,7 @@ const UserProfile = () => {
                 transition={{ delay: 0.2 }}
                 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3"
               >
-                <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
                   {user.name}
                 </span>
               </motion.h1>
@@ -200,13 +200,13 @@ const UserProfile = () => {
               >
                 {[
                   { icon: Building, text: user.college, color: "text-violet-400" },
-                  { icon: Mail, text: user.email, color: "text-cyan-400" },
+                  { icon: Mail, text: user.email, color: "text-fuchsia-400" },
                   ...(user.passingYear ? [{ icon: Calendar, text: `Class of ${user.passingYear}`, color: "text-emerald-400" }] : [])
                 ].map((item, idx) => (
                   <span 
                     key={idx}
                     className="flex items-center gap-2 px-4 py-2 rounded-full 
-                             bg-gray-700/50 border border-gray-600/50 
+                             bg-white/5 border border-white/10 
                              hover:border-violet-500/30 transition-colors"
                   >
                     <item.icon size={16} className={item.color} /> 
@@ -215,15 +215,15 @@ const UserProfile = () => {
                 ))}
               </motion.div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - Old Theme */}
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 className="flex flex-wrap justify-center lg:justify-start gap-3"
               >
-                <button className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                               text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                <button className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                               text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                                transition-all duration-300 shadow-lg shadow-violet-500/25 
                                flex items-center gap-2 text-sm">
                   <Mail size={16} /> Contact
@@ -233,8 +233,8 @@ const UserProfile = () => {
                     href={user.linkedin} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-6 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 
-                             text-gray-300 font-semibold hover:bg-gray-700 hover:border-violet-500/30 
+                    className="px-6 py-2.5 rounded-xl bg-white/5 border border-white/10 
+                             text-gray-300 font-semibold hover:bg-white/10 hover:border-violet-500/30 
                              transition-all duration-300 flex items-center gap-2 text-sm"
                   >
                     <Linkedin size={16} /> LinkedIn
@@ -245,7 +245,7 @@ const UserProfile = () => {
           </div>
         </motion.div>
 
-        {/* Stats Cards - Responsive Grid */}
+        {/* Stats Cards - Responsive Grid - Old Theme */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
@@ -256,14 +256,14 @@ const UserProfile = () => {
             { icon: Briefcase, value: user.completedProjects?.length || 0, label: "Completed Projects", color: "violet" },
             { icon: Trophy, value: user.leetcode?.solved || 0, label: "LeetCode Solved", color: "amber" },
             { icon: Star, value: user.leetcode?.rating || 'N/A', label: "LeetCode Rating", color: "orange" },
-            { icon: Target, value: user.skills?.length || 0, label: "Skills", color: "cyan" }
+            { icon: Target, value: user.skills?.length || 0, label: "Skills", color: "fuchsia" }
           ].map((stat, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 
-                       backdrop-blur-xl hover:border-violet-500/30 transition-all duration-300 text-center"
+              className="group p-5 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 
+                       backdrop-blur-sm hover:border-violet-500/30 transition-all duration-300 text-center"
             >
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-r from-${stat.color}-500/20 to-${stat.color}-600/20 
                            flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
@@ -277,15 +277,15 @@ const UserProfile = () => {
           ))}
         </motion.div>
 
-        {/* Tabs Section - Dark Glassmorphism */}
+        {/* Tabs Section - Old Theme Glassmorphism */}
         <motion.div 
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl overflow-hidden shadow-2xl"
+          className="rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm overflow-hidden shadow-2xl"
         >
-          {/* Tab Navigation */}
-          <div className="flex border-b border-gray-700/50 bg-gray-800/30 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+          {/* Tab Navigation - Old Theme */}
+          <div className="flex border-b border-white/10 bg-white/5 overflow-x-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
             {['about', 'skills', 'projects', 'social'].map((tab) => (
               <button
                 key={tab}
@@ -294,7 +294,7 @@ const UserProfile = () => {
                          transition-all duration-300 relative capitalize ${
                   activeTab === tab 
                     ? 'text-violet-400' 
-                    : 'text-gray-400 hover:text-gray-200'
+                    : 'text-gray-400 hover:text-white'
                 }`}
               >
                 <span className="relative z-10">{tab}</span>
@@ -302,7 +302,7 @@ const UserProfile = () => {
                   <motion.div 
                     layoutId="activeTabIndicator"
                     className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-0.5 
-                             bg-gradient-to-r from-violet-500 to-cyan-500 rounded-full" 
+                             bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full" 
                   />
                 )}
                 {/* Hover Effect */}
@@ -325,9 +325,9 @@ const UserProfile = () => {
                   transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
-                  {/* Bio Section */}
-                  <div className="p-6 rounded-2xl bg-gray-900/50 border border-gray-700/50">
-                    <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
+                  {/* Bio Section - Old Theme */}
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                       <Award className="text-violet-400" size={20} />
                       About Me
                     </h3>
@@ -336,11 +336,11 @@ const UserProfile = () => {
                     </p>
                   </div>
 
-                  {/* Info Grid */}
+                  {/* Info Grid - Old Theme */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     {[
                       { icon: Building, label: "College", value: user.college, color: "violet" },
-                      { icon: Calendar, label: "Passing Year", value: user.passingYear || "Not specified", color: "cyan" },
+                      { icon: Calendar, label: "Passing Year", value: user.passingYear || "Not specified", color: "fuchsia" },
                       { icon: Mail, label: "Email", value: user.email, color: "emerald" },
                       { icon: Briefcase, label: "Completed Projects", value: user.completedProjects?.length || 0, color: "amber" }
                     ].map((info, idx) => (
@@ -350,7 +350,7 @@ const UserProfile = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
                         whileHover={{ scale: 1.02 }}
-                        className="p-4 rounded-xl bg-gray-900/30 border border-gray-700/50 
+                        className="p-4 rounded-xl bg-white/5 border border-white/10 
                                  hover:border-violet-500/30 transition-all duration-300 flex items-center gap-4"
                       >
                         <div className={`w-11 h-11 rounded-xl bg-gradient-to-r from-${info.color}-500/20 to-${info.color}-600/20 
@@ -376,8 +376,8 @@ const UserProfile = () => {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="p-6 rounded-2xl bg-gray-900/50 border border-gray-700/50">
-                    <h3 className="text-lg font-bold text-gray-100 mb-6 flex items-center gap-2">
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                    <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                       <Code className="text-violet-400" size={20} />
                       Technical Skills
                     </h3>
@@ -393,7 +393,7 @@ const UserProfile = () => {
                             key={index}
                             variants={itemVariants}
                             whileHover={{ scale: 1.05, y: -2 }}
-                            className="px-4 py-2 bg-gradient-to-r from-violet-500/10 to-cyan-500/10 
+                            className="px-4 py-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 
                                      border border-violet-500/20 rounded-xl text-sm font-semibold 
                                      text-violet-300 hover:text-white hover:border-violet-500/40 
                                      transition-all duration-300 cursor-default backdrop-blur-sm"
@@ -423,7 +423,7 @@ const UserProfile = () => {
                   transition={{ duration: 0.3 }}
                   className="space-y-4"
                 >
-                  <h3 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <CheckCircle2 className="text-emerald-400" size={20} />
                     Completed Projects
                   </h3>
@@ -439,11 +439,11 @@ const UserProfile = () => {
                           key={project._id || index}
                           variants={itemVariants}
                           whileHover={{ y: -3 }}
-                          className="group p-5 rounded-2xl bg-gray-900/50 border border-gray-700/50 
+                          className="group p-5 rounded-2xl bg-white/5 border border-white/10 
                                    hover:border-emerald-500/30 transition-all duration-300"
                         >
                           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
-                            <h4 className="font-bold text-lg text-gray-100 group-hover:text-violet-300 transition-colors">
+                            <h4 className="font-bold text-lg text-white group-hover:text-violet-300 transition-colors">
                               {project.title}
                             </h4>
                             <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-bold border border-emerald-500/20 flex items-center gap-1 w-fit">
@@ -453,11 +453,11 @@ const UserProfile = () => {
                           </div>
                           <p className="text-sm text-gray-400 mb-4 leading-relaxed">{project.description}</p>
                           
-                          {/* Tech Stack */}
+                          {/* Tech Stack - Old Theme */}
                           {project.techStack?.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
                               {project.techStack.map((tech, i) => (
-                                <span key={i} className="px-3 py-1 bg-gray-800/50 rounded-lg text-xs font-medium text-gray-300 border border-gray-700/50">
+                                <span key={i} className="px-3 py-1 bg-white/5 rounded-lg text-xs font-medium text-gray-300 border border-white/10">
                                   {tech}
                                 </span>
                               ))}
@@ -465,7 +465,7 @@ const UserProfile = () => {
                           )}
                           
                           {/* Meta Info */}
-                          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 pt-3 border-t border-gray-700/50">
+                          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 pt-3 border-t border-white/10">
                             <span className="flex items-center gap-1.5">
                               <Calendar size={14} className="text-violet-400" /> 
                               {project.completedDate || 'Date not specified'}
@@ -500,10 +500,10 @@ const UserProfile = () => {
                   transition={{ duration: 0.3 }}
                   className="space-y-6"
                 >
-                  {/* LinkedIn Card */}
-                  <div className="p-6 rounded-2xl bg-gray-900/50 border border-gray-700/50">
+                  {/* LinkedIn Card - Old Theme */}
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                      <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
                         <Linkedin className="text-blue-400" size={24} />
                         LinkedIn Profile
                       </h3>
@@ -524,7 +524,7 @@ const UserProfile = () => {
                         {[
                           { label: "Connections", value: user.linkedinStats?.connections || '500+', icon: TrendingUp, color: "blue" },
                           { label: "Experience", value: user.linkedinStats?.experience || 'N/A', icon: Briefcase, color: "violet" },
-                          { label: "Education", value: user.linkedinStats?.education || user.college, icon: Building, color: "cyan" }
+                          { label: "Education", value: user.linkedinStats?.education || user.college, icon: Building, color: "fuchsia" }
                         ].map((item, idx) => (
                           <SocialStat key={idx} {...item} />
                         ))}
@@ -538,10 +538,10 @@ const UserProfile = () => {
                     )}
                   </div>
 
-                  {/* LeetCode Card */}
-                  <div className="p-6 rounded-2xl bg-gray-900/50 border border-gray-700/50">
+                  {/* LeetCode Card - Old Theme */}
+                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                      <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
                         <Code className="text-amber-400" size={24} />
                         LeetCode Profile
                       </h3>
@@ -576,11 +576,11 @@ const UserProfile = () => {
                     )}
                   </div>
 
-                  {/* GitHub Card (Bonus) */}
+                  {/* GitHub Card (Bonus) - Old Theme */}
                   {user.github && (
-                    <div className="p-6 rounded-2xl bg-gray-900/50 border border-gray-700/50">
+                    <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
                           <Github className="text-gray-300" size={24} />
                           GitHub Profile
                         </h3>
@@ -597,7 +597,7 @@ const UserProfile = () => {
                       <div className="grid sm:grid-cols-3 gap-4">
                         {[
                           { label: "Repositories", value: user.githubStats?.repos || 'N/A', icon: Code, color: "gray" },
-                          { label: "Followers", value: user.githubStats?.followers || 'N/A', icon: Users, color: "violet" },
+                          { label: "Followers", value: user.githubStats?.followers || 'N/A', icon: User, color: "violet" },
                           { label: "Contributions", value: user.githubStats?.contributions || 'N/A', icon: TrendingUp, color: "emerald" }
                         ].map((item, idx) => (
                           <SocialStat key={idx} {...item} />
@@ -617,7 +617,7 @@ const UserProfile = () => {
   );
 };
 
-// ===== Reusable Components =====
+// ===== Reusable Components - Old Theme =====
 
 // Stat Card Component
 const StatCard = ({ icon: Icon, value, label, color }) => (
@@ -648,14 +648,14 @@ const SocialStat = ({ label, value, icon: Icon, color }) => (
   </motion.div>
 );
 
-// Empty State Component
+// Empty State Component - Old Theme
 const EmptyState = ({ icon: Icon, message, subMessage }) => (
   <motion.div 
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     className="text-center py-12"
   >
-    <div className="w-16 h-16 rounded-2xl bg-gray-800/50 border border-gray-700/50 flex items-center justify-center mx-auto mb-4">
+    <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
       <Icon className="w-8 h-8 text-gray-500" />
     </div>
     <p className="text-gray-300 font-semibold mb-1">{message}</p>

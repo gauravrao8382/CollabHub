@@ -17,7 +17,6 @@ const Signup = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
-  // ✅ REMOVED: const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -50,13 +49,11 @@ const Signup = ({ onLogin }) => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     
-    // ✅ Basic validation
     if (!formData.email.trim()) {
       showError('Please enter your college email');
       return;
     }
     
-    // ✅ Email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       showError('Please enter a valid email address');
@@ -64,26 +61,19 @@ const Signup = ({ onLogin }) => {
     }
 
     setLoading(true);
-
-    // ✅ Show loading toast
     const toastId = showLoading('Sending verification code...');
 
     try {
       const res = await axios.post(`${API}/signup`, { email: formData.email });
-      
-      // ✅ Update toast to success
       updateToastSuccess(toastId, 'Verification code sent! Check your inbox 📧');
       
       setOtpSent(true);
       setTimer(30);
       setStep(2);
-      
-      // Auto-focus OTP input
       setTimeout(() => otpInputRef.current?.focus(), 100);
       
     } catch (err) {
       console.error('Send OTP error:', err);
-      // ✅ Update toast to error
       updateToastError(
         toastId, 
         err.response?.data?.message || "Failed to send OTP. Please try again."
@@ -97,15 +87,12 @@ const Signup = ({ onLogin }) => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
 
-    // ✅ OTP validation
     if (formData.otp.length < 4) {
       showError('Please enter the 4-digit verification code');
       return;
     }
 
     setLoading(true);
-    
-    // ✅ Show loading toast for verification
     const toastId = showLoading('Verifying code...');
 
     try {
@@ -114,17 +101,12 @@ const Signup = ({ onLogin }) => {
         otp: formData.otp
       });
 
-      // ✅ Update toast to success
       updateToastSuccess(toastId, 'Email verified! ✅');
-      
-      // Optional: Show next step info
       showInfo('Now complete your profile...');
-      
       setStep(3);
       
     } catch (err) {
       console.error('Verify OTP error:', err);
-      // ✅ Update toast to error
       updateToastError(
         toastId, 
         err.response?.data?.message || "Invalid code. Please try again."
@@ -138,7 +120,6 @@ const Signup = ({ onLogin }) => {
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ Final validation
     if (!formData.name.trim()) {
       showError('Please enter your full name');
       return;
@@ -157,12 +138,9 @@ const Signup = ({ onLogin }) => {
     }
 
     setLoading(true);
-    
-    // ✅ Show loading toast for account creation
     const toastId = showLoading('Creating your account...');
 
     try {
-      // Step 1: Complete signup
       await axios.post(`${API}/complete-signup`, {
         name: formData.name,
         email: formData.email,
@@ -171,32 +149,24 @@ const Signup = ({ onLogin }) => {
         skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
       });
 
-      // Step 2: Auto-login after signup
       const loginRes = await axios.post(`${API}/login`, { 
         email: formData.email 
       });
       
-      // Save auth data
       localStorage.setItem("token", loginRes.data.token);
       localStorage.setItem("user", JSON.stringify(loginRes.data.user));
       
-      // ✅ Update toast to final success
       updateToastSuccess(toastId, 'Account created successfully! Welcome aboard 🎉');
-      
-      // Optional: Show redirect info
       showInfo('Redirecting to your dashboard...');
       
-      // Call parent onLogin and navigate
       if (onLogin) onLogin(loginRes.data.user);
       
-      // Small delay for toast visibility
       setTimeout(() => {
         navigate('/dashboard');
       }, 1200);
 
     } catch (err) {
       console.error('Signup error:', err);
-      // ✅ Update toast to error
       updateToastError(
         toastId, 
         err.response?.data?.message || "Signup failed. Please try again."
@@ -210,20 +180,14 @@ const Signup = ({ onLogin }) => {
   const handleResendOtp = async () => {
     if (timer === 0) {
       setLoading(true);
-      
-      // ✅ Show loading toast for resend
       const toastId = showLoading('Resending code...');
       
       try {
         await axios.post(`${API}/signup`, { email: formData.email });
-        
-        // ✅ Update toast to success
         updateToastSuccess(toastId, 'New code sent! Check your inbox 📧');
-        
         setTimer(30);
       } catch (err) {
         console.error('Resend OTP error:', err);
-        // ✅ Update toast to error
         updateToastError(
           toastId, 
           err.response?.data?.message || "Failed to resend code"
@@ -232,7 +196,6 @@ const Signup = ({ onLogin }) => {
         setLoading(false);
       }
     } else {
-      // ✅ Show info if user tries to resend too early
       showInfo(`Please wait ${timer}s before resending`);
     }
   };
@@ -273,62 +236,62 @@ const Signup = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-gray-100 flex items-center justify-center px-4 py-8 relative overflow-hidden">
       
-      {/* ===== Background Decorative Elements ===== */}
+      {/* ===== Background Decorative Elements - Old Theme ===== */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated Gradient Blobs */}
+        {/* Animated Gradient Blobs - Violet/Fuchsia */}
         <motion.div 
           animate={{ 
             scale: [1, 1.15, 1],
-            opacity: [0.2, 0.35, 0.2],
+            opacity: [0.08, 0.12, 0.08],
             x: [0, 20, 0]
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-10 -left-10 w-80 h-80 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-10 -left-10 w-80 h-80 bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 rounded-full blur-3xl"
         />
         <motion.div 
           animate={{ 
             scale: [1.15, 1, 1.15],
-            opacity: [0.15, 0.25, 0.15],
+            opacity: [0.06, 0.1, 0.06],
             x: [0, -15, 0]
           }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-10 -right-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-10 -right-10 w-80 h-80 bg-gradient-to-r from-fuchsia-600/10 to-violet-600/10 rounded-full blur-3xl"
         />
         
         {/* Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
         
         {/* Radial Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-gray-950/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30" />
       </div>
 
-      {/* ===== Signup Card ===== */}
+      {/* ===== Signup Card - Old Theme Glass ===== */}
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="relative w-full max-w-lg z-10"
       >
-        {/* Glassmorphism Card */}
-        <div className="p-6 md:p-10 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl">
+        {/* Glassmorphism Card - Old Theme */}
+        <div className="p-6 md:p-10 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 backdrop-blur-sm shadow-2xl">
           
-          {/* Card Glow Effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 pointer-events-none" />
+          {/* Card Glow Effect - Violet/Fuchsia */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-fuchsia-500/5 pointer-events-none" />
           
           {/* Header */}
           <div className="relative z-10 text-center mb-8">
             {/* Back to Home */}
             <Link 
               to="/" 
-              className="absolute -top-2 left-0 p-2 text-gray-400 hover:text-violet-400 transition-colors rounded-lg hover:bg-gray-700/50"
+              className="absolute -top-2 left-0 p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
               aria-label="Back to home"
             >
               <Home size={20} />
             </Link>
 
-            {/* Step Indicator */}
+            {/* Step Indicator - Old Theme */}
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -340,9 +303,9 @@ const Signup = ({ onLogin }) => {
               </span>
             </motion.div>
 
-            {/* Title */}
+            {/* Title - Old Theme Gradient */}
             <h2 className="text-2xl md:text-3xl font-extrabold mb-2">
-              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                 {step === 1 && "Create Account"}
                 {step === 2 && "Verify Email"}
                 {step === 3 && "Complete Profile"}
@@ -356,7 +319,7 @@ const Signup = ({ onLogin }) => {
               {step === 3 && "Tell us more about yourself to personalize your experience"}
             </p>
 
-            {/* Progress Bar */}
+            {/* Progress Bar - Old Theme */}
             <div className="flex items-center justify-center gap-2 mt-6">
               {[1, 2, 3].map((s) => (
                 <React.Fragment key={s}>
@@ -364,20 +327,18 @@ const Signup = ({ onLogin }) => {
                     initial={false}
                     animate={{ 
                       width: s <= step ? '2rem' : '0.5rem',
-                      backgroundColor: s <= step ? '#8b5cf6' : '#374151'
+                      backgroundColor: s <= step ? '#8b5cf6' : '#334155'
                     }}
                     transition={{ duration: 0.3 }}
-                    className={`h-1.5 rounded-full ${s <= step ? 'bg-violet-500' : 'bg-gray-600'}`}
+                    className={`h-1.5 rounded-full ${s <= step ? 'bg-violet-500' : 'bg-slate-600'}`}
                   />
                   {s < 3 && (
-                    <div className={`w-8 h-1.5 rounded-full ${s < step ? 'bg-violet-500/50' : 'bg-gray-700'}`} />
+                    <div className={`w-8 h-1.5 rounded-full ${s < step ? 'bg-violet-500/50' : 'bg-white/10'}`} />
                   )}
                 </React.Fragment>
               ))}
             </div>
           </div>
-
-          {/* ✅ REMOVED: Inline error message block - toasts handle global messages now */}
 
           {/* Form Steps */}
           <AnimatePresence mode="wait" custom={direction}>
@@ -403,10 +364,10 @@ const Signup = ({ onLogin }) => {
                     <input
                       type="email"
                       placeholder="student@college.edu"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                               outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                               hover:border-gray-600"
+                               outline-none transition-all duration-300 text-white placeholder-gray-500
+                               hover:border-white/20"
                       required
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -422,13 +383,13 @@ const Signup = ({ onLogin }) => {
                   <button
                     type="submit"
                     disabled={loading || !formData.email}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                              transition-all duration-300 shadow-lg shadow-violet-500/25 
                              hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
                              flex items-center justify-center gap-2 group relative overflow-hidden"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-fuchsia-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                     {loading ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -470,11 +431,11 @@ const Signup = ({ onLogin }) => {
                       pattern="[0-9]*"
                       placeholder="••••"
                       maxLength={4}
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                      className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                               outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
+                               outline-none transition-all duration-300 text-white placeholder-gray-500
                                text-center text-2xl tracking-[0.5em] font-mono font-bold
-                               hover:border-gray-600"
+                               hover:border-white/20"
                       required
                       value={formData.otp}
                       onChange={e => {
@@ -510,8 +471,8 @@ const Signup = ({ onLogin }) => {
                   <button
                     type="submit"
                     disabled={loading || formData.otp.length < 4}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                              transition-all duration-300 shadow-lg shadow-violet-500/25 
                              hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
                              flex items-center justify-center gap-2 group"
@@ -533,8 +494,8 @@ const Signup = ({ onLogin }) => {
                     type="button"
                     onClick={() => { paginate(-1); setStep(1); }}
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
-                             text-gray-300 font-medium hover:bg-gray-700 hover:border-violet-500/30 
+                    className="w-full py-3 rounded-xl bg-white/5 border border-white/10 
+                             text-gray-300 font-medium hover:bg-white/10 hover:border-violet-500/30 
                              transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -566,10 +527,10 @@ const Signup = ({ onLogin }) => {
                         <input
                           type="text"
                           placeholder="John Doe"
-                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                    focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                   outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                   hover:border-gray-600"
+                                   outline-none transition-all duration-300 text-white placeholder-gray-500
+                                   hover:border-white/20"
                           required
                           value={formData.name}
                           onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -583,18 +544,18 @@ const Signup = ({ onLogin }) => {
                       <div className="relative">
                         <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                         <select
-                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                          className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                    focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                   outline-none transition-all duration-300 text-gray-100 appearance-none
-                                   hover:border-gray-600 cursor-pointer"
+                                   outline-none transition-all duration-300 text-white appearance-none
+                                   hover:border-white/20 cursor-pointer"
                           required
                           value={formData.passingYear}
                           onChange={e => setFormData({ ...formData, passingYear: e.target.value })}
                           disabled={loading}
                         >
-                          <option value="" className="bg-gray-800">Select Year</option>
+                          <option value="" className="bg-slate-800">Select Year</option>
                           {[2024, 2025, 2026, 2027, 2028, 2029, 2030].map(year => (
-                            <option key={year} value={year} className="bg-gray-800">{year}</option>
+                            <option key={year} value={year} className="bg-slate-800">{year}</option>
                           ))}
                         </select>
                         <ArrowRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 rotate-90 pointer-events-none" />
@@ -610,10 +571,10 @@ const Signup = ({ onLogin }) => {
                       <input
                         type="text"
                         placeholder="e.g. IIT Delhi, DTU, NSUT..."
-                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                  focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                 outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                 hover:border-gray-600"
+                                 outline-none transition-all duration-300 text-white placeholder-gray-500
+                                 hover:border-white/20"
                         required
                         value={formData.college}
                         onChange={e => setFormData({ ...formData, college: e.target.value })}
@@ -630,10 +591,10 @@ const Signup = ({ onLogin }) => {
                       <input
                         type="text"
                         placeholder="React, Node.js, Python, UI/UX..."
-                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
+                        className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 
                                  focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                 outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                 hover:border-gray-600"
+                                 outline-none transition-all duration-300 text-white placeholder-gray-500
+                                 hover:border-white/20"
                         required
                         value={formData.skills}
                         onChange={e => setFormData({ ...formData, skills: e.target.value })}
@@ -644,13 +605,13 @@ const Signup = ({ onLogin }) => {
                   </motion.div>
                 </motion.div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - Old Theme */}
                 <motion.div variants={itemVariants} className="space-y-3 pt-2">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                             text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                             text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                              transition-all duration-300 shadow-lg shadow-violet-500/25 
                              hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
                              flex items-center justify-center gap-2 group"
@@ -672,8 +633,8 @@ const Signup = ({ onLogin }) => {
                     type="button"
                     onClick={() => { paginate(-1); setStep(2); }}
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
-                             text-gray-300 font-medium hover:bg-gray-700 hover:border-violet-500/30 
+                    className="w-full py-3 rounded-xl bg-white/5 border border-white/10 
+                             text-gray-300 font-medium hover:bg-white/10 hover:border-violet-500/30 
                              transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -685,12 +646,12 @@ const Signup = ({ onLogin }) => {
 
           </AnimatePresence>
 
-          {/* Login Link */}
+          {/* Login Link - Old Theme */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mt-8 pt-6 border-t border-gray-700/50 text-center relative z-10"
+            className="mt-8 pt-6 border-t border-white/10 text-center relative z-10"
           >
             <p className="text-sm text-gray-400">
               Already have an account?{' '}

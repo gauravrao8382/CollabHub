@@ -10,16 +10,16 @@ import {
 // ✅ Import toast utilities
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
-// ===== Dark Theme EmptyState Component =====
-const EmptyState = ({ icon: Icon, msg, subMsg, link, linkText, color = 'violet' }) => {
+// ===== Warm Dark Theme EmptyState Component =====
+const EmptyState = ({ icon: Icon, msg, subMsg, link, linkText, color = 'amber' }) => {
   const colorClasses = {
-    violet: { bg: 'bg-violet-500/10', border: 'border-violet-500/20', text: 'text-violet-400', btn: 'from-violet-600 to-cyan-600' },
-    cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400', btn: 'from-cyan-600 to-emerald-600' },
-    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', btn: 'from-emerald-600 to-teal-600' },
-    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', btn: 'from-amber-600 to-orange-600' }
+    amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', btn: 'from-amber-600 to-orange-600' },
+    orange: { bg: 'bg-orange-500/10', border: 'border-orange-500/20', text: 'text-orange-400', btn: 'from-orange-600 to-rose-600' },
+    rose: { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400', btn: 'from-rose-600 to-red-600' },
+    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', btn: 'from-emerald-600 to-teal-600' }
   };
   
-  const colors = colorClasses[color] || colorClasses.violet;
+  const colors = colorClasses[color] || colorClasses.amber;
 
   return (
     <motion.div 
@@ -30,14 +30,14 @@ const EmptyState = ({ icon: Icon, msg, subMsg, link, linkText, color = 'violet' 
       <div className={`w-20 h-20 rounded-2xl ${colors.bg} ${colors.border} border flex items-center justify-center mx-auto mb-6`}>
         <Icon className={`w-10 h-10 ${colors.text}`} />
       </div>
-      <h3 className="text-lg font-semibold text-gray-100 mb-2">{msg}</h3>
-      {subMsg && <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">{subMsg}</p>}
+      <h3 className="text-lg font-semibold text-stone-100 mb-2">{msg}</h3>
+      {subMsg && <p className="text-stone-400 text-sm mb-6 max-w-sm mx-auto">{subMsg}</p>}
       {link && linkText && (
         <Link 
           to={link} 
           className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r ${colors.btn} 
                     text-white font-semibold hover:opacity-90 transition-all shadow-lg 
-                    shadow-violet-500/25 hover:shadow-violet-500/40`}
+                    shadow-amber-500/25 hover:shadow-amber-500/40`}
         >
           {linkText} <ArrowRight size={18} />
         </Link>
@@ -46,23 +46,23 @@ const EmptyState = ({ icon: Icon, msg, subMsg, link, linkText, color = 'violet' 
   );
 };
 
-// ===== Dark Theme Project Card Component =====
+// ===== Warm Dark Theme Project Card Component =====
 const ProjectCard = ({ project, type, color, onAction }) => {
   const colorClasses = {
-    indigo: { badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20', hover: 'hover:border-indigo-500/30', text: 'text-indigo-400' },
-    purple: { badge: 'bg-purple-500/10 text-purple-300 border-purple-500/20', hover: 'hover:border-purple-500/30', text: 'text-purple-400' },
-    cyan: { badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20', hover: 'hover:border-cyan-500/30', text: 'text-cyan-400' },
+    amber: { badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20', hover: 'hover:border-amber-500/30', text: 'text-amber-400' },
+    orange: { badge: 'bg-orange-500/10 text-orange-300 border-orange-500/20', hover: 'hover:border-orange-500/30', text: 'text-orange-400' },
+    rose: { badge: 'bg-rose-500/10 text-rose-300 border-rose-500/20', hover: 'hover:border-rose-500/30', text: 'text-rose-400' },
     emerald: { badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20', hover: 'hover:border-emerald-500/30', text: 'text-emerald-400' }
   };
   
-  const colors = colorClasses[color] || colorClasses.indigo;
+  const colors = colorClasses[color] || colorClasses.amber;
   
   const statusColors = {
     Accepted: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
     Rejected: 'bg-rose-500/10 text-rose-300 border-rose-500/20',
     Pending: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-    Completed: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
-    Active: 'bg-violet-500/10 text-violet-300 border-violet-500/20'
+    Completed: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+    Active: 'bg-amber-500/10 text-amber-300 border-amber-500/20'
   };
 
   return (
@@ -72,12 +72,12 @@ const ProjectCard = ({ project, type, color, onAction }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className={`group p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl 
+      className={`group p-5 rounded-2xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl 
                 ${colors.hover} transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4`}
     >
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-3 mb-2">
-          <h3 className={`font-bold text-lg text-gray-100 group-hover:${colors.text} transition-colors truncate`}>
+          <h3 className={`font-bold text-lg text-stone-100 group-hover:${colors.text} transition-colors truncate`}>
             {project.title}
           </h3>
           {project.status && (
@@ -92,21 +92,21 @@ const ProjectCard = ({ project, type, color, onAction }) => {
           )}
         </div>
         
-        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-stone-400">
           <span className="flex items-center gap-1.5">
             <Building size={14} className={colors.text} /> 
             <span className="truncate max-w-[150px]">{project.college}</span>
           </span>
-          <span className="w-1 h-1 bg-gray-600 rounded-full hidden sm:inline" />
-          <span className="px-2 py-0.5 bg-gray-700/50 rounded text-xs">{project.type}</span>
-          <span className="w-1 h-1 bg-gray-600 rounded-full hidden sm:inline" />
+          <span className="w-1 h-1 bg-stone-600 rounded-full hidden sm:inline" />
+          <span className="px-2 py-0.5 bg-stone-700/50 rounded text-xs">{project.type}</span>
+          <span className="w-1 h-1 bg-stone-600 rounded-full hidden sm:inline" />
           <span className="flex items-center gap-1.5">
-            <Clock size={14} className="text-gray-500" /> 
+            <Clock size={14} className="text-stone-500" /> 
             {project.date || project.posted || project.completedDate}
           </span>
           {project.applicants?.length !== undefined && (
             <>
-              <span className="w-1 h-1 bg-gray-600 rounded-full hidden sm:inline" />
+              <span className="w-1 h-1 bg-stone-600 rounded-full hidden sm:inline" />
               <span className={`flex items-center gap-1.5 ${colors.text} font-medium`}>
                 <Users size={14} /> {project.applicants.length} Applicants
               </span>
@@ -119,9 +119,9 @@ const ProjectCard = ({ project, type, color, onAction }) => {
         {onAction?.secondary && (
           <button
             onClick={(e) => { e.stopPropagation(); onAction.secondary.onClick(); }}
-            className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white 
-                     bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors 
-                     flex items-center gap-1.5 border border-gray-600/50"
+            className="px-4 py-2 text-sm font-medium text-stone-300 hover:text-white 
+                     bg-stone-700/50 hover:bg-stone-700 rounded-lg transition-colors 
+                     flex items-center gap-1.5 border border-stone-600/50"
           >
             {onAction.secondary.icon} {onAction.secondary.label}
           </button>
@@ -130,7 +130,7 @@ const ProjectCard = ({ project, type, color, onAction }) => {
           to={onAction?.primary?.link || `/project/${project._id || project.id}`}
           onClick={(e) => onAction?.primary?.onClick?.(e)}
           className={`inline-flex items-center gap-1.5 text-sm font-semibold ${colors.text} 
-                    hover:text-gray-100 transition-colors group/link`}
+                    hover:text-stone-100 transition-colors group/link`}
         >
           {onAction?.primary?.label || 'View Details'} 
           <ArrowRight size={14} className="group-hover/link:translate-x-0.5 transition-transform" />
@@ -158,10 +158,8 @@ const Profile = ({ user, onLogout, projects }) => {
   // ===== Check for updates from edit page with toast =====
   useEffect(() => {
     if (location.state?.updated && user) {
-      // Show welcome back toast if coming from successful edit
       showInfo('Profile updated! Welcome back ✨');
       
-      // Refresh user data from localStorage if updated
       const savedUser = localStorage.getItem('user');
       if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
@@ -180,23 +178,19 @@ const Profile = ({ user, onLogout, projects }) => {
     if (projects && localUser?._id) {
       const userId = String(localUser._id);
       
-      // Created projects (user is owner)
       const created = projects.filter(p => String(p.owner) === userId);
       setCreatedProject(created);
       
-      // Applied projects (user applied)
       const applied = projects.filter(p => 
         p.applicants?.some(applicant => String(applicant.userId) === userId)
       );
       setAppliedProject(applied);
       
-      // Selected projects (user is team member)
       const selected = projects.filter(p => 
         p.teamMembers?.some(member => String(member.userId) === userId)
       );
       setSelectedProject(selected);
       
-      // Completed projects
       const completed = projects.filter(p => 
         p.status === 'Completed' && (
           String(p.owner) === userId || 
@@ -213,30 +207,25 @@ const Profile = ({ user, onLogout, projects }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // ✅ Validate file type
     if (!file.type.startsWith('image/')) {
       showError('Please select a valid image file');
       return;
     }
 
-    // ✅ Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       showError('Image size should be less than 5MB');
       return;
     }
 
-    // ✅ Show loading toast for upload
     const toastId = showLoading('Uploading profile picture...');
 
     try {
-      // Read file for preview
       const reader = new FileReader();
       
       reader.onloadend = async () => {
         const imageDataUrl = reader.result;
         setProfileImage(imageDataUrl);
 
-        // ✅ Optional: Upload to server
         try {
           const formData = new FormData();
           formData.append('profileImage', file);
@@ -248,10 +237,8 @@ const Profile = ({ user, onLogout, projects }) => {
             }
           });
           
-          // ✅ Update toast to success after server upload
           updateToastSuccess(toastId, 'Profile picture updated! 🎨');
           
-          // ✅ Update localStorage with new image if backend returns updated user
           const savedUser = localStorage.getItem('user');
           if (savedUser) {
             const parsedUser = JSON.parse(savedUser);
@@ -261,7 +248,6 @@ const Profile = ({ user, onLogout, projects }) => {
           
         } catch (uploadErr) {
           console.error('Upload error:', uploadErr);
-          // ✅ Still show success for local preview, but warn about server sync
           updateToastSuccess(toastId, 'Picture updated locally! (Server sync failed)');
           showError('Failed to sync with server. Please try again.');
         }
@@ -271,7 +257,6 @@ const Profile = ({ user, onLogout, projects }) => {
 
     } catch (err) {
       console.error('Image read error:', err);
-      // ✅ Update toast to error
       updateToastError(toastId, 'Failed to process image. Please try again.');
     }
   };
@@ -281,7 +266,6 @@ const Profile = ({ user, onLogout, projects }) => {
   // ===== Logout handler with toast =====
   const handleLogoutClick = () => {
     if (window.confirm("Are you sure you want to logout?")) {
-      // ✅ Show info toast before redirect
       showInfo('Logging out... See you soon! 👋');
       
       localStorage.removeItem('token');
@@ -289,7 +273,6 @@ const Profile = ({ user, onLogout, projects }) => {
       
       if (onLogout) onLogout();
       
-      // Small delay for toast visibility
       setTimeout(() => {
         navigate('/');
       }, 800);
@@ -298,8 +281,6 @@ const Profile = ({ user, onLogout, projects }) => {
 
   // ===== Edit navigation handler =====
   const handleEditClick = () => {
-    // ✅ Optional: Show info toast when navigating to edit
-    // showInfo('Editing your profile...');
     navigate('/profile/edit', { 
       state: { user: { ...localUser, skills: localUser?.skills || [] } } 
     });
@@ -308,8 +289,6 @@ const Profile = ({ user, onLogout, projects }) => {
   // ===== Tab navigation with smooth scroll =====
   const handleStatClick = (tabName) => {
     setActiveTab(tabName);
-    // ✅ Optional: Show subtle feedback on tab change
-    // showInfo(`Showing ${tabName} projects`);
     window.scrollTo({ top: 400, behavior: 'smooth' });
   };
 
@@ -335,85 +314,85 @@ const Profile = ({ user, onLogout, projects }) => {
     }
   };
 
-  // ===== Get tab color =====
+  // ===== Get tab color - Warm Theme =====
   const getTabColor = (tabId) => {
     const colors = {
-      applied: 'violet',
-      created: 'purple', 
-      selected: 'cyan',
+      applied: 'amber',
+      created: 'orange', 
+      selected: 'rose',
       completed: 'emerald'
     };
-    return colors[tabId] || 'violet';
+    return colors[tabId] || 'amber';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 pt-20 px-4 pb-12 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/30 text-stone-100 pt-20 px-4 pb-12 relative overflow-hidden">
       
-      {/* ===== Background Decorative Elements ===== */}
+      {/* ===== Background Decorative Elements - Warm Tones ===== */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.35, 0.2] }}
           transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-amber-600/30 via-orange-600/25 to-rose-600/25 rounded-full blur-3xl"
         />
         <motion.div 
-          animate={{ scale: [1.15, 1, 1.15], opacity: [0.1, 0.25, 0.1] }}
+          animate={{ scale: [1.15, 1, 1.15], opacity: [0.15, 0.3, 0.15] }}
           transition={{ duration: 12, repeat: Infinity }}
-          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-orange-600/25 via-rose-600/20 to-red-600/20 rounded-full blur-3xl"
         />
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        {/* Warm Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(251,191,36,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,191,36,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
 
-        {/* ===== Profile Header Card ===== */}
+        {/* ===== Profile Header Card - Warm Theme ===== */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="p-6 md:p-10 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl mb-8 relative overflow-hidden group"
+          className="p-6 md:p-10 rounded-3xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl shadow-2xl mb-8 relative overflow-hidden group"
         >
-          {/* Glow Effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-r from-violet-600/10 to-cyan-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          {/* Glow Effect - Warm */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-r from-amber-600/10 via-orange-600/10 to-rose-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
           {/* Responsive Layout: Image Left/Top, Details Right/Bottom */}
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 relative z-10">
 
-            {/* Profile Picture */}
+            {/* Profile Picture - Warm Gradient */}
             <motion.div 
               whileHover={{ scale: 1.03 }}
               className="relative group cursor-pointer order-1 lg:order-1" 
               onClick={triggerFileInput}
               title="Click to change profile picture"
             >
-              {/* Animated Ring */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
+              {/* Animated Ring - Warm */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 blur-lg opacity-40 group-hover:opacity-60 transition-opacity" />
               
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gray-700/50 shadow-xl overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-stone-700/50 shadow-xl overflow-hidden bg-gradient-to-br from-stone-700 to-stone-800 flex items-center justify-center">
                 {profileImage ? (
                   <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                  <span className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
                     {localUser?.name?.[0]?.toUpperCase() || 'U'}
                   </span>
                 )}
               </div>
               
-              {/* Camera Button */}
+              {/* Camera Button - Warm */}
               <motion.div 
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="absolute bottom-1 right-1 md:bottom-2 md:right-2 p-2 md:p-2.5 rounded-full bg-gray-900/90 border border-gray-700 shadow-lg"
+                className="absolute bottom-1 right-1 md:bottom-2 md:right-2 p-2 md:p-2.5 rounded-full bg-stone-900/90 border border-stone-700 shadow-lg"
               >
-                <Camera size={18} className="text-violet-400" />
+                <Camera size={18} className="text-amber-400" />
               </motion.div>
               
               <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
             </motion.div>
 
-            {/* User Details & Actions - Right side on desktop */}
+            {/* User Details & Actions - Right side on desktop - Warm */}
             <div className="flex-1 text-center lg:text-left w-full order-2 lg:order-2">
               <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-4">
                 <div>
@@ -422,7 +401,7 @@ const Profile = ({ user, onLogout, projects }) => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight"
                   >
-                    <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
                       {localUser?.name || 'User'}
                     </span>
                   </motion.h1>
@@ -434,23 +413,23 @@ const Profile = ({ user, onLogout, projects }) => {
                     className="flex flex-wrap justify-center lg:justify-start gap-2.5 text-sm font-medium"
                   >
                     {[
-                      { icon: Mail, text: localUser?.email, color: "text-cyan-400" },
-                      { icon: Building, text: localUser?.college, color: "text-violet-400" },
+                      { icon: Mail, text: localUser?.email, color: "text-orange-400" },
+                      { icon: Building, text: localUser?.college, color: "text-amber-400" },
                       { icon: GraduationCap, text: localUser?.passingYear ? `Passing: ${localUser.passingYear}` : null, color: "text-emerald-400" }
                     ].filter(item => item.text).map((item, idx) => (
                       <span 
                         key={idx}
                         className="flex items-center gap-2 px-4 py-2 rounded-full 
-                                 bg-gray-700/50 border border-gray-600/50 
-                                 hover:border-violet-500/30 transition-colors"
+                                 bg-stone-700/50 border border-stone-600/50 
+                                 hover:border-amber-500/30 transition-colors"
                       >
                         <item.icon size={16} className={item.color} /> 
-                        <span className="text-gray-300">{item.text}</span>
+                        <span className="text-stone-300">{item.text}</span>
                       </span>
                     ))}
                   </motion.div>
 
-                  {/* Skills Tags */}
+                  {/* Skills Tags - Warm */}
                   {localUser?.skills?.length > 0 && (
                     <motion.div 
                       initial={{ opacity: 0 }}
@@ -462,14 +441,14 @@ const Profile = ({ user, onLogout, projects }) => {
                         <span 
                           key={idx}
                           className="px-3 py-1 rounded-full text-xs font-medium 
-                                   bg-gradient-to-r from-violet-500/20 to-cyan-500/20 
-                                   border border-violet-500/30 text-violet-300"
+                                   bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-rose-500/20 
+                                   border border-amber-500/30 text-amber-300"
                         >
                           {skill}
                         </span>
                       ))}
                       {localUser.skills.length > 5 && (
-                        <span className="px-2 py-1 text-xs text-gray-500">
+                        <span className="px-2 py-1 text-xs text-stone-500">
                           +{localUser.skills.length - 5} more
                         </span>
                       )}
@@ -477,7 +456,7 @@ const Profile = ({ user, onLogout, projects }) => {
                   )}
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - Warm */}
                 <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -486,8 +465,8 @@ const Profile = ({ user, onLogout, projects }) => {
                 >
                   <button 
                     onClick={handleEditClick}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 
-                             text-gray-300 font-semibold hover:bg-gray-700 hover:border-violet-500/30 
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-stone-700/50 border border-stone-600/50 
+                             text-stone-300 font-semibold hover:bg-stone-700 hover:border-amber-500/30 
                              transition-all duration-300"
                   >
                     <Edit3 size={18} /> Edit
@@ -504,7 +483,7 @@ const Profile = ({ user, onLogout, projects }) => {
                 </motion.div>
               </div>
 
-              {/* Stats Row (Clickable) */}
+              {/* Stats Row (Clickable) - Warm Colors */}
               <motion.div 
                 variants={containerVariants}
                 initial="hidden"
@@ -512,9 +491,9 @@ const Profile = ({ user, onLogout, projects }) => {
                 className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
               >
                 {[
-                  { label: 'Applied', value: appliedProject.length, color: 'violet', icon: Briefcase, tab: 'applied' },
-                  { label: 'Created', value: createdProject.length, color: 'purple', icon: PlusCircle, tab: 'created' },
-                  { label: 'Selected', value: selectedProject.length, color: 'cyan', icon: UserCheck, tab: 'selected' },
+                  { label: 'Applied', value: appliedProject.length, color: 'amber', icon: Briefcase, tab: 'applied' },
+                  { label: 'Created', value: createdProject.length, color: 'orange', icon: PlusCircle, tab: 'created' },
+                  { label: 'Selected', value: selectedProject.length, color: 'rose', icon: UserCheck, tab: 'selected' },
                   { label: 'Completed', value: completedProject.length, color: 'emerald', icon: Award, tab: 'completed' }
                 ].map((stat, idx) => (
                   <motion.button
@@ -523,7 +502,7 @@ const Profile = ({ user, onLogout, projects }) => {
                     whileHover={{ y: -4, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleStatClick(stat.tab)}
-                    className={`p-4 rounded-2xl bg-gray-900/50 border border-gray-700/50 
+                    className={`p-4 rounded-2xl bg-stone-900/50 border border-stone-700/50 
                              hover:border-${stat.color}-500/30 transition-all duration-300 text-center group`}
                   >
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-r from-${stat.color}-500/20 to-${stat.color}-600/20 
@@ -533,7 +512,7 @@ const Profile = ({ user, onLogout, projects }) => {
                     <p className={`text-2xl font-bold bg-gradient-to-r from-${stat.color}-400 to-${stat.color}-300 bg-clip-text text-transparent`}>
                       {stat.value}
                     </p>
-                    <p className="text-xs text-gray-400 font-medium mt-1">{stat.label}</p>
+                    <p className="text-xs text-stone-400 font-medium mt-1">{stat.label}</p>
                   </motion.button>
                 ))}
               </motion.div>
@@ -541,19 +520,19 @@ const Profile = ({ user, onLogout, projects }) => {
           </div>
         </motion.div>
 
-        {/* ===== Tabs & Content Section ===== */}
+        {/* ===== Tabs & Content Section - Warm Theme ===== */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl overflow-hidden"
+          className="rounded-3xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl shadow-2xl overflow-hidden"
         >
-          {/* Tab Navigation */}
-          <div className="flex border-b border-gray-700/50 bg-gray-800/30 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-700">
+          {/* Tab Navigation - Warm */}
+          <div className="flex border-b border-stone-700/50 bg-stone-800/30 overflow-x-auto scrollbar-thin scrollbar-thumb-stone-700">
             {[
-              { id: 'applied', label: 'Applied', icon: Briefcase, color: 'violet' },
-              { id: 'created', label: 'Created', icon: PlusCircle, color: 'purple' },
-              { id: 'selected', label: 'Selected', icon: UserCheck, color: 'cyan' },
+              { id: 'applied', label: 'Applied', icon: Briefcase, color: 'amber' },
+              { id: 'created', label: 'Created', icon: PlusCircle, color: 'orange' },
+              { id: 'selected', label: 'Selected', icon: UserCheck, color: 'rose' },
               { id: 'completed', label: 'Completed', icon: Award, color: 'emerald' }
             ].map((tab) => (
               <button
@@ -563,7 +542,7 @@ const Profile = ({ user, onLogout, projects }) => {
                          transition-all duration-300 relative capitalize ${
                   activeTab === tab.id 
                     ? `text-${tab.color}-400` 
-                    : 'text-gray-400 hover:text-gray-200'
+                    : 'text-stone-400 hover:text-stone-200'
                 }`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
@@ -577,12 +556,12 @@ const Profile = ({ user, onLogout, projects }) => {
                              bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-400 rounded-full`} 
                   />
                 )}
-                <span className="absolute inset-0 bg-violet-500/5 opacity-0 hover:opacity-100 transition-opacity rounded-t-3xl" />
+                <span className="absolute inset-0 bg-amber-500/5 opacity-0 hover:opacity-100 transition-opacity rounded-t-3xl" />
               </button>
             ))}
           </div>
 
-          {/* Tab Content Area */}
+          {/* Tab Content Area - Warm */}
           <div className="p-5 md:p-8 min-h-[400px]">
             <AnimatePresence mode="wait">
               {['applied', 'created', 'selected', 'completed'].map((tabId) => (
@@ -652,7 +631,7 @@ const Profile = ({ user, onLogout, projects }) => {
           </div>
         </motion.div>
 
-        {/* ===== Profile Tips Section ===== */}
+        {/* ===== Profile Tips Section - Warm Theme ===== */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -665,14 +644,14 @@ const Profile = ({ user, onLogout, projects }) => {
               title: "Profile Completeness", 
               value: `${Math.min(100, 60 + (localUser?.skills?.length || 0) * 8 + (localUser?.college ? 15 : 0) + (localUser?.passingYear ? 7 : 0))}%`, 
               desc: "Add skills & details to reach 100%", 
-              color: "violet" 
+              color: "amber" 
             },
             { 
               icon: TrendingUp, 
               title: "Profile Views", 
               value: "124", 
               desc: "+12 this week", 
-              color: "cyan" 
+              color: "orange" 
             }
           ].map((stat, idx) => {
             const percentage = parseInt(stat.value);
@@ -680,7 +659,7 @@ const Profile = ({ user, onLogout, projects }) => {
               <motion.div
                 key={idx}
                 whileHover={{ y: -4 }}
-                className="p-5 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl"
+                className="p-5 rounded-2xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-r from-${stat.color}-500/20 to-${stat.color}-600/20 
@@ -688,11 +667,11 @@ const Profile = ({ user, onLogout, projects }) => {
                     <stat.icon className={`text-${stat.color}-400 w-5 h-5`} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-200">{stat.title}</p>
-                    <p className="text-xs text-gray-400">{stat.desc}</p>
+                    <p className="text-sm font-semibold text-stone-200">{stat.title}</p>
+                    <p className="text-xs text-stone-400">{stat.desc}</p>
                   </div>
                 </div>
-                <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div className="h-2 bg-stone-700 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${percentage}%` }}
@@ -700,7 +679,7 @@ const Profile = ({ user, onLogout, projects }) => {
                     className={`h-full bg-gradient-to-r from-${stat.color}-500 to-${stat.color}-400 rounded-full`}
                   />
                 </div>
-                <p className="text-right text-xs text-gray-400 mt-1">{stat.value}</p>
+                <p className="text-right text-xs text-stone-400 mt-1">{stat.value}</p>
               </motion.div>
             );
           })}

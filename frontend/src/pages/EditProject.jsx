@@ -20,7 +20,7 @@ import { showSuccess, showError, showLoading, updateToastSuccess, updateToastErr
 
 const API = "http://localhost:5000";
 
-// ===== Dark Theme LabeledInput Component =====
+// ===== Warm Dark Theme LabeledInput Component =====
 const LabeledInput = ({ 
   label, 
   icon: Icon, 
@@ -37,23 +37,23 @@ const LabeledInput = ({
   <motion.div 
     initial={{ opacity: 0, x: -10 }}
     animate={{ opacity: 1, x: 0 }}
-    className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center py-4 border-b border-gray-700/50 last:border-0"
+    className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center py-4 border-b border-stone-700/50 last:border-0"
   >
-    {/* Label */}
-    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-gray-300 flex items-center gap-2 md:justify-end text-right">
-      <Icon className="text-violet-400 w-4 h-4 flex-shrink-0" /> 
+    {/* Label - Warm */}
+    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-stone-300 flex items-center gap-2 md:justify-end text-right">
+      <Icon className="text-amber-400 w-4 h-4 flex-shrink-0" /> 
       <span className="hidden md:inline">{label}</span>
       <span className="md:hidden">{label}</span>
       {required && <span className="text-rose-400 text-[10px] md:text-sm">*</span>}
     </label>
 
-    {/* Input */}
+    {/* Input - Warm Focus */}
     <div className="md:col-span-9">
       {isTextArea ? (
         <textarea
-          className={`w-full px-4 py-3 rounded-xl bg-gray-900/50 border ${
-            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gray-700 focus:ring-violet-500/50 focus:border-violet-500'
-          } outline-none transition-all duration-300 text-gray-100 placeholder-gray-500 resize-none hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-full px-4 py-3 rounded-xl bg-stone-900/50 border ${
+            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-stone-700 focus:ring-amber-500/50 focus:border-amber-500'
+          } outline-none transition-all duration-300 text-stone-100 placeholder-stone-500 resize-none hover:border-stone-600 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder}
           rows={4}
           required={required}
@@ -64,9 +64,9 @@ const LabeledInput = ({
       ) : (
         <input
           type={type}
-          className={`w-full px-4 py-3 rounded-xl bg-gray-900/50 border ${
-            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-gray-700 focus:ring-violet-500/50 focus:border-violet-500'
-          } outline-none transition-all duration-300 text-gray-100 placeholder-gray-500 hover:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-full px-4 py-3 rounded-xl bg-stone-900/50 border ${
+            error ? 'border-rose-500/50 focus:ring-rose-500/50' : 'border-stone-700 focus:ring-amber-500/50 focus:border-amber-500'
+          } outline-none transition-all duration-300 text-stone-100 placeholder-stone-500 hover:border-stone-600 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder}
           required={required}
           value={value}
@@ -108,7 +108,6 @@ const EditProject = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
-  // ✅ REMOVED: const [success, setSuccess] = useState(''); - toasts handle this
 
   // ===== Fetch existing project =====
   useEffect(() => {
@@ -132,10 +131,7 @@ const EditProject = () => {
         });
 
       } catch (err) {
-        // ✅ Use toast for fetch error instead of inline message
         showError(err.response?.data?.message || "Failed to load project");
-        
-        // Still navigate back after error
         setTimeout(() => navigate('/profile'), 2000);
       } finally {
         setLoading(false);
@@ -165,13 +161,11 @@ const EditProject = () => {
     if (saving) return;
 
     if (!validateForm()) {
-      showError('Please fix the errors above'); // ✅ Toast for validation failure
+      showError('Please fix the errors above');
       return;
     }
     
     setSaving(true);
-
-    // ✅ Show loading toast
     const toastId = showLoading('Saving project changes...');
 
     try {
@@ -187,20 +181,15 @@ const EditProject = () => {
         }
       });
 
-      // ✅ Update loading toast to success
       updateToastSuccess(toastId, 'Project updated successfully! 🚀');
-      
-      // ✅ Optional: Show extra info
       showInfo('Redirecting to project page...');
       
-      // Small delay for toast visibility before redirect
       setTimeout(() => {
         navigate(`/project/${projectId}`);
       }, 1500);
 
     } catch (err) {
       console.error('Update error:', err);
-      // ✅ Update loading toast to error
       updateToastError(
         toastId, 
         err.response?.data?.message || "Update failed. Please try again."
@@ -229,39 +218,39 @@ const EditProject = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
-  // ===== Loading State =====
+  // ===== Loading State - Warm Theme =====
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/30 flex items-center justify-center">
         <motion.div 
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="relative"
         >
-          <div className="w-14 h-14 rounded-full border-4 border-violet-500/20 border-t-violet-500" />
-          <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-transparent border-r-cyan-500 animate-spin" style={{ animationDuration: '0.8s' }} />
+          <div className="w-14 h-14 rounded-full border-4 border-amber-500/20 border-t-amber-500" />
+          <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-transparent border-r-orange-500 animate-spin" style={{ animationDuration: '0.8s' }} />
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 py-8 px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/30 text-stone-100 py-8 px-4 relative overflow-hidden">
       
-      {/* ===== Background Decorative Elements ===== */}
+      {/* ===== Background Decorative Elements - Warm Tones ===== */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.35, 0.2] }}
           transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-amber-600/30 via-orange-600/25 to-rose-600/25 rounded-full blur-3xl"
         />
         <motion.div 
-          animate={{ scale: [1.15, 1, 1.15], opacity: [0.1, 0.25, 0.1] }}
+          animate={{ scale: [1.15, 1, 1.15], opacity: [0.15, 0.3, 0.15] }}
           transition={{ duration: 12, repeat: Infinity }}
-          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-orange-600/25 via-rose-600/20 to-red-600/20 rounded-full blur-3xl"
         />
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        {/* Warm Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(251,191,36,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,191,36,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
       <motion.div 
@@ -270,13 +259,13 @@ const EditProject = () => {
         className="max-w-4xl mx-auto relative z-10"
       >
 
-        {/* ===== Header Card ===== */}
+        {/* ===== Header Card - Warm Theme ===== */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-7 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl mb-6 relative overflow-hidden group"
+          className="p-5 md:p-7 rounded-3xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl shadow-2xl mb-6 relative overflow-hidden group"
         >
-          {/* Glow Effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          {/* Warm Glow Effect */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
           
           <div className="relative z-10 flex items-center gap-4">
             <motion.button
@@ -284,43 +273,40 @@ const EditProject = () => {
               whileTap={{ scale: 0.95 }}
               onClick={handleBack}
               type="button"
-              className="p-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 hover:bg-gray-700 hover:border-violet-500/30 transition-all flex items-center justify-center"
+              className="p-2.5 rounded-xl bg-stone-700/50 border border-stone-600/50 hover:bg-stone-700 hover:border-amber-500/30 transition-all flex items-center justify-center"
               aria-label="Go back"
             >
-              <ArrowLeft className="text-gray-300 hover:text-violet-400 transition-colors w-5 h-5" />
+              <ArrowLeft className="text-stone-300 hover:text-amber-400 transition-colors w-5 h-5" />
             </motion.button>
             
             <div className="flex-1 min-w-0">
               <h1 className="text-xl md:text-2xl font-extrabold">
-                <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
                   Edit Project
                 </span>
               </h1>
-              <p className="text-gray-400 text-sm mt-0.5">Update your project details</p>
+              <p className="text-stone-400 text-sm mt-0.5">Update your project details</p>
             </div>
             
-            {/* Status Badge */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20">
-              <Sparkles className="w-4 h-4 text-violet-400" />
-              <span className="text-xs font-medium text-violet-300">Quick Edit</span>
+            {/* Status Badge - Warm */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-medium text-amber-300">Quick Edit</span>
             </div>
           </div>
         </motion.div>
 
-        {/* ===== Form Card ===== */}
+        {/* ===== Form Card - Warm Theme ===== */}
         <motion.form
           onSubmit={handleSubmit}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="p-5 md:p-7 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl relative overflow-hidden"
+          className="p-5 md:p-7 rounded-3xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl shadow-2xl relative overflow-hidden"
         >
-          {/* Card Glow */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/3 to-cyan-500/3 pointer-events-none" />
+          {/* Card Glow - Warm */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-500/3 via-orange-500/3 to-rose-500/3 pointer-events-none" />
           
-          {/* ✅ REMOVED: Inline success/error message blocks - toasts handle these now */}
-          {/* Field-level errors still show inside LabeledInput components */}
-
           {/* Form Fields */}
           <div className="space-y-2 relative z-10">
             <LabeledInput
@@ -394,16 +380,16 @@ const EditProject = () => {
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-8 pt-6 border-t border-gray-700/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+          {/* Action Buttons - Warm Theme */}
+          <div className="mt-8 pt-6 border-t border-stone-700/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={handleBack}
               disabled={saving}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 
-                       text-gray-300 font-semibold hover:bg-gray-700 hover:border-violet-500/30 
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-stone-700/50 border border-stone-600/50 
+                       text-stone-300 font-semibold hover:bg-stone-700 hover:border-amber-500/30 
                        transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <ArrowLeft size={18} /> Back
@@ -414,14 +400,14 @@ const EditProject = () => {
               whileTap={{ scale: saving ? 1 : 0.98 }}
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                       text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
-                       transition-all duration-300 shadow-lg shadow-violet-500/25 
-                       hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
+                       text-white font-semibold hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
+                       transition-all duration-300 shadow-lg shadow-amber-500/30 
+                       hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed
                        flex items-center justify-center gap-2 group relative overflow-hidden"
             >
-              {/* Button Glow */}
-              <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* Button Glow - Warm */}
+              <span className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-rose-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
               
               {saving ? (
                 <>
@@ -438,7 +424,7 @@ const EditProject = () => {
           </div>
         </motion.form>
 
-        {/* ===== Helper Tips ===== */}
+        {/* ===== Helper Tips - Warm Theme ===== */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -446,18 +432,18 @@ const EditProject = () => {
           className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
         >
           {[
-            { icon: Code, text: "Use comma-separated values for skills (e.g., React, Node.js)" },
-            { icon: FileText, text: "Keep descriptions clear and concise for better visibility" }
+            { icon: Code, text: "Use comma-separated values for skills (e.g., React, Node.js)", color: "text-amber-400" },
+            { icon: FileText, text: "Keep descriptions clear and concise for better visibility", color: "text-orange-400" }
           ].map((tip, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 + idx * 0.1 }}
-              className="flex items-center gap-3 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50"
+              className="flex items-center gap-3 p-4 rounded-xl bg-stone-800/30 border border-stone-700/50"
             >
-              <tip.icon className="w-4 h-4 text-violet-400 flex-shrink-0" />
-              <p className="text-xs text-gray-400">{tip.text}</p>
+              <tip.icon className={`w-4 h-4 ${tip.color} flex-shrink-0`} />
+              <p className="text-xs text-stone-400">{tip.text}</p>
             </motion.div>
           ))}
         </motion.div>

@@ -4,23 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, Lock, Smartphone, Eye, EyeOff,
-  CheckCircle2, AlertCircle, LogOut, Trash2, Edit2, Save,
+  CheckCircle2, AlertCircle, LogOut, Edit2, Save,
   Mail, Key, ChevronRight
 } from 'lucide-react';
 
-// --- Settings Section Component ---
+// --- Settings Section Component (Old Theme Style) ---
 const SettingsSection = ({ title, icon: Icon, children, description }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="p-5 lg:p-6 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl"
+    className="p-5 lg:p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10"
   >
     <div className="flex items-start gap-4 mb-5">
-      <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/20 border border-violet-500/30">
+      <div className="p-2.5 rounded-xl bg-violet-500/20 border border-violet-500/30">
         <Icon size={20} className="text-violet-400" />
       </div>
       <div>
-        <h3 className="text-lg font-bold text-gray-100">{title}</h3>
+        <h3 className="text-lg font-bold text-white">{title}</h3>
         {description && <p className="text-sm text-gray-400 mt-0.5">{description}</p>}
       </div>
     </div>
@@ -28,7 +28,7 @@ const SettingsSection = ({ title, icon: Icon, children, description }) => (
   </motion.div>
 );
 
-// --- Password Input Component ---
+// --- Password Input Component (Old Theme) ---
 const PasswordInput = ({ label, value, onChange, placeholder, showToggle = true }) => {
   const [showPassword, setShowPassword] = useState(false);
   
@@ -41,8 +41,8 @@ const PasswordInput = ({ label, value, onChange, placeholder, showToggle = true 
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl 
-                   text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 
+          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+                   text-white placeholder-gray-500 focus:outline-none focus:ring-2 
                    focus:ring-violet-500/50 focus:border-violet-500 transition-all"
         />
         {showToggle && (
@@ -59,7 +59,7 @@ const PasswordInput = ({ label, value, onChange, placeholder, showToggle = true 
   );
 };
 
-// --- Device Card Component ---
+// --- Device Card Component (Old Theme) ---
 const DeviceCard = ({ device, onRevoke, isCurrent }) => (
   <motion.div
     layout
@@ -68,11 +68,11 @@ const DeviceCard = ({ device, onRevoke, isCurrent }) => (
     className={`p-4 rounded-xl border ${
       isCurrent 
         ? 'bg-emerald-500/10 border-emerald-500/30' 
-        : 'bg-gray-900/30 border-gray-700/50'
+        : 'bg-white/5 border-white/10'
     } flex items-center justify-between gap-4`}
   >
     <div className="flex items-center gap-3 min-w-0">
-      <div className={`p-2.5 rounded-lg ${isCurrent ? 'bg-emerald-500/20' : 'bg-gray-800/50'}`}>
+      <div className={`p-2.5 rounded-lg ${isCurrent ? 'bg-emerald-500/20' : 'bg-white/5'}`}>
         <Smartphone size={18} className={isCurrent ? 'text-emerald-400' : 'text-gray-400'} />
       </div>
       <div className="min-w-0">
@@ -170,7 +170,6 @@ const Settings = ({ user, onUpdateUser }) => {
 
   const handleRevokeDevice = (deviceId) => {
     setDevices(prev => prev.filter(d => d.id !== deviceId));
-    // API call: await api.revokeSession(deviceId);
   };
 
   const handleProfileUpdate = async (e) => {
@@ -192,7 +191,7 @@ const Settings = ({ user, onUpdateUser }) => {
     navigate('/forgot-password', { state: { email: user?.email } });
   };
 
-  // Sections Config (Only Security, Profile, Devices)
+  // Sections Config
   const sections = [
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'profile', label: 'Profile', icon: Edit2 },
@@ -200,31 +199,31 @@ const Settings = ({ user, onUpdateUser }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 relative pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-gray-100 relative pb-20">
       
-      {/* Background Decorations */}
+      {/* Background Decorations - Old Theme Style */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.15, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-gradient-to-r from-violet-600/15 to-cyan-600/15 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.1, 1], opacity: [0.08, 0.12, 0.08] }}
+          transition={{ duration: 12, repeat: Infinity }}
+          className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 rounded-full blur-3xl"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-900/70 border-b border-gray-800/50">
+      {/* Header - Old Theme */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/60 border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-gray-200 hover:bg-gray-800/50 rounded-xl transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
             >
               <ArrowLeft size={18} />
               <span className="hidden sm:inline">Back</span>
             </button>
             
-            <h1 className="text-xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               Settings
             </h1>
             
@@ -236,21 +235,21 @@ const Settings = ({ user, onUpdateUser }) => {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           
-          {/* Sidebar Navigation */}
+          {/* Sidebar Navigation - Old Theme */}
           <motion.aside 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="lg:w-64 flex-shrink-0"
           >
-            <nav className="sticky top-24 space-y-1 p-2 rounded-2xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl">
+            <nav className="sticky top-24 space-y-1 p-2 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10">
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
                     activeSection === section.id
-                      ? 'bg-gradient-to-r from-violet-600/20 to-cyan-600/20 text-violet-300 border border-violet-500/30'
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/30'
+                      ? 'bg-gradient-to-r from-violet-600/30 to-fuchsia-600/30 text-violet-300 border border-violet-500/40'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <section.icon size={18} />
@@ -288,7 +287,7 @@ const Settings = ({ user, onUpdateUser }) => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           onClick={() => setShowPasswordForm(true)}
-                          className="w-full flex items-center justify-between p-4 rounded-xl bg-gray-900/50 border border-gray-700/50 hover:border-violet-500/30 transition-all group"
+                          className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-violet-500/30 transition-all group"
                         >
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-violet-500/20">
@@ -355,13 +354,13 @@ const Settings = ({ user, onUpdateUser }) => {
                                 setPasswords({ current: '', new: '', confirm: '' });
                                 setPasswordError('');
                               }}
-                              className="flex-1 px-4 py-2.5 rounded-xl bg-gray-700/50 text-gray-300 font-medium hover:bg-gray-700 transition-colors"
+                              className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-300 font-medium hover:bg-white/10 transition-colors border border-white/10"
                             >
                               Cancel
                             </button>
                             <button
                               type="submit"
-                              className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all shadow-lg shadow-violet-500/25"
+                              className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all shadow-lg shadow-violet-500/25"
                             >
                               Update Password
                             </button>
@@ -383,7 +382,7 @@ const Settings = ({ user, onUpdateUser }) => {
                       </p>
                       <button
                         onClick={handleForgotPassword}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-900/50 border border-gray-700/50 text-gray-300 font-medium hover:border-violet-500/30 hover:text-violet-400 transition-all"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-medium hover:border-violet-500/30 hover:text-violet-400 transition-all"
                       >
                         <Mail size={18} />
                         Send Reset Link to {user?.email}
@@ -414,8 +413,8 @@ const Settings = ({ user, onUpdateUser }) => {
                             type="text"
                             value={profile.name}
                             onChange={(e) => setProfile(prev => ({ ...prev, name: e.target.value }))}
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl 
-                                     text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+                                     text-white placeholder-gray-500 focus:outline-none focus:ring-2 
                                      focus:ring-violet-500/50 focus:border-violet-500 transition-all"
                           />
                         </div>
@@ -426,7 +425,7 @@ const Settings = ({ user, onUpdateUser }) => {
                             type="email"
                             value={profile.email}
                             disabled
-                            className="w-full px-4 py-3 bg-gray-900/30 border border-gray-700/50 rounded-xl 
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
                                      text-gray-400 cursor-not-allowed"
                           />
                           <p className="text-xs text-gray-500">Email cannot be changed</p>
@@ -439,8 +438,8 @@ const Settings = ({ user, onUpdateUser }) => {
                             value={profile.college}
                             onChange={(e) => setProfile(prev => ({ ...prev, college: e.target.value }))}
                             placeholder="Your college name"
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl 
-                                     text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+                                     text-white placeholder-gray-500 focus:outline-none focus:ring-2 
                                      focus:ring-violet-500/50 focus:border-violet-500 transition-all"
                           />
                         </div>
@@ -454,8 +453,8 @@ const Settings = ({ user, onUpdateUser }) => {
                             placeholder="2025"
                             min="2020"
                             max="2030"
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl 
-                                     text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+                                     text-white placeholder-gray-500 focus:outline-none focus:ring-2 
                                      focus:ring-violet-500/50 focus:border-violet-500 transition-all"
                           />
                         </div>
@@ -467,8 +466,8 @@ const Settings = ({ user, onUpdateUser }) => {
                             value={profile.skills}
                             onChange={(e) => setProfile(prev => ({ ...prev, skills: e.target.value }))}
                             placeholder="React, Node.js, Python (comma separated)"
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl 
-                                     text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl 
+                                     text-white placeholder-gray-500 focus:outline-none focus:ring-2 
                                      focus:ring-violet-500/50 focus:border-violet-500 transition-all"
                           />
                         </div>
@@ -477,8 +476,8 @@ const Settings = ({ user, onUpdateUser }) => {
                       <div className="flex justify-end pt-4">
                         <button
                           type="submit"
-                          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                                   text-white font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all 
+                          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                                   text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all 
                                    shadow-lg shadow-violet-500/25"
                         >
                           <Save size={18} />

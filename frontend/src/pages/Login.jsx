@@ -25,38 +25,28 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  // ✅ REMOVED: const [error, setError] = useState('');
-  // ✅ REMOVED: const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ Basic client-side validation
     if (!email.trim() || !password.trim()) {
       showError('Please enter both email and password');
       return;
     }
 
     setLoading(true);
-
-    // ✅ Show loading toast
     const toastId = showLoading('Signing you in...');
 
     try {
       const res = await axios.post(`${API}/login`, { email, password });
 
       if (res.data.user) {
-        // ✅ Save auth data
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         
-        // ✅ Update loading toast to success
         updateToastSuccess(toastId, 'Login successful! Welcome back 🎉');
-        
-        // ✅ Optional: Show extra info
         showInfo('Redirecting to dashboard...');
         
-        // Small delay for toast visibility
         setTimeout(() => {
           onLogin(res.data.user);
           navigate('/dashboard', { state: { user: res.data.user } });
@@ -64,13 +54,10 @@ const Login = ({ onLogin }) => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      
-      // ✅ Update loading toast to error
       updateToastError(
         toastId, 
         err.response?.data?.message || "Invalid credentials. Please try again."
       );
-      
     } finally {
       setLoading(false);
     }
@@ -91,11 +78,11 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950/30 text-stone-100 flex items-center justify-center px-4 py-12 relative overflow-hidden">
       
-      {/* ===== Background Decorative Elements ===== */}
+      {/* ===== Background Decorative Elements - Warm Tones ===== */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated Gradient Blobs */}
+        {/* Animated Gradient Blobs - Warm */}
         <motion.div 
           animate={{ 
             scale: [1, 1.2, 1],
@@ -103,7 +90,7 @@ const Login = ({ onLogin }) => {
             x: [0, 30, 0]
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 -left-20 w-96 h-96 bg-gradient-to-r from-violet-600/30 to-cyan-600/30 rounded-full blur-3xl"
+          className="absolute top-1/4 -left-20 w-96 h-96 bg-gradient-to-r from-amber-600/30 via-orange-600/25 to-rose-600/25 rounded-full blur-3xl"
         />
         <motion.div 
           animate={{ 
@@ -112,64 +99,62 @@ const Login = ({ onLogin }) => {
             x: [0, -20, 0]
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+          className="absolute bottom-1/4 -right-20 w-96 h-96 bg-gradient-to-r from-orange-600/25 via-rose-600/20 to-red-600/20 rounded-full blur-3xl"
         />
         
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        {/* Warm Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(251,191,36,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,191,36,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
         
-        {/* Radial Gradient Center */}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-gray-950/50" />
+        {/* Radial Gradient Center - Warm */}
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-stone-950/50" />
       </div>
 
-      {/* ===== Login Card ===== */}
+      {/* ===== Login Card - Warm Theme ===== */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="relative w-full max-w-md z-10"
       >
-        {/* Glassmorphism Card */}
-        <div className="p-8 md:p-10 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl">
+        {/* Glassmorphism Card - Warm */}
+        <div className="p-8 md:p-10 rounded-3xl bg-stone-800/40 border border-stone-700/50 backdrop-blur-xl shadow-2xl">
           
-          {/* Card Glow Effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/5 to-cyan-500/5 pointer-events-none" />
+          {/* Card Glow Effect - Warm */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-rose-500/5 pointer-events-none" />
           
-          {/* Logo/Brand */}
+          {/* Logo/Brand - Warm */}
           <motion.div 
             variants={itemVariants}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-600 mb-4 shadow-lg shadow-violet-500/25">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 mb-4 shadow-lg shadow-amber-500/25">
               <CheckCircle2 className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-3xl font-extrabold">
-              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
                 Welcome Back
               </span>
             </h2>
-            <p className="text-gray-400 mt-2 text-sm">Sign in to continue to CollabHub</p>
+            <p className="text-stone-400 mt-2 text-sm">Sign in to continue to CollabHub</p>
           </motion.div>
 
-          {/* ✅ REMOVED: Inline error/success message blocks - toasts handle these now */}
-
-          {/* Login Form */}
+          {/* Login Form - Warm */}
           <form onSubmit={handleSubmit} className="space-y-5">
             
-            {/* Email Field */}
+            {/* Email Field - Warm Focus */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500" />
                 <input
                   type="email"
                   placeholder="you@college.edu"
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
-                           focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                           outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                           hover:border-gray-600"
+                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-stone-900/50 border border-stone-700 
+                           focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 
+                           outline-none transition-all duration-300 text-stone-100 placeholder-stone-500
+                           hover:border-stone-600"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -178,20 +163,20 @@ const Login = ({ onLogin }) => {
               </div>
             </motion.div>
 
-            {/* Password Field */}
+            {/* Password Field - Warm Focus */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-stone-300 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500" />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-gray-900/50 border border-gray-700 
-                           focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                           outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                           hover:border-gray-600"
+                  className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-stone-900/50 border border-stone-700 
+                           focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 
+                           outline-none transition-all duration-300 text-stone-100 placeholder-stone-500
+                           hover:border-stone-600"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -200,7 +185,7 @@ const Login = ({ onLogin }) => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 transition-colors"
                   disabled={loading}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -208,29 +193,29 @@ const Login = ({ onLogin }) => {
               </div>
             </motion.div>
 
-            {/* Forgot Password */}
+            {/* Forgot Password - Warm */}
             <motion.div variants={itemVariants} className="text-right">
               <Link 
                 to="/forgot-password" 
-                className="text-sm text-violet-400 hover:text-violet-300 transition-colors font-medium"
+                className="text-sm text-amber-400 hover:text-amber-300 transition-colors font-medium"
               >
                 Forgot password?
               </Link>
             </motion.div>
 
-            {/* Submit Button */}
+            {/* Submit Button - Warm Gradient */}
             <motion.div variants={itemVariants}>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                         text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
-                         transition-all duration-300 shadow-lg shadow-violet-500/25 
-                         hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
+                         text-white font-semibold hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
+                         transition-all duration-300 shadow-lg shadow-amber-500/30 
+                         hover:shadow-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed
                          flex items-center justify-center gap-2 group relative overflow-hidden"
               >
-                {/* Button Hover Glow */}
-                <span className="absolute inset-0 bg-gradient-to-r from-violet-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Button Hover Glow - Warm */}
+                <span className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-rose-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 
                 {loading ? (
                   <>
@@ -247,20 +232,20 @@ const Login = ({ onLogin }) => {
             </motion.div>
           </form>
 
-          {/* Divider */}
+          {/* Divider - Warm */}
           <motion.div 
             variants={itemVariants}
             className="relative my-8"
           >
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700/50" />
+              <div className="w-full border-t border-stone-700/50" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-gray-800/40 text-gray-400">Or continue with</span>
+              <span className="px-4 bg-stone-800/40 text-stone-400">Or continue with</span>
             </div>
           </motion.div>
 
-          {/* Social Login Buttons */}
+          {/* Social Login Buttons - Warm Hover */}
           <motion.div 
             variants={itemVariants}
             className="grid grid-cols-2 gap-4"
@@ -268,9 +253,9 @@ const Login = ({ onLogin }) => {
             <button
               type="button"
               onClick={() => showInfo('Google login coming soon! 🔜')}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-700/50 
-                       border border-gray-600/50 text-gray-300 font-medium hover:bg-gray-700 
-                       hover:border-violet-500/30 transition-all duration-300"
+              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-stone-700/50 
+                       border border-stone-600/50 text-stone-300 font-medium hover:bg-stone-700 
+                       hover:border-amber-500/30 transition-all duration-300"
             >
               <Chrome className="w-5 h-5" />
               Google
@@ -278,37 +263,37 @@ const Login = ({ onLogin }) => {
             <button
               type="button"
               onClick={() => showInfo('GitHub login coming soon! 🔜')}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-700/50 
-                       border border-gray-600/50 text-gray-300 font-medium hover:bg-gray-700 
-                       hover:border-violet-500/30 transition-all duration-300"
+              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-stone-700/50 
+                       border border-stone-600/50 text-stone-300 font-medium hover:bg-stone-700 
+                       hover:border-amber-500/30 transition-all duration-300"
             >
               <Github className="w-5 h-5" />
               GitHub
             </button>
           </motion.div>
 
-          {/* Sign Up Link */}
+          {/* Sign Up Link - Warm */}
           <motion.p 
             variants={itemVariants}
-            className="mt-8 text-center text-sm text-gray-400"
+            className="mt-8 text-center text-sm text-stone-400"
           >
             Don't have an account?{' '}
             <Link 
               to="/signup" 
-              className="text-violet-400 font-semibold hover:text-violet-300 transition-colors hover:underline"
+              className="text-amber-400 font-semibold hover:text-amber-300 transition-colors hover:underline"
             >
               Create account
             </Link>
           </motion.p>
 
-          {/* Back to Home */}
+          {/* Back to Home - Warm */}
           <motion.p 
             variants={itemVariants}
-            className="mt-4 text-center text-xs text-gray-500"
+            className="mt-4 text-center text-xs text-stone-500"
           >
             <Link 
               to="/" 
-              className="inline-flex items-center gap-1 hover:text-gray-300 transition-colors"
+              className="inline-flex items-center gap-1 hover:text-stone-300 transition-colors"
             >
               <ArrowRight className="w-3 h-3 rotate-180" />
               Back to Home
@@ -316,17 +301,17 @@ const Login = ({ onLogin }) => {
           </motion.p>
         </div>
 
-        {/* Footer Note */}
+        {/* Footer Note - Warm */}
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center text-xs text-gray-500 mt-6"
+          className="text-center text-xs text-stone-500 mt-6"
         >
           By signing in, you agree to our{' '}
-          <Link to="/terms" className="text-violet-400 hover:underline">Terms</Link>
+          <Link to="/terms" className="text-amber-400 hover:underline">Terms</Link>
           {' '}and{' '}
-          <Link to="/privacy" className="text-violet-400 hover:underline">Privacy Policy</Link>
+          <Link to="/privacy" className="text-amber-400 hover:underline">Privacy Policy</Link>
         </motion.p>
       </motion.div>
     </div>

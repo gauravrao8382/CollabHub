@@ -66,7 +66,7 @@ const ProjectDetails = ({ projects, user }) => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-center px-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -75,12 +75,12 @@ const ProjectDetails = ({ projects, user }) => {
           <div className="w-20 h-20 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-6">
             <AlertCircle size={40} className="text-rose-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-100 mb-2">Project not found</h2>
+          <h2 className="text-2xl font-bold text-white mb-2">Project not found</h2>
           <p className="text-gray-400 mb-6">The project you're looking for doesn't exist or has been removed.</p>
           <button 
             onClick={() => navigate(-1)} 
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 
-                     text-white font-semibold hover:from-violet-500 hover:to-cyan-500 
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 
+                     text-white font-semibold hover:from-violet-500 hover:to-fuchsia-500 
                      transition-all duration-300 shadow-lg shadow-violet-500/25 
                      flex items-center gap-2 mx-auto"
           >
@@ -188,33 +188,33 @@ const ProjectDetails = ({ projects, user }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-slate-900 text-gray-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-gray-100 relative overflow-hidden">
       
-      {/* ===== Background Decorative Elements ===== */}
+      {/* ===== Background Decorative Elements - Old Theme ===== */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.3, 0.15] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/25 to-cyan-600/25 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.12, 0.08] }}
+          transition={{ duration: 12, repeat: Infinity }}
+          className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-r from-violet-600/10 to-fuchsia-600/10 rounded-full blur-3xl"
         />
         <motion.div 
-          animate={{ scale: [1.15, 1, 1.15], opacity: [0.1, 0.25, 0.1] }}
-          transition={{ duration: 12, repeat: Infinity }}
-          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-emerald-600/20 to-blue-600/20 rounded-full blur-3xl"
+          animate={{ scale: [1.15, 1, 1.15], opacity: [0.06, 0.1, 0.06] }}
+          transition={{ duration: 14, repeat: Infinity }}
+          className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-r from-fuchsia-600/10 to-violet-600/10 rounded-full blur-3xl"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
       </div>
 
-      {/* ===== TOP BAR ===== */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-900/70 border-b border-gray-800/50">
+      {/* ===== TOP BAR - Old Theme ===== */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/60 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <motion.button
               whileHover={{ scale: 1.02, x: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-400 hover:text-violet-400 transition-colors font-medium 
-                       px-4 py-2 rounded-xl hover:bg-gray-800/50"
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-medium 
+                       px-4 py-2 rounded-xl hover:bg-white/5"
             >
               <ArrowLeft size={18} /> <span className="hidden sm:inline">Back</span>
             </motion.button>
@@ -237,8 +237,8 @@ const ProjectDetails = ({ projects, user }) => {
           transition={{ duration: 0.4 }}
           className="w-full lg:w-3/5 space-y-6"
         >
-          {/* Project Header Card */}
-          <div className="p-6 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl">
+          {/* Project Header Card - Old Theme */}
+          <div className="p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10 shadow-2xl">
             
             {/* Status Badges */}
             <div className="flex flex-wrap items-center gap-3 mb-5">
@@ -254,25 +254,25 @@ const ProjectDetails = ({ projects, user }) => {
 
             {/* Title */}
             <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 leading-tight">
-              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                 {project.title}
               </span>
             </h1>
 
-            {/* Meta Info */}
+            {/* Meta Info - Old Theme */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/50 border border-gray-700/50 text-gray-300 text-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm">
                 <GraduationCap size={16} className="text-violet-400" />
                 <span className="font-medium">{project.college}</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/50 border border-gray-700/50 text-gray-300 text-sm">
-                <Briefcase size={16} className="text-cyan-400" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm">
+                <Briefcase size={16} className="text-fuchsia-400" />
                 <span className="font-medium">
                   Owner: {typeof project.owner === 'object' ? project.owner.name : project.ownerName || project.owner}
                 </span>
               </div>
               {project.teamMembers?.length > 0 && (
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900/50 border border-gray-700/50 text-gray-300 text-sm">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-sm">
                   <Users size={16} className="text-emerald-400" />
                   <span className="font-medium">{project.teamMembers.length} Members</span>
                 </div>
@@ -280,8 +280,8 @@ const ProjectDetails = ({ projects, user }) => {
             </div>
 
             {/* Description */}
-            <div className="mb-6 pb-6 border-b border-gray-700/50">
-              <h3 className="text-lg font-bold text-gray-100 mb-3 flex items-center gap-2">
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                 <Sparkles className="text-violet-400" size={18} />
                 About Project
               </h3>
@@ -289,7 +289,7 @@ const ProjectDetails = ({ projects, user }) => {
             </div>
 
             {/* 👥 Team Members Section */}
-            <div className="mb-6 pb-6 border-b border-gray-700/50">
+            <div className="mb-6 pb-6 border-b border-white/10">
               <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
                 <Users size={16} className="text-emerald-400" />
                 Team Members
@@ -302,7 +302,7 @@ const ProjectDetails = ({ projects, user }) => {
 
                 if (allMembers.length === 0) {
                   return (
-                    <p className="text-xs text-gray-500 italic pl-2 py-3 px-4 rounded-xl bg-gray-900/30 border border-gray-700/30">
+                    <p className="text-xs text-gray-500 italic pl-2 py-3 px-4 rounded-xl bg-white/5 border border-white/10">
                       No team members yet — be the first to join!
                     </p>
                   );
@@ -328,21 +328,21 @@ const ProjectDetails = ({ projects, user }) => {
                           key={memberId || index}
                           variants={itemVariants}
                           whileHover={{ x: 4 }}
-                          className="flex items-center gap-4 p-4 rounded-xl bg-gray-900/30 border border-gray-700/50 
+                          className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 
                                    hover:border-violet-500/30 transition-all cursor-pointer group"
                           onClick={(e) => handleMemberClick(memberId, e)}
                           title={`View ${member.name || 'Profile'}`}
                         >
                           {/* Avatar */}
                           <div className="relative flex-shrink-0">
-                            <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-full 
+                            <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full 
                                           flex items-center justify-center text-white text-sm font-bold 
                                           shadow-lg group-hover:scale-105 transition-transform">
                               {(member.name?.charAt?.(0) || 'U').toUpperCase()}
                             </div>
                             {isMemberOwner && (
                               <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full 
-                                           flex items-center justify-center text-[10px] text-white border-2 border-gray-900" 
+                                           flex items-center justify-center text-[10px] text-white border-2 border-slate-900" 
                                 title="Project Owner">
                                 👑
                               </span>
@@ -383,7 +383,7 @@ const ProjectDetails = ({ projects, user }) => {
               })()}
             </div>
 
-            {/* Tech Stack */}
+            {/* Tech Stack - Old Theme */}
             <div>
               <h3 className="text-sm font-bold text-gray-300 mb-4 flex items-center gap-2 uppercase tracking-wide">
                 <Code size={16} className="text-violet-400" />
@@ -398,7 +398,7 @@ const ProjectDetails = ({ projects, user }) => {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.05 }}
                       whileHover={{ scale: 1.05, y: -2 }}
-                      className="px-3.5 py-2 bg-gray-900/50 border border-gray-700/50 rounded-xl 
+                      className="px-3.5 py-2 bg-white/5 border border-white/10 rounded-xl 
                                text-xs font-semibold text-gray-300 hover:border-violet-500/30 
                                hover:text-violet-300 transition-all cursor-default"
                     >
@@ -420,7 +420,7 @@ const ProjectDetails = ({ projects, user }) => {
           transition={{ duration: 0.4, delay: 0.1 }}
           className="w-full lg:w-2/5"
         >
-          <div className="sticky top-24 p-6 rounded-3xl bg-gray-800/40 border border-gray-700/50 backdrop-blur-xl shadow-2xl">
+          <div className="sticky top-24 p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10 shadow-2xl">
             
             <AnimatePresence mode="wait">
               
@@ -437,13 +437,13 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="w-20 h-20 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-5">
                     <Lock size={36} className="text-rose-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-100 mb-2">Hiring Closed 🔒</h2>
+                  <h2 className="text-xl font-bold text-white mb-2">Hiring Closed 🔒</h2>
                   <p className="text-gray-400 mb-6 text-sm px-2">
                     Applications for <br />
                     <span className="font-semibold text-violet-300">{project.title}</span> are now closed.
                   </p>
 
-                  <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl p-4 mb-6 text-left">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left">
                     <p className="text-xs text-gray-400 font-medium mb-2">📌 Project Status:</p>
                     <ul className="text-[10px] text-gray-500 space-y-1.5">
                       <li><strong className="text-gray-300">Closed On:</strong> {project.closedDate ? new Date(project.closedDate).toLocaleDateString() : 'N/A'}</li>
@@ -455,8 +455,8 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="space-y-3">
                     <button
                       onClick={() => navigate('/dashboard')}
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white 
-                               font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all 
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white 
+                               font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all 
                                shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 text-sm"
                     >
                       Explore More Projects
@@ -464,8 +464,8 @@ const ProjectDetails = ({ projects, user }) => {
                     {isTeamMember && (
                       <button
                         onClick={() => navigate(`/project/${project._id}/workspace`)}
-                        className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 text-gray-300 
-                                 font-semibold hover:bg-gray-700 hover:border-violet-500/30 transition-all text-sm"
+                        className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 
+                                 font-semibold hover:bg-white/10 hover:border-violet-500/30 transition-all text-sm"
                       >
                         Open Workspace
                       </button>
@@ -487,7 +487,7 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-5">
                     <UserCheck size={36} className="text-emerald-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-100 mb-2">You're on the Team! 🎉</h2>
+                  <h2 className="text-xl font-bold text-white mb-2">You're on the Team! 🎉</h2>
                   <p className="text-gray-400 mb-6 text-sm px-2">
                     You are already a member of <br />
                     <span className="font-semibold text-violet-300">{project.title}</span>.
@@ -496,16 +496,16 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="space-y-3 mb-6">
                     <button
                       onClick={() => navigate('/dashboard')}
-                      className="w-full py-3 rounded-xl bg-gray-700/50 border border-gray-600/50 text-gray-300 
-                               font-semibold hover:bg-gray-700 hover:border-violet-500/30 transition-all text-sm 
+                      className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-gray-300 
+                               font-semibold hover:bg-white/10 hover:border-violet-500/30 transition-all text-sm 
                                flex items-center justify-center gap-2"
                     >
                       <Briefcase size={16} /> Go to Dashboard
                     </button>
                     <button
                       onClick={() => navigate(`/project/${project._id}/workspace`)}
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white 
-                               font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all 
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white 
+                               font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all 
                                shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 text-sm 
                                flex items-center justify-center gap-2"
                     >
@@ -532,13 +532,13 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5">
                     <Clock size={36} className="text-amber-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-100 mb-2">Application Pending</h2>
+                  <h2 className="text-xl font-bold text-white mb-2">Application Pending</h2>
                   <p className="text-gray-400 mb-6 text-sm px-2">
                     Thanks <strong className="text-gray-200">{formData.name || user?.name}</strong>, your application for <br />
                     <span className="font-semibold text-violet-300">{project.title}</span> is under review.
                   </p>
 
-                  <div className="bg-gray-900/50 border border-amber-500/20 rounded-xl p-4 mb-6 text-left">
+                  <div className="bg-white/5 border border-amber-500/20 rounded-xl p-4 mb-6 text-left">
                     <p className="text-xs text-amber-300 font-medium mb-2">📋 Application Summary:</p>
                     <ul className="text-[10px] text-gray-400 space-y-1.5">
                       <li><strong className="text-gray-300">College:</strong> {formData.college || 'N/A'}</li>
@@ -549,8 +549,8 @@ const ProjectDetails = ({ projects, user }) => {
 
                   <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white 
-                             font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all 
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white 
+                             font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all 
                              shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 text-sm"
                   >
                     Back to Dashboard
@@ -575,15 +575,15 @@ const ProjectDetails = ({ projects, user }) => {
                   <div className="w-20 h-20 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-5">
                     <AlertCircle size={36} className="text-rose-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-100 mb-2">Application Not Selected</h2>
+                  <h2 className="text-xl font-bold text-white mb-2">Application Not Selected</h2>
                   <p className="text-gray-400 mb-6 text-sm px-2">
                     Sorry, your application for <br />
                     <span className="font-semibold text-violet-300">{project.title}</span> was not selected this time.
                   </p>
                   <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white 
-                             font-semibold hover:from-violet-500 hover:to-cyan-500 transition-all 
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white 
+                             font-semibold hover:from-violet-500 hover:to-fuchsia-500 transition-all 
                              shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 text-sm"
                   >
                     Explore More Projects
@@ -600,13 +600,13 @@ const ProjectDetails = ({ projects, user }) => {
                   animate="visible"
                   className="py-2"
                 >
-                  <div className="mb-6 pb-4 border-b border-gray-700/50">
-                    <h2 className="text-xl font-bold text-gray-100 mb-1">Join this Team</h2>
+                  <div className="mb-6 pb-4 border-b border-white/10">
+                    <h2 className="text-xl font-bold text-white mb-1">Join this Team</h2>
                     <p className="text-gray-400 text-xs">Fill in your details to apply.</p>
                   </div>
 
                   <form onSubmit={handleApplyClick} className="space-y-4">
-                    {/* Name */}
+                    {/* Name - Old Theme Inputs */}
                     <motion.div variants={itemVariants}>
                       <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">Full Name</label>
                       <div className="relative">
@@ -616,10 +616,10 @@ const ProjectDetails = ({ projects, user }) => {
                           value={formData.name}
                           onChange={handleInputChange}
                           placeholder="Rahul Sharma"
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900/50 border border-gray-700 
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 
                                    focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                   outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                   hover:border-gray-600 disabled:opacity-50"
+                                   outline-none transition-all duration-300 text-white placeholder-gray-500
+                                   hover:border-white/20 disabled:opacity-50"
                           disabled={isApplying || hasApplied}
                         />
                         <Briefcase size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -637,10 +637,10 @@ const ProjectDetails = ({ projects, user }) => {
                             value={formData.college}
                             onChange={handleInputChange}
                             placeholder="IIT Delhi"
-                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900/50 border border-gray-700 
+                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 
                                      focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                     outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                     hover:border-gray-600 disabled:opacity-50"
+                                     outline-none transition-all duration-300 text-white placeholder-gray-500
+                                     hover:border-white/20 disabled:opacity-50"
                             disabled={isApplying || hasApplied}
                           />
                           <GraduationCap size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -657,10 +657,10 @@ const ProjectDetails = ({ projects, user }) => {
                             placeholder="2025"
                             min="2024"
                             max="2030"
-                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900/50 border border-gray-700 
+                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 
                                      focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                     outline-none transition-all duration-300 text-gray-100 placeholder-gray-500
-                                     hover:border-gray-600 disabled:opacity-50"
+                                     outline-none transition-all duration-300 text-white placeholder-gray-500
+                                     hover:border-white/20 disabled:opacity-50"
                             disabled={isApplying || hasApplied}
                           />
                           <Calendar size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -678,10 +678,10 @@ const ProjectDetails = ({ projects, user }) => {
                           onChange={handleInputChange}
                           placeholder="React, Node.js, Python..."
                           rows="3"
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900/50 border border-gray-700 
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 
                                    focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 
-                                   outline-none transition-all duration-300 text-gray-100 placeholder-gray-500 resize-none
-                                   hover:border-gray-600 disabled:opacity-50"
+                                   outline-none transition-all duration-300 text-white placeholder-gray-500 resize-none
+                                   hover:border-white/20 disabled:opacity-50"
                           disabled={isApplying || hasApplied}
                         />
                         <Code size={14} className="absolute left-3.5 top-3.5 text-gray-500" />
@@ -702,7 +702,7 @@ const ProjectDetails = ({ projects, user }) => {
                       )}
                     </AnimatePresence>
 
-                    {/* Submit Button */}
+                    {/* Submit Button - Old Theme Gradient */}
                     <motion.div variants={itemVariants}>
                       <button
                         type="submit"
@@ -710,8 +710,8 @@ const ProjectDetails = ({ projects, user }) => {
                         className={`w-full py-3.5 rounded-xl font-semibold text-sm text-white shadow-lg transition-all 
                                   flex items-center justify-center gap-2 mt-2
                                   ${isApplying || hasApplied || isHiringClosed
-                                    ? 'bg-gray-700/50 border border-gray-600/50 text-gray-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 hover:shadow-violet-500/40'
+                                    ? 'bg-white/5 border border-white/10 text-gray-400 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 hover:shadow-violet-500/40'
                                   }`}
                       >
                         {isApplying ? (
@@ -749,8 +749,8 @@ const ProjectDetails = ({ projects, user }) => {
       <style>{`
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
       `}</style>
     </div>
   );
