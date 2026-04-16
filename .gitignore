@@ -1,27 +1,45 @@
 # ==============================
-# 🔐 ENV (MOST IMPORTANT)
-# ==============================
-backend/.env
-backend/.env.*
-!.env.example
+
+# 🔐 ENV FILES (MOST IMPORTANT)
 
 # ==============================
-# 📦 DEPENDENCIES
+
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
 # ==============================
+
+# 📦 DEPENDENCIES
+
+# ==============================
+
 node_modules/
+frontend/node_modules/
+backend/node_modules/
 jspm_packages/
 
 # ==============================
+
 # 🏗️ BUILD FILES
+
 # ==============================
+
 build/
 dist/
 .next/
 out/
+frontend/build/
+frontend/dist/
 
 # ==============================
+
 # 📁 LOG FILES
+
 # ==============================
+
 logs/
 *.log
 npm-debug.log*
@@ -30,36 +48,51 @@ yarn-error.log*
 pnpm-debug.log*
 
 # ==============================
+
 # 💾 CACHE & TEMP FILES
+
 # ==============================
+
 .cache/
 .parcel-cache/
 .tmp/
 temp/
 
 # ==============================
+
 # 🖥️ OS FILES
+
 # ==============================
+
 .DS_Store
 Thumbs.db
 
 # ==============================
+
 # 🧠 IDE / EDITOR FILES
+
 # ==============================
+
 .vscode/
 .idea/
 *.swp
 *.swo
 
 # ==============================
+
 # 🧪 TEST & COVERAGE
+
 # ==============================
+
 coverage/
 .nyc_output/
 
 # ==============================
+
 # 🔑 SECURITY FILES
+
 # ==============================
+
 *.pem
 *.key
 *.crt
@@ -67,13 +100,19 @@ coverage/
 *.pfx
 
 # ==============================
+
 # 📊 DATABASE FILES (LOCAL)
+
 # ==============================
+
 *.sqlite
 *.db
 
 # ==============================
-# 🚀 MISC
+
+# 🚀 ARCHIVE FILES
+
 # ==============================
+
 *.tgz
 *.zip
