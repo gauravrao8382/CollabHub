@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import CreateProject from './pages/CreateProject';
 import ProjectDetails from './pages/ProjectDetails';
 import CompletedProjectDetails from './pages/CompletedProjectDetails';
+import ProjectCompletion from './pages/ProjectCompletion';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import Settings from './pages/Settings';
@@ -101,7 +102,7 @@ function App() {
 
   return (
     <Router>
-      <Toaster toastOptions={{duration: 3000,style: {background: '#1f2937',color: '#f3f4f6',border: '1px solid #374151',borderRadius: '12px',},}} position="top-right" reverseOrder={false}/>
+      <Toaster toastOptions={{duration: 1500,style: {background: '#1f2937',color: '#f3f4f6',border: '1px solid #374151',borderRadius: '12px',},}} position="top-right" reverseOrder={false}/>
       <div className="min-h-screen text-gray-800">
 
         <Routes>
@@ -136,6 +137,7 @@ function App() {
           />
           <Route path="/project/:projectId/edit" element={user ? <EditProject /> : <Navigate to="/login" />} />
           <Route path="/project/:projectId/manage" element={user ? <ManageProject /> : <Navigate to="/login" />} />
+          <Route path="/complete" element={user ? <ProjectCompletion /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate to="/login" />} />
           <Route path="/profile/edit" element={<EditProfile user={user}  onUserUpdate={handleUserUpdate}/>} />
           <Route path="/settings" element={<Settings user={user} onUpdateUser={handleUserUpdate} />} />

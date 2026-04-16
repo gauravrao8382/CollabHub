@@ -4,7 +4,7 @@ import axios from "axios";
 import {
   ArrowLeft, Briefcase, GraduationCap, Code, Users, CheckCircle,
   XCircle, Lock, Unlock, Loader2, AlertCircle, Mail, ExternalLink,
-  Sparkles, ChevronRight, Shield
+  Sparkles, ChevronRight, Shield, Flag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
@@ -14,6 +14,11 @@ const API = "http://localhost:5000";
 const ManageProject = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
+
+  // 🎯 Page load par top par scroll kare
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [projectId]);
 
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -81,7 +86,15 @@ const ManageProject = () => {
     } finally { setActionLoading(null); }
   };
 
+  // 🚀 New: Ready for Completion Handler (Left Box Upper Right)
+  const handleReadyForCompletion = () => {
+    navigate("/complete", { state: { project } });
+    showInfo("Opening completion page...");
+  };
+
   const isProjectOpen = project?.status === 'Open';
+  // 🚀 Completion button kab enable hoga
+  const canMarkComplete = project?.teamMembers?.length > 0;
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
   const itemVariants = { hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
@@ -162,107 +175,144 @@ const ManageProject = () => {
       {/* 📐 CONTENT WRAPPER - Warm Theme */}
       <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
 
-        {/* ← LEFT SIDE: Project Details */}
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="w-full lg:w-3/5 space-y-6">
-          {/* Project Header Card - Warm */}
-          <div className="p-6 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50">
-            
-            {/* Type Badge + Status - Warm */}
-            <div className="flex flex-wrap items-center gap-3 mb-5">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold">
-                <Briefcase size={12} /> {project.type || 'Project'}
-              </span>
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${isProjectOpen ? 'bg-emerald-100 border-emerald-200 text-emerald-800' : 'bg-rose-100 border-rose-200 text-rose-800'}`}>
-                {isProjectOpen ? <Unlock size={12} /> : <Lock size={12} />}
-                {isProjectOpen ? 'Accepting Applications' : 'Hiring Closed'}
-              </div>
-            </div>
+        {/* ← LEFT SIDE: Project Details (Scrollable) */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.4 }} 
+          className="w-full lg:w-3/5"
+        >
+          {/* ✅ Scrollable container for left content */}
+          <div className="max-h-[calc(100vh-140px)] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-6 pb-6">
+              {/* Project Header Card - Warm */}
+              <div className="p-6 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50">
+                
+                {/* 🔄 UPDATED: Type Badge + Status + Ready for Completion Button */}
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+                  {/* Left: Badges */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold">
+                      <Briefcase size={12} /> {project.type || 'Project'}
+                    </span>
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${isProjectOpen ? 'bg-emerald-100 border-emerald-200 text-emerald-800' : 'bg-rose-100 border-rose-200 text-rose-800'}`}>
+                      {isProjectOpen ? <Unlock size={12} /> : <Lock size={12} />}
+                      {isProjectOpen ? 'Accepting Applications' : 'Hiring Closed'}
+                    </div>
+                  </div>
+                  
+                  {/* Right: Ready for Completion Button */}
+                  <motion.button
+                    whileHover={{ scale: canMarkComplete ? 1.05 : 1 }}
+                    whileTap={{ scale: canMarkComplete ? 0.95 : 1 }}
+                    onClick={handleReadyForCompletion}
+                    disabled={!canMarkComplete}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shadow-sm
+                      ${canMarkComplete
+                        ? 'bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 hover:from-violet-700 hover:via-purple-700 hover:to-fuchsia-700 text-white shadow-purple-200/60 hover:shadow-purple-300/70'
+                        : 'bg-stone-200 border border-stone-300 text-stone-400 cursor-not-allowed'
+                      }`}
+                    title={canMarkComplete ? "Mark project as ready for completion" : "Add team members first"}
+                  >
+                    <Flag size={12} />
+                    Ready for Completion
+                    <ChevronRight size={10} />
+                  </motion.button>
+                </div>
 
-            {/* Title - Warm Gradient */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 leading-tight">
-              <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">{project.title}</span>
-            </h1>
+                {/* Title - Warm Gradient */}
+                <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 leading-tight">
+                  <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">{project.title}</span>
+                </h1>
 
-            {/* Meta Info - Warm */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 border border-amber-200 text-stone-700 text-sm shadow-sm">
-                <GraduationCap size={16} className="text-amber-600" />
-                <span className="font-medium">{project.college}</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 border border-amber-200 text-stone-700 text-sm shadow-sm">
-                <Briefcase size={16} className="text-orange-600" />
-                <span className="font-medium">Owner: {project.owner}</span>
-              </div>
-            </div>
+                {/* Meta Info - Warm */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 border border-amber-200 text-stone-700 text-sm shadow-sm">
+                    <GraduationCap size={16} className="text-amber-600" />
+                    <span className="font-medium">{project.college}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/70 border border-amber-200 text-stone-700 text-sm shadow-sm">
+                    <Briefcase size={16} className="text-orange-600" />
+                    <span className="font-medium">Owner: {project.owner}</span>
+                  </div>
+                </div>
 
-            {/* Description - Warm */}
-            <div className="mb-6 pb-6 border-b border-amber-200">
-              <h3 className="text-lg font-bold text-stone-900 mb-3 flex items-center gap-2">
-                <Sparkles className="text-amber-600" size={18} /> About Project
-              </h3>
-              <p className="text-stone-700 text-sm leading-relaxed">{project.description}</p>
-            </div>
+                {/* Description - Warm */}
+                <div className="mb-6 pb-6 border-b border-amber-200">
+                  <h3 className="text-lg font-bold text-stone-900 mb-3 flex items-center gap-2">
+                    <Sparkles className="text-amber-600" size={18} /> About Project
+                  </h3>
+                  <p className="text-stone-700 text-sm leading-relaxed">{project.description}</p>
+                </div>
 
-            {/* Tech Stack - Warm Tags */}
-            <div className="mb-6 pb-6 border-b border-amber-200">
-              <h3 className="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                <Code size={16} className="text-amber-600" /> Tech Stack
-              </h3>
-              <div className="flex flex-wrap gap-2.5">
-                {project.techStack && project.techStack.length > 0 ? (
-                  project.techStack.map((tech, i) => (
-                    <motion.span key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      className={`px-3.5 py-2 bg-white/70 border border-amber-200 rounded-xl text-xs font-semibold text-stone-700 hover:border-amber-400 transition-all cursor-default shadow-sm
-                        ${i % 3 === 0 ? 'hover:text-amber-800 hover:bg-amber-100' : i % 3 === 1 ? 'hover:text-orange-800 hover:bg-orange-100' : 'hover:text-rose-800 hover:bg-rose-100'}`}
-                    >{tech}</motion.span>
-                  ))
-                ) : (<span className="text-stone-500 text-xs italic">No tech stack listed</span>)}
-              </div>
-            </div>
+                {/* Tech Stack - Warm Tags */}
+                <div className="mb-6 pb-6 border-b border-amber-200">
+                  <h3 className="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <Code size={16} className="text-amber-600" /> Tech Stack
+                  </h3>
+                  <div className="flex flex-wrap gap-2.5">
+                    {project.techStack && project.techStack.length > 0 ? (
+                      project.techStack.map((tech, i) => (
+                        <motion.span key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
+                          whileHover={{ scale: 1.05, y: -2 }}
+                          className={`px-3.5 py-2 bg-white/70 border border-amber-200 rounded-xl text-xs font-semibold text-stone-700 hover:border-amber-400 transition-all cursor-default shadow-sm
+                            ${i % 3 === 0 ? 'hover:text-amber-800 hover:bg-amber-100' : i % 3 === 1 ? 'hover:text-orange-800 hover:bg-orange-100' : 'hover:text-rose-800 hover:bg-rose-100'}`}
+                        >{tech}</motion.span>
+                      ))
+                    ) : (<span className="text-stone-500 text-xs italic">No tech stack listed</span>)}
+                  </div>
+                </div>
 
-            {/* 👥 Team Members Section - Warm */}
-            <div>
-              <h3 className="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                <Users size={16} className="text-emerald-600" /> Team Members ({project.teamMembers?.length || 0})
-              </h3>
-              {project.teamMembers?.length > 0 ? (
-                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-3 max-h-56 overflow-y-auto pr-1 custom-scrollbar-light">
-                  {project.teamMembers.map((member, i) => (
-                    <motion.div key={member._id || i} variants={itemVariants} whileHover={{ x: 4 }}
-                      className="p-4 rounded-xl bg-white/70 border border-amber-200 hover:border-amber-400 transition-all flex items-center justify-between group shadow-sm"
-                    >
-                      <div className="flex items-center gap-4">
-                        {/* Avatar - Warm Gradient */}
-                        <div onClick={() => viewUserProfile(member.userId || member._id)}
-                          className="relative w-10 h-10 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md cursor-pointer hover:scale-105 transition-transform border-2 border-white"
-                          title="View Profile"
-                        >{member.name?.charAt(0)?.toUpperCase() || 'U'}</div>
-                        {/* Member Info - Warm */}
-                        <div>
-                          <p onClick={() => viewUserProfile(member.userId || member._id)}
-                            className="font-semibold text-sm text-stone-900 cursor-pointer hover:text-amber-700 transition-colors">{member.name}</p>
-                          <p className="text-xs text-stone-600 flex items-center gap-1">
-                            <GraduationCap size={12} className="text-amber-600" /> {member.college}
-                          </p>
-                        </div>
-                      </div>
-                      <CheckCircle className="text-emerald-600 flex-shrink-0" size={18} />
+                {/* 👥 Team Members Section - Warm */}
+                <div>
+                  <h3 className="text-sm font-bold text-stone-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
+                    <Users size={16} className="text-emerald-600" /> Team Members ({project.teamMembers?.length || 0})
+                  </h3>
+                  {project.teamMembers?.length > 0 ? (
+                    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-3 max-h-56 overflow-y-auto pr-1 custom-scrollbar-light">
+                      {project.teamMembers.map((member, i) => (
+                        <motion.div key={member._id || i} variants={itemVariants} whileHover={{ x: 4 }}
+                          className="p-4 rounded-xl bg-white/70 border border-amber-200 hover:border-amber-400 transition-all flex items-center justify-between group shadow-sm"
+                        >
+                          <div className="flex items-center gap-4">
+                            {/* Avatar - Warm Gradient */}
+                            <div onClick={() => viewUserProfile(member.userId || member._id)}
+                              className="relative w-10 h-10 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md cursor-pointer hover:scale-105 transition-transform border-2 border-white"
+                              title="View Profile"
+                            >{member.name?.charAt(0)?.toUpperCase() || 'U'}</div>
+                            {/* Member Info - Warm */}
+                            <div>
+                              <p onClick={() => viewUserProfile(member.userId || member._id)}
+                                className="font-semibold text-sm text-stone-900 cursor-pointer hover:text-amber-700 transition-colors">{member.name}</p>
+                              <p className="text-xs text-stone-600 flex items-center gap-1">
+                                <GraduationCap size={12} className="text-amber-600" /> {member.college}
+                              </p>
+                            </div>
+                          </div>
+                          <CheckCircle className="text-emerald-600 flex-shrink-0" size={18} />
+                        </motion.div>
+                      ))}
                     </motion.div>
-                  ))}
-                </motion.div>
-              ) : (
-                <p className="text-stone-600 text-xs italic pl-2 py-3 px-4 rounded-xl bg-white/70 border border-amber-200 shadow-sm">
-                  No team members yet — accept applicants to build your team!
-                </p>
-              )}
+                  ) : (
+                    <p className="text-stone-600 text-xs italic pl-2 py-3 px-4 rounded-xl bg-white/70 border border-amber-200 shadow-sm">
+                      No team members yet — accept applicants to build your team!
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* → RIGHT SIDE: Applicants Management - Warm Theme */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="w-full lg:w-2/5">
-          <div className="sticky top-24 p-6 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50">
+        {/* → RIGHT SIDE: Applicants Management - Warm Theme (Sticky) */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.4, delay: 0.1 }} 
+          className="w-full lg:w-2/5"
+        >
+          {/* ✅ Sticky container - right panel fixed rahega */}
+          <div className="sticky top-24 lg:top-28 p-6 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50 max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
             
             {/* Header - Warm */}
             <div className="mb-6 pb-4 border-b border-amber-200">
@@ -272,7 +322,7 @@ const ManageProject = () => {
 
             <AnimatePresence mode="wait">
               {project.applicants?.length > 0 ? (
-                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 custom-scrollbar-light">
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
                   {project.applicants.map((app, index) => (
                     <motion.div key={app._id} variants={itemVariants} layout
                       className="p-5 rounded-2xl bg-white/70 border border-amber-200 hover:border-amber-400 transition-all duration-300 shadow-sm"
@@ -349,8 +399,31 @@ const ManageProject = () => {
         </motion.div>
       </div>
 
-      {/* Custom Scrollbar CSS for Warm Light Mode */}
+      {/* ✨ Custom Scrollbar CSS for Warm Light Mode */}
       <style>{`
+        /* Custom scrollbar for scrollable areas */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #fcd34d;
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #f59e0b;
+        }
+        
+        /* Firefox scrollbar */
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #fcd34d transparent;
+        }
+        
+        /* Light version for inner containers */
         .custom-scrollbar-light::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar-light::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar-light::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 3px; }
