@@ -137,7 +137,7 @@ function App() {
           />
           <Route path="/project/:projectId/edit" element={user ? <EditProject /> : <Navigate to="/login" />} />
           <Route path="/project/:projectId/manage" element={user ? <ManageProject /> : <Navigate to="/login" />} />
-          <Route path="/complete" element={user ? <ProjectCompletion /> : <Navigate to="/login" />} />
+          <Route path="/complete/:projectId" element={user ? <ProjectCompletion /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate to="/login" />} />
           <Route path="/profile/edit" element={<EditProfile user={user}  onUserUpdate={handleUserUpdate}/>} />
           <Route path="/settings" element={<Settings user={user} onUpdateUser={handleUserUpdate} />} />

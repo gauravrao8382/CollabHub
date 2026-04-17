@@ -88,8 +88,7 @@ const ManageProject = () => {
 
   // 🚀 New: Ready for Completion Handler (Left Box Upper Right)
   const handleReadyForCompletion = () => {
-    navigate("/complete", { state: { project } });
-    showInfo("Opening completion page...");
+      navigate(`/complete/${project._id}`);
   };
 
   const isProjectOpen = project?.status === 'Open';

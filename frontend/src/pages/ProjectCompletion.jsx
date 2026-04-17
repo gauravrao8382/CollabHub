@@ -14,10 +14,9 @@ const API = "http://localhost:5000";
 
 const ProjectCompletion = () => {
   
-  // const { projectId } = useParams();
+  const { projectId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [project, setProject] = useState(location.state?.project || null);
+  const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -39,29 +38,28 @@ const ProjectCompletion = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (location.state?.project) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      setProject(location.state.project);
-      setLoading(false);
-    } else {
+    if (!projectId) {
+      showError("Invalid project ID");
+      navigate("/dashboard");
+      return;
+    }
+    fetchProject();
+  }, [projectId]);
+
+  const fetchProject = async () => {
+    try {
+      const res = await axios.get(`${API}/project/${projectId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      setProject(res.data.project);
+    } catch (err) {
+      console.error(err);
+      showError("Failed to load project details");
+      navigate("/dashboard");
+    } finally {
       setLoading(false);
     }
-  }, []);
-
-  // const fetchProject = async () => {
-  //   try {
-  //     const res = await axios.get(`${API}/project/${projectId}`, {
-  //       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-  //     });
-  //     setProject(res.data.project);
-  //   } catch (err) {
-  //     console.error(err);
-  //     showError("Failed to load project details");
-  //     navigate("/dashboard");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  };
 
   // URL Validation Helper
   const isValidUrl = (url) => {
@@ -132,7 +130,7 @@ const ProjectCompletion = () => {
     const toastId = showLoading("Submitting completion details...");
 
     try {
-      await axios.post(
+      await axios.patch(
         `${API}/project/${projectId}/complete`,
         {
           ...formData,
@@ -152,7 +150,7 @@ const ProjectCompletion = () => {
       // Redirect after success
       setTimeout(() => {
         navigate(`/project/${projectId}`);
-      }, 2000);
+      }, 1000);
       
     } catch (err) {
       console.error('Completion error:', err);

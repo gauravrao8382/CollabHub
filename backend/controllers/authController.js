@@ -364,3 +364,28 @@ export const toggleHiringStatus = async (req, res) => {
     res.status(500).json({ message: "Error updating project status" });
   }
 }
+
+export const completeProject = async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const { gitlink, livelink, finalNote } = req.body;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    if (project.owner.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+    project.status = "Completed";
+    project.gitlink = gitlink;
+    project.livelink = livelink;
+    project.finalNote = finalNote;
+    await project.save();
+    res.json({ message: "Project marked as completed", project });
+  } 
+  catch (err) {
+    console.error("Error completing project:", err);
+    res.status(500).json({ message: "Error completing project" });
+  }
+}

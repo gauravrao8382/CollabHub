@@ -40,6 +40,15 @@ const projectSchema = new mongoose.Schema({
     enum: ['Open', 'Completed', 'Closed'], 
     default: 'Open' 
   },
+  gitlink:{
+    type: String,
+  },
+  livelink:{
+    type: String,
+  },
+  finalNote:{
+    type: String,
+  },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
