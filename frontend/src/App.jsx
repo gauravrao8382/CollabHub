@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import CreateProject from './pages/CreateProject';
 import ProjectDetails from './pages/ProjectDetails';
@@ -123,7 +124,7 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/dashboard"
-            element={user ? <Dashboard user={user} projects={projects} setProjects={setProjects} /> : <Navigate to="/login" />}
+            element={user ? <LandingPage user={user} projects={projects} setProjects={setProjects} /> : <Navigate to="/login" />}
           />
 
           <Route

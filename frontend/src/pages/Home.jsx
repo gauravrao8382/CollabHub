@@ -4,11 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Code, Users, Rocket, Mail, MapPin, Phone, Github, Linkedin, Twitter, 
   Target, Lightbulb, Heart, Building, ArrowRight, Search, Zap, Shield, 
-  CheckCircle, Star, TrendingUp 
+  TrendingUp, Monitor, Smartphone, Palette, Award, Globe, Layers, 
+  Cpu, MessageSquare, Star, CheckCircle2, Play, ExternalLink, Trophy
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
-// Dummy Projects Data (6 Best Projects)
+// Dummy Projects Data
 const bestProjects = [
   {
     id: 1,
@@ -17,6 +18,7 @@ const bestProjects = [
     techStack: ["Python", "OpenCV", "React"],
     teamSize: 3,
     college: "DTU Delhi",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop"
   },
   {
     id: 2,
@@ -25,6 +27,7 @@ const bestProjects = [
     techStack: ["Flutter", "Firebase"],
     teamSize: 4,
     college: "IIT Bombay",
+    image: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&h=400&fit=crop"
   },
   {
     id: 3,
@@ -33,6 +36,7 @@ const bestProjects = [
     techStack: ["MERN", "Tailwind"],
     teamSize: 5,
     college: "NSUT Delhi",
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop"
   },
   {
     id: 4,
@@ -41,6 +45,7 @@ const bestProjects = [
     techStack: ["Arduino", "React"],
     teamSize: 2,
     college: "VIT Vellore",
+    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=400&fit=crop"
   },
   {
     id: 5,
@@ -49,6 +54,7 @@ const bestProjects = [
     techStack: ["Next.js", "Supabase"],
     teamSize: 3,
     college: "IIIT Hyderabad",
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop"
   },
   {
     id: 6,
@@ -57,6 +63,7 @@ const bestProjects = [
     techStack: ["React Native", "Node"],
     teamSize: 4,
     college: "JU Kolkata",
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop"
   },
 ];
 
@@ -66,10 +73,7 @@ const Home = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   const itemVariants = {
@@ -78,668 +82,423 @@ const Home = () => {
   };
 
   return (
-    // 🎨 Warm Color Background - Amber/Orange/Rose/Brown Theme
-    <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 
-                    bg-[length:100%_100%] text-stone-900 relative overflow-x-hidden">
+    <div className="min-h-screen bg-white text-slate-900">
       
-      {/* 🌈 Decorative Color Blobs - Warm Tones */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 12, repeat: Infinity }}
-          className="absolute top-0 right-0 w-[600px] h-[600px] 
-                   bg-gradient-to-br from-amber-300/40 via-orange-300/30 to-yellow-300/35 
-                   rounded-full blur-3xl"
-        />
-        <motion.div 
-          animate={{ scale: [1.1, 1, 1.1], rotate: [0, -3, 3, 0] }}
-          transition={{ duration: 15, repeat: Infinity }}
-          className="absolute bottom-0 left-0 w-[500px] h-[500px] 
-                   bg-gradient-to-tr from-rose-300/35 via-pink-300/25 to-red-300/30 
-                   rounded-full blur-3xl"
-        />
-        <motion.div 
-          animate={{ scale: [0.9, 1.2, 0.9], opacity: [0.25, 0.4, 0.25] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                   w-[700px] h-[700px] 
-                   bg-gradient-to-r from-orange-200/30 via-amber-200/20 to-yellow-200/25 
-                   rounded-full blur-3xl"
-        />
-        {/* Subtle Pattern Overlay - Warm Brown Dots */}
-        <div className="absolute inset-0 opacity-35" 
-             style={{
-               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(120,53,15,0.12) 1px, transparent 0)`,
-               backgroundSize: '40px 40px'
-             }} 
-        />
-      </div>
-
       <Navbar />
       
-      <div className="px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* 🔥 HERO SECTION - Purple Theme */}
+      <section id="/" className="relative min-h-[600px] lg:min-h-[700px] flex items-start justify-center overflow-hidden pt-20 lg:pt-28 pb-12">
+        
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop" 
+            alt="Hero Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/80" />
+        </div>
 
-        {/* 🔥 Hero Section - Warm Vibrant Colors */}
-        <section id="home" className="relative py-24 lg:py-32">
-          
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-10 max-w-5xl mx-auto text-center"
-          >
-            {/* Badge - Warm Gradient */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(4)].map((_, i) => (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full 
-                       bg-gradient-to-r from-amber-200 via-orange-200 to-rose-200 
-                       border border-amber-300 backdrop-blur-md shadow-sm"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-600"></span>
-              </span>
-              <span className="text-sm font-medium bg-gradient-to-r from-amber-800 via-orange-700 to-rose-700 bg-clip-text text-transparent">
-                🚀 For Students, By Students
-              </span>
-            </motion.div>
+              key={i}
+              className="absolute w-1.5 h-1.5 bg-white/20 rounded-full"
+              style={{ left: `${20 + i * 20}%`, top: `${25 + (i % 2) * 30}%` }}
+              animate={{ y: [0, -20, 0], opacity: [0.2, 0.5, 0.2] }}
+              transition={{ duration: 3 + i * 0.3, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
+        </div>
 
-            {/* Main Heading - Warm Gradient */}
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 
-                             bg-[length:200%_200%] animate-gradient bg-clip-text text-transparent">
-                Hire Your Team
-              </span>
-              <br />
-              <span className="text-stone-800">Build Your Dream Project</span>
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-4 lg:pt-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            
+            {/* ✅ Purple Badge */}
+            <div className="inline-flex items-center gap-1.5 px-4 py-2 mb-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+              <Rocket className="w-3.5 h-3.5 text-violet-400" />
+              <span className="text-xs font-medium text-white">CollabHub - Student Platform</span>
+            </div>
+
+            {/* ✅ Purple Accent Text */}
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-white mb-3 leading-tight">
+              DREAM. CREATE.<br />
+              <span className="text-violet-400">SUCCEED.</span>
             </h1>
 
-            {/* Subheading */}
-            <p className="text-lg sm:text-xl text-stone-700 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Connect with talented students from top colleges. Post your project idea,
-              find the right teammates, and bring your vision to life — all on{' '}
-              <span className="text-amber-700 font-semibold">CollabHub</span>.
+            <p className="text-sm sm:text-base text-slate-200 mb-5 max-w-2xl mx-auto leading-relaxed">
+              Connect with talented students from top colleges. Find teammates, share ideas, and build amazing projects!
             </p>
 
-            {/* CTA Buttons - Warm Colors */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-              <a
-                href="/#projects"
-                className="group px-8 py-4 rounded-xl text-lg font-semibold 
-                         border-2 border-amber-400 
-                         bg-gradient-to-r from-amber-100 via-orange-100 to-rose-100 
-                         hover:from-amber-200 hover:via-orange-200 hover:to-rose-200 
-                         text-amber-800 hover:text-amber-900 transition-all duration-300 
-                         flex items-center justify-center gap-2 backdrop-blur-sm shadow-md"
-              >
-                <Search size={20} className="group-hover:scale-110 transition-transform" /> 
-                Find Teammates
-              </a>
-              <Link
-                to="/create-project"
-                className="group px-8 py-4 rounded-xl text-lg font-semibold 
-                         bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
-                         hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
-                         text-white shadow-xl shadow-amber-300/50 
-                         hover:shadow-amber-400/60 transition-all duration-300 
-                         flex items-center justify-center gap-2"
-              >
-                <Zap size={20} className="group-hover:scale-110 transition-transform" /> 
-                Post a Project
+            {/* ✅ Purple Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <Link to="/create-project" className="group px-6 py-3 rounded-full bg-violet-600 text-white font-semibold text-sm hover:bg-violet-500 transition-all flex items-center gap-2 shadow-lg shadow-violet-600/30">
+                <Zap size={16} /> START BUILDING <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
-            </div>
-
-            {/* Trust Badges */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap justify-center gap-6 text-sm"
-            >
-              {[
-                { icon: Shield, text: "Verified Students", color: "text-amber-700", bg: "bg-amber-100" },
-                { icon: Users, text: "10,000+ Members", color: "text-orange-700", bg: "bg-orange-100" },
-                { icon: Rocket, text: "500+ Projects", color: "text-rose-700", bg: "bg-rose-100" }
-              ].map((badge, idx) => (
-                <span key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${badge.bg} border border-${badge.color.split('-')[1]}-200`}>
-                  <badge.icon size={16} className={badge.color} /> 
-                  <span className="text-stone-700 font-medium">{badge.text}</span>
-                </span>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll Indicator */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          >
-            <motion.div 
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-6 h-10 rounded-full border-2 border-amber-400 flex justify-center pt-2 bg-amber-50/50"
-            >
-              <div className="w-1.5 h-3 bg-amber-500 rounded-full" />
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* ✨ How It Works - Warm Colorful Cards */}
-        <section className="py-20 relative">
-          <div className="max-w-7xl mx-auto">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl sm:text-4xl font-bold text-center mb-4"
-            >
-              How to <span className="bg-gradient-to-r from-amber-700 to-rose-700 bg-clip-text text-transparent">Hire Your Team</span>
-            </motion.h2>
-            <p className="text-stone-700 text-center mb-16 max-w-2xl mx-auto">
-              Get started in minutes. No complex setup, just pure collaboration.
-            </p>
-
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-3 gap-6 lg:gap-8"
-            >
-              {[
-                {
-                  step: "01",
-                  icon: Lightbulb,
-                  title: "Post Your Idea",
-                  desc: "Share your project details, required skills, and team size. It's completely free!",
-                  gradient: "from-amber-200 to-orange-200",
-                  iconColor: "text-amber-700",
-                  border: "border-amber-300",
-                  hoverShadow: "hover:shadow-amber-200/60"
-                },
-                {
-                  step: "02",
-                  icon: Search,
-                  title: "Review Applications",
-                  desc: "Talented students from top colleges apply. Browse profiles, skills, and portfolios.",
-                  gradient: "from-orange-200 to-rose-200",
-                  iconColor: "text-orange-700",
-                  border: "border-orange-300",
-                  hoverShadow: "hover:shadow-orange-200/60"
-                },
-                {
-                  step: "03",
-                  icon: Rocket,
-                  title: "Start Building",
-                  desc: "Select your dream team, collaborate seamlessly, and launch your project together.",
-                  gradient: "from-rose-200 to-red-200",
-                  iconColor: "text-rose-700",
-                  border: "border-rose-300",
-                  hoverShadow: "hover:shadow-rose-200/60"
-                }
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  className={`group relative p-8 rounded-2xl 
-                           bg-gradient-to-br ${item.gradient} 
-                           border-2 ${item.border}
-                           backdrop-blur-md transition-all duration-300 
-                           shadow-lg ${item.hoverShadow}`}
-                >
-                  {/* Step Number */}
-                  <div className={`absolute top-6 right-6 text-5xl font-bold 
-                               bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent`}>
-                    {item.step}
-                  </div>
-                  
-                  {/* Icon */}
-                  <div className={`bg-white/70 w-14 h-14 rounded-xl flex items-center justify-center mb-6 
-                               group-hover:scale-110 transition-transform border border-white/50 shadow-sm`}>
-                    <item.icon className={`${item.iconColor} w-7 h-7`} />
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-3 text-stone-900">{item.title}</h3>
-                  <p className="text-stone-700 leading-relaxed">{item.desc}</p>
-                  
-                  {/* Decorative Corner */}
-                  <div className={`absolute bottom-4 right-4 w-16 h-16 rounded-full 
-                               bg-gradient-to-br ${item.gradient} opacity-30 blur-xl`} />
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 🔥 Trending Projects Section */}
-        <section id="projects" className="py-20">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 rounded-full 
-                           bg-gradient-to-r from-amber-200 to-orange-200 border border-amber-300">
-                <TrendingUp size={16} className="text-amber-700" />
-                <span className="text-sm font-medium text-amber-800">Hot Right Now</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-                <span className="bg-gradient-to-r from-amber-700 to-rose-700 bg-clip-text text-transparent">🔥 Trending Projects</span>
-              </h2>
-              <p className="text-lg text-stone-700 max-w-2xl mx-auto">
-                Join these exciting projects or get inspired to post your own
-              </p>
-            </motion.div>
-
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {bestProjects.map((project, idx) => (
-                <motion.div
-                  key={project.id}
-                  variants={itemVariants}
-                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                  className="group relative p-6 rounded-2xl 
-                           bg-gradient-to-br from-orange-100 via-amber-50 to-rose-100 
-                           border-2 border-orange-300 
-                           backdrop-blur-md transition-all duration-300 
-                           flex flex-col justify-between h-full 
-                           shadow-lg hover:shadow-orange-200/60"
-                >
-                  {/* Hiring Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 bg-amber-200 text-amber-800 text-xs rounded-full font-medium border border-amber-300 flex items-center gap-1 shadow-sm">
-                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-pulse" />
-                      Hiring
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold text-stone-900 mb-3 group-hover:text-amber-800 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-stone-700 text-sm mb-4 line-clamp-2 leading-relaxed">
-                      {project.description}
-                    </p>
-                    
-                    {/* Tech Stack - Warm Colorful Tags */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.techStack.map((tech, i) => (
-                        <span key={i} className={`px-3 py-1 text-xs rounded-lg border shadow-sm
-                          ${i % 3 === 0 ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                            i % 3 === 1 ? 'bg-orange-100 text-orange-800 border-orange-200' : 
-                            'bg-rose-100 text-rose-800 border-rose-200'}`}>
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="border-t border-orange-200 pt-4 mt-2">
-                    <div className="flex justify-between text-sm text-stone-700 mb-4">
-                      <div className="flex items-center gap-2">
-                        <Building size={14} className="text-amber-700" /> 
-                        <span>{project.college}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users size={14} className="text-orange-700" /> 
-                        <span>{project.teamSize} Needed</span>
-                      </div>
-                    </div>
-                    <Link 
-                      to={`/project/${project.id}`} 
-                      className="group/btn block w-full text-center 
-                               bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
-                               text-white py-3 rounded-xl 
-                               hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
-                               transition-all duration-300 flex items-center justify-center gap-2 font-medium
-                               shadow-md shadow-amber-300/50 hover:shadow-amber-400/60"
-                    >
-                      Apply Now 
-                      <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-
-                  {/* Decorative Glow */}
-                  <div className="absolute -bottom-8 -right-8 w-24 h-24 rounded-full 
-                               bg-gradient-to-br from-amber-300/40 to-orange-300/40 blur-2xl opacity-0 
-                               group-hover:opacity-100 transition-opacity pointer-events-none" />
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Browse All Button */}
-            <div className="text-center mt-12">
-              <button 
-                onClick={browseAll} 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl 
-                         border-2 border-amber-400 text-amber-800 
-                         bg-gradient-to-r from-amber-100 via-orange-100 to-rose-100
-                         hover:from-amber-200 hover:via-orange-200 hover:to-rose-200
-                         hover:border-amber-500 hover:text-amber-900 
-                         transition-all duration-300 font-semibold
-                         backdrop-blur-sm shadow-md group"
-              >
-                Browse All Projects 
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <button className="group px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-sm hover:bg-white/20 transition-all flex items-center gap-2">
+                <Play size={16} /> WATCH DEMO
               </button>
             </div>
+          </motion.div>
+        </div>
+
+        <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10" animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+          <div className="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center pt-1.5">
+            <div className="w-1 h-2 bg-white rounded-full" />
           </div>
-        </section>
+        </motion.div>
+      </section>
 
-        {/* 💡 Why Choose CollabHub - Warm Features */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl sm:text-4xl font-bold text-center mb-4"
-            >
-              Why Students <span className="bg-gradient-to-r from-amber-700 to-rose-700 bg-clip-text text-transparent">Choose CollabHub</span>
-            </motion.h2>
-            <p className="text-stone-700 text-center mb-16 max-w-2xl mx-auto">
-              Built by students, for students. Experience collaboration redefined.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: Users,
-                  title: "Cross-College Teams",
-                  desc: "Collaborate with talented peers from IITs, NITs, DTU, and 500+ colleges across India.",
-                  gradient: "from-amber-500 via-orange-500 to-yellow-500",
-                  bg: "from-amber-100 via-orange-50 to-yellow-100",
-                  border: "border-amber-300"
-                },
-                {
-                  icon: Code,
-                  title: "Real-World Experience",
-                  desc: "Build projects that matter. Add meaningful work to your portfolio and resume.",
-                  gradient: "from-orange-500 via-rose-500 to-red-500",
-                  bg: "from-orange-100 via-rose-50 to-red-100",
-                  border: "border-orange-300"
-                },
-                {
-                  icon: Rocket,
-                  title: "Career Opportunities",
-                  desc: "Stand out to recruiters. Many students get internships and jobs through CollabHub projects.",
-                  gradient: "from-rose-500 via-pink-500 to-purple-500",
-                  bg: "from-rose-100 via-pink-50 to-purple-100",
-                  border: "border-rose-300"
-                }
-              ].map((feature, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ y: -8 }}
-                  className={`group p-8 rounded-2xl bg-gradient-to-br ${feature.bg} 
-                           border-2 ${feature.border} 
-                           backdrop-blur-md transition-all duration-300 text-center 
-                           shadow-lg hover:shadow-xl`}
-                >
-                  <div className={`bg-gradient-to-r ${feature.gradient} w-16 h-16 rounded-2xl 
-                               flex items-center justify-center mx-auto mb-6 
-                               group-hover:scale-110 transition-transform shadow-md`}>
-                    <feature.icon className="text-white w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-stone-900">{feature.title}</h3>
-                  <p className="text-stone-700 leading-relaxed">{feature.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 🎯 About Section */}
-        <section id="about" className="py-20">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-                <span className="bg-gradient-to-r from-amber-700 to-rose-700 bg-clip-text text-transparent">About CollabHub</span>
-              </h2>
-              <p className="text-xl text-stone-700 max-w-3xl mx-auto">
-                We're on a mission to make student collaboration effortless and impactful.
-              </p>
-            </motion.div>
-
-            {/* Vision Card - Warm Gradient Background */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="p-8 lg:p-12 rounded-3xl 
-                       bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 
-                       border-2 border-amber-300 backdrop-blur-md mb-16 text-center 
-                       relative overflow-hidden shadow-xl"
-            >
-              {/* Animated Color Orbs - Warm Tones */}
-              <motion.div 
-                animate={{ scale: [1, 1.2, 1], opacity: [0.35, 0.55, 0.35] }}
-                transition={{ duration: 6, repeat: Infinity }}
-                className="absolute -top-10 -right-10 w-32 h-32 
-                         bg-gradient-to-br from-amber-300 to-orange-300 rounded-full blur-2xl"
-              />
-              <motion.div 
-                animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.45, 0.3] }}
-                transition={{ duration: 8, repeat: Infinity }}
-                className="absolute -bottom-10 -left-10 w-32 h-32 
-                         bg-gradient-to-tr from-rose-300 to-red-300 rounded-full blur-2xl"
-              />
-              
-              <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full 
-                             bg-amber-200 border border-amber-300">
-                  <Target className="text-amber-700" size={18} />
-                  <span className="text-sm font-medium text-amber-800">Our Vision</span>
+      {/* ✨ FEATURES SECTION - Purple Theme */}
+      <section className="relative -mt-16 z-20 px-4 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: Globe, title: "Cross-College", desc: "500+ colleges", color: "bg-violet-600" },
+              { icon: Code, title: "Real Projects", desc: "Build portfolio", color: "bg-violet-500" },
+              { icon: Users, title: "Find Teammates", desc: "Match skills", color: "bg-fuchsia-500" },
+              { icon: Trophy, title: "Career Growth", desc: "Get noticed", color: "bg-violet-400" }
+            ].map((f, i) => (
+              <motion.div key={i} variants={itemVariants} whileHover={{ y: -4 }} className="bg-white rounded-xl p-5 shadow-lg border border-slate-100 text-center">
+                <div className={`${f.color} w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                  <f.icon className="text-white w-6 h-6" />
                 </div>
-                <p className="text-lg lg:text-xl text-stone-800 leading-relaxed max-w-4xl mx-auto">
-                  Every great startup began with a team. Every great project began with an idea.
-                  CollabHub bridges the gap — helping students find their co-founders, teammates,
-                  and collaborators to turn ideas into reality.
-                </p>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">{f.title}</h3>
+                <p className="text-xs text-slate-500">{f.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 🔥 ABOUT SECTION - Purple Theme */}
+      <section id="about" className="py-16 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
+              <div className="rounded-2xl overflow-hidden shadow-xl">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop" alt="Students" className="w-full h-auto" />
               </div>
             </motion.div>
 
-            {/* Steps - Warm Colors */}
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid md:grid-cols-3 gap-6"
-            >
-              {[
-                { icon: Lightbulb, title: "Post Idea", desc: "Share your project with the community.", color: "text-amber-700", bg: "from-amber-100 to-orange-100", border: "border-amber-300" },
-                { icon: Users, title: "Get Applications", desc: "Skilled students apply to join your team.", color: "text-orange-700", bg: "from-orange-100 to-rose-100", border: "border-orange-300" },
-                { icon: Heart, title: "Build Together", desc: "Collaborate, create, and celebrate success.", color: "text-rose-700", bg: "from-rose-100 to-red-100", border: "border-rose-300" }
-              ].map((step, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  whileHover={{ y: -5 }}
-                  className={`group p-8 rounded-2xl bg-gradient-to-br ${step.bg} 
-                           border-2 ${step.border} 
-                           backdrop-blur-md transition-all duration-300 text-center 
-                           shadow-md hover:shadow-lg`}
-                >
-                  <div className={`bg-white/70 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 
-                               group-hover:scale-105 transition-transform border border-white/50 shadow-sm`}>
-                    <step.icon className={`${step.color} w-8 h-8`} />
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              {/* ✅ Purple Badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-4 rounded-full bg-violet-100">
+                <Target className="w-3.5 h-3.5 text-violet-600" />
+                <span className="text-xs font-medium text-violet-700">About</span>
+              </div>
+              
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4 leading-tight">
+                Build Your Dream<br /><span className="text-violet-600">Team Today</span>
+              </h2>
+              
+              <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                Every great project began with an idea. CollabHub helps students find teammates and collaborators to turn ideas into reality.
+              </p>
+
+              {/* ✅ Purple Checkmarks */}
+              <div className="space-y-3 mb-6">
+                {[
+                  "Post projects & find teammates",
+                  "Collaborate across colleges",
+                  "Build real portfolio projects",
+                  "Get noticed by recruiters"
+                ].map((txt, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-violet-600" />
+                    </div>
+                    <span className="text-sm text-slate-700">{txt}</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-stone-900">{step.title}</h3>
-                  <p className="text-stone-700">{step.desc}</p>
-                </motion.div>
-              ))}
+                ))}
+              </div>
+
+              {/* ✅ Purple Button */}
+              <Link to="/create-project" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/30">
+                Get Started <ArrowRight size={14} />
+              </Link>
             </motion.div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* 📬 Contact Section */}
-        <section id="contact" className="py-20">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-                <span className="bg-gradient-to-r from-amber-700 to-rose-700 bg-clip-text text-transparent">Let's Connect</span>
-              </h2>
-              <p className="text-xl text-stone-700">Have questions? We're here to help you build your team.</p>
-            </motion.div>
+      {/* 🎨 SERVICES SECTION - Purple Theme */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-4 rounded-full bg-violet-100">
+              <Layers className="w-3.5 h-3.5 text-violet-600" />
+              <span className="text-xs font-medium text-violet-700">What We Offer</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">Everything to <span className="text-violet-600">Collaborate</span></h2>
+            <p className="text-sm text-slate-600 max-w-xl mx-auto">Powerful tools designed for student teams</p>
+          </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Contact Info */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="space-y-6"
-              >
-                <div className="p-8 rounded-2xl 
-                             bg-gradient-to-br from-orange-100 via-amber-50 to-rose-100 
-                             border-2 border-orange-300 backdrop-blur-md shadow-xl">
-                  <h3 className="text-2xl font-bold mb-8 text-stone-900">Get in Touch</h3>
-                  <div className="space-y-5">
-                    {[
-                      { icon: Mail, text: "hello@collabhub.com", label: "Email", color: "text-amber-700", bg: "from-amber-100 to-orange-100" },
-                      { icon: MapPin, text: "Pan-India • Remote First", label: "Location", color: "text-orange-700", bg: "from-orange-100 to-rose-100" },
-                      { icon: Phone, text: "Support via Chat", label: "Support", color: "text-rose-700", bg: "from-rose-100 to-red-100" }
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-start gap-4 group">
-                        <div className={`bg-gradient-to-br ${item.bg} p-3 rounded-xl 
-                                     group-hover:scale-105 transition-all border border-white/50 shadow-sm`}>
-                          <item.icon className={`${item.color}`} size={20} />
-                        </div>
-                        <div>
-                          <p className="text-sm text-stone-600 mb-0.5">{item.label}</p>
-                          <span className="text-stone-900 font-medium">{item.text}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-10 pt-8 border-t border-orange-200">
-                    <h4 className="font-bold mb-4 text-stone-900">Follow Our Journey</h4>
-                    <div className="flex gap-3">
-                      {[
-                        { icon: Github, href: "#", hoverColor: "hover:text-amber-700", hoverBg: "hover:from-amber-100" },
-                        { icon: Linkedin, href: "#", hoverColor: "hover:text-orange-700", hoverBg: "hover:from-orange-100" },
-                        { icon: Twitter, href: "#", hoverColor: "hover:text-rose-700", hoverBg: "hover:from-rose-100" }
-                      ].map((social, idx) => (
-                        <a 
-                          key={idx} 
-                          href={social.href} 
-                          className={`p-3 bg-gradient-to-br from-stone-100 to-stone-50 rounded-xl 
-                                   border border-stone-200 ${social.hoverBg} to-white
-                                   ${social.hoverColor} transition-all duration-300 group shadow-sm`}
-                        >
-                          <social.icon className="text-stone-700 transition-colors" size={20} />
-                        </a>
-                      ))}
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              { icon: Monitor, title: "Web Dev", desc: "React, Next.js, Vue", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop", color: "bg-violet-600" },
+              { icon: Smartphone, title: "Mobile Apps", desc: "Flutter, React Native", image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&h=300&fit=crop", color: "bg-fuchsia-600" },
+              { icon: Palette, title: "UI/UX Design", desc: "Figma, Adobe XD", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop", color: "bg-pink-600" },
+              { icon: Cpu, title: "AI & ML", desc: "Python, TensorFlow", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop", color: "bg-violet-500" },
+              { icon: Globe, title: "Cloud & DevOps", desc: "AWS, Docker, K8s", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop", color: "bg-indigo-600" },
+              { icon: Shield, title: "Cybersecurity", desc: "Security, Encryption", image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop", color: "bg-violet-700" }
+            ].map((s, i) => (
+              <motion.div key={i} variants={itemVariants} whileHover={{ y: -4 }} className="group bg-white rounded-xl overflow-hidden border border-slate-100 shadow-md hover:shadow-lg transition-all">
+                <div className="relative h-36 overflow-hidden">
+                  <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute bottom-3 left-3">
+                    <div className={`${s.color} w-10 h-10 rounded-lg flex items-center justify-center`}>
+                      <s.icon className="text-white w-5 h-5" />
                     </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-sm font-bold text-slate-900 mb-1">{s.title}</h3>
+                  <p className="text-xs text-slate-500 mb-3">{s.desc}</p>
+                  {/* ✅ Purple Link */}
+                  <button className="inline-flex items-center gap-1 text-violet-600 font-semibold text-xs hover:gap-2 transition-all">Learn More <ArrowRight size={12} /></button>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 🔥 STATS SECTION - Purple Theme */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1920&h=600&fit=crop" alt="Stats" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-slate-900/85" />
+        </div>
+        <div className="relative z-10 max-w-6xl mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Trusted by Students</h2>
+            <p className="text-sm text-slate-300">Join thousands building projects together</p>
+          </motion.div>
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Users, num: "10K+", label: "Students", color: "text-violet-400" },
+              { icon: Rocket, num: "500+", label: "Projects", color: "text-fuchsia-400" },
+              { icon: Building, num: "500+", label: "Colleges", color: "text-pink-400" },
+              { icon: Star, num: "4.9/5", label: "Rating", color: "text-amber-400" }
+            ].map((st, i) => (
+              <motion.div key={i} variants={itemVariants} className="text-center">
+                <div className={`w-12 h-12 ${st.color.replace('text-','bg-').replace('400','500')}/20 rounded-xl flex items-center justify-center mx-auto mb-3`}>
+                  <st.icon className={`w-6 h-6 ${st.color}`} />
+                </div>
+                <p className={`text-2xl sm:text-3xl font-bold ${st.color} mb-1`}>{st.num}</p>
+                <p className="text-xs text-slate-400">{st.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 🔥 PROJECTS SECTION - Purple Theme */}
+      <section id="projects" className="py-16 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            {/* ✅ Purple Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-4 rounded-full bg-violet-100">
+              <TrendingUp size={14} className="text-violet-600" />
+              <span className="text-xs font-medium text-violet-700">Hot Now</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Trending Projects</h2>
+            <p className="text-sm text-slate-600 max-w-xl mx-auto">Join exciting projects or post your own</p>
+          </motion.div>
+
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {bestProjects.map((p) => (
+              <motion.div key={p.id} variants={itemVariants} whileHover={{ y: -4 }} className="group bg-white rounded-xl overflow-hidden shadow-md border border-slate-100 hover:shadow-lg transition-all">
+                <div className="relative h-40 overflow-hidden">
+                  <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                  <div className="absolute top-3 right-3">
+                    {/* ✅ Purple Badge */}
+                    <span className="px-2.5 py-1 bg-violet-600 text-white text-xs rounded-full font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> Hiring
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <div className="flex items-center gap-1.5 text-white/90 text-xs">
+                      <Building size={12} /> <span>{p.college}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-sm font-bold text-slate-900 mb-2 line-clamp-1">{p.title}</h3>
+                  <p className="text-xs text-slate-500 mb-3 line-clamp-2">{p.description}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {p.techStack.slice(0,3).map((t,i) => <span key={i} className="px-2 py-1 text-xs rounded bg-slate-100 text-slate-600">{t}</span>)}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <Users size={12} /> <span>{p.teamSize} needed</span>
+                    </div>
+                    {/* ✅ Purple Button */}
+                    <Link to={`/project/${p.id}`} className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-violet-600 text-white text-xs font-semibold hover:bg-violet-700 transition-all">
+                      Apply <ArrowRight size={12} />
+                    </Link>
                   </div>
                 </div>
               </motion.div>
+            ))}
+          </motion.div>
 
-              {/* Contact Form - Warm Colors */}
-              <motion.form
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="p-8 rounded-2xl 
-                         bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 
-                         border-2 border-amber-300 backdrop-blur-md space-y-6 shadow-xl"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert('Thanks for reaching out! We\'ll get back to you soon. 🚀');
-                }}
-              >
-                <div className="grid sm:grid-cols-2 gap-6">
+          <div className="text-center mt-8">
+            <button onClick={browseAll} className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition-all">
+              Browse All <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 💬 TESTIMONIALS - Purple Theme */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-4 rounded-full bg-violet-100">
+              <MessageSquare className="w-3.5 h-3.5 text-violet-600" />
+              <span className="text-xs font-medium text-violet-700">Testimonials</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">What Students Say</h2>
+          </motion.div>
+
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-3 gap-5">
+            {[
+              { name: "Priya S.", role: "IIT Delhi", text: "Found perfect teammates for hackathon. We won first place!", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" },
+              { name: "Rahul V.", role: "NIT Trichy", text: "Amazing platform! Built AI project that got featured in tech magazine.", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" },
+              { name: "Ananya P.", role: "BITS Pilani", text: "Built 3 projects, got 2 internship offers. Highly recommend!", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" }
+            ].map((t, i) => (
+              <motion.div key={i} variants={itemVariants} className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(5)].map((_,j) => <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
+                </div>
+                <p className="text-sm text-slate-600 mb-4 italic">"{t.text}"</p>
+                <div className="flex items-center gap-3">
+                  <img src={t.img} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
                   <div>
-                    <label className="block text-sm font-medium text-stone-800 mb-2">Your Name</label>
-                    <input 
-                      type="text" 
-                      required 
-                      className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-stone-300 
-                               focus:ring-2 focus:ring-amber-400 focus:border-amber-500 
-                               outline-none transition-all text-stone-900 placeholder-stone-500 shadow-sm" 
-                      placeholder="e.g., Rahul Sharma" 
-                    />
+                    <p className="text-sm font-bold text-slate-900">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.role}</p>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-stone-800 mb-2">College Email</label>
-                    <input 
-                      type="email" 
-                      required 
-                      className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-stone-300 
-                               focus:ring-2 focus:ring-amber-400 focus:border-amber-500 
-                               outline-none transition-all text-stone-900 placeholder-stone-500 shadow-sm" 
-                      placeholder="you@college.edu" 
-                    />
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 📬 CTA SECTION - Purple Gradient */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=600&fit=crop" alt="CTA" className="w-full h-full object-cover" />
+          {/* ✅ Pure Purple Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/95 to-fuchsia-600/95" />
+        </div>
+        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">Ready to Build Something Amazing?</h2>
+            <p className="text-sm text-white/80 mb-6 max-w-xl mx-auto">Join thousands of students collaborating on exciting projects. Your dream team is one click away!</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/create-project" className="group px-6 py-3 rounded-full bg-white text-slate-900 font-semibold text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2">
+                <Rocket size={16} /> Start Free
+              </Link>
+              <Link to="/about" className="group px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-sm hover:bg-white/20 transition-all flex items-center justify-center gap-2">
+                Learn More <ExternalLink size={14} />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 📬 CONTACT SECTION - Purple Theme */}
+      <section id="contact" className="py-16 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-10">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              {/* ✅ Purple Badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-4 rounded-full bg-violet-100">
+                <Mail className="w-3.5 h-3.5 text-violet-600" />
+                <span className="text-xs font-medium text-violet-700">Contact</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">Let's Connect</h2>
+              <p className="text-sm text-slate-600 mb-6">Have questions? We're here to help.</p>
+
+              <div className="space-y-4">
+                {[
+                  { icon: Mail, label: "Email", val: "hello@collabhub.com", color: "bg-violet-600" },
+                  { icon: MapPin, label: "Location", val: "Pan-India • Remote", color: "bg-fuchsia-600" },
+                  { icon: Phone, label: "Support", val: "Chat Support", color: "bg-pink-600" }
+                ].map((it, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className={`${it.color} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0`}>
+                      <it.icon className="text-white w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500">{it.label}</p>
+                      <span className="text-sm font-semibold text-slate-900">{it.val}</span>
+                    </div>
                   </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-slate-200">
+                <p className="text-sm font-bold text-slate-900 mb-3">Follow Us</p>
+                <div className="flex gap-2">
+                  {[Github, Linkedin, Twitter].map((S, i) => (
+                    <a key={i} href="#" className="p-2.5 bg-slate-100 hover:bg-violet-600 rounded-lg transition-all group">
+                      <S className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ✅ Purple Form */}
+            <motion.form initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100" onSubmit={(e) => { e.preventDefault(); alert('Thanks! 🚀'); }}>
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1.5">Name</label>
+                  <input type="text" required className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none text-sm" placeholder="Your name" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-stone-800 mb-2">How can we help?</label>
-                  <textarea 
-                    rows="4" 
-                    required 
-                    className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-stone-300 
-                             focus:ring-2 focus:ring-amber-400 focus:border-amber-500 
-                             outline-none transition-all text-stone-900 placeholder-stone-500 resize-none shadow-sm" 
-                    placeholder="Tell us about your project or question..."
-                  ></textarea>
+                  <label className="block text-xs font-medium text-slate-600 mb-1.5">Email</label>
+                  <input type="email" required className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none text-sm" placeholder="you@college.edu" />
                 </div>
-                <button 
-                  type="submit"
-                  className="w-full py-4 rounded-xl 
-                           bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
-                           text-white font-semibold 
-                           hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
-                           transition-all duration-300 shadow-lg shadow-amber-300/50 
-                           hover:shadow-amber-400/60 flex items-center justify-center gap-2 group"
-                >
-                  Send Message 
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </motion.form>
-            </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-xs font-medium text-slate-600 mb-1.5">Message</label>
+                <textarea rows="4" required className="w-full px-3 py-2.5 rounded-lg bg-slate-50 border border-slate-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-100 outline-none text-sm resize-none" placeholder="Your message..."></textarea>
+              </div>
+              {/* ✅ Purple Submit Button */}
+              <button type="submit" className="w-full py-3 rounded-lg bg-violet-600 text-white font-semibold text-sm hover:bg-violet-700 transition-all flex items-center justify-center gap-2">
+                Send Message <ArrowRight size={14} />
+              </button>
+            </motion.form>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Footer - Warm Colors */}
-        <footer className="py-10 border-t-2 border-amber-300 
-                        bg-gradient-to-r from-amber-100 via-orange-50 to-rose-100">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-stone-800 font-medium">© 2024 CollabHub. All rights reserved.</p>
-            <p className="text-sm text-stone-600 mt-2 flex items-center justify-center gap-1">
-              Built with <Heart size={14} className="text-rose-500 fill-rose-500" /> for student builders across India
+      {/* Footer - Purple Theme */}
+      <footer className="py-8 bg-slate-900">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              {/* ✅ Purple Logo Icon */}
+              <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center">
+                <Rocket className="text-white w-4 h-4" />
+              </div>
+              <span className="text-lg font-bold text-white">CollabHub</span>
+            </div>
+            <p className="text-slate-400 text-xs">© 2024 CollabHub. All rights reserved.</p>
+            <p className="text-xs text-slate-500 flex items-center gap-1">
+              Built with <Heart size={12} className="text-pink-500 fill-pink-500" /> for students
             </p>
           </div>
-        </footer>
+        </div>
+      </footer>
 
-      </div>
     </div>
   );
 };

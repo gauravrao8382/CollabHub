@@ -2,41 +2,41 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, Filter, RefreshCw, Plus, Sparkles,
+  Search, RefreshCw, Plus, Sparkles,
   Code, Layers, Cpu, Globe, Database, Shield,
-  Terminal, Cloud, Activity, Zap, ArrowRight, ArrowUpRight,
+  Zap, ArrowRight,
   Briefcase, University, ChevronDown, Users, ExternalLink,
   Image as ImageIcon, CheckCircle2, MessageSquare, Bell, LogOut,
   User, Settings
 } from 'lucide-react';
 
-// --- 1. Open Project Card Component (Fixed Height + Truncation) ---
+// --- 1. Open Project Card Component ---
 const OpenProjectCard = ({ project, onApplyClick }) => (
   <motion.div
     layout
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     exit={{ opacity: 0, scale: 0.95 }}
-    whileHover={{ y: -6, transition: { duration: 0.2 } }}
-    className="group relative p-1 rounded-2xl bg-gradient-to-r from-amber-200/40 via-orange-200/40 to-rose-200/40 hover:from-amber-300/50 hover:via-orange-300/50 hover:to-rose-300/50 transition-all duration-300"
+    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+    className="group relative p-0.5 rounded-xl bg-gradient-to-r from-violet-200/40 via-fuchsia-200/40 to-pink-200/40 hover:from-violet-300/50 hover:via-fuchsia-300/50 hover:to-pink-300/50 transition-all duration-300"
   >
-    <div className="h-full p-5 rounded-2xl bg-white/80 border-2 border-amber-200 backdrop-blur-md flex flex-col shadow-lg shadow-amber-100/50">
+    <div className="h-full p-3 sm:p-4 rounded-xl bg-white/80 border border-slate-200 backdrop-blur-md flex flex-col shadow-sm shadow-violet-200/50">
       
-      {/* Header with Warm Gradient Banner - FIXED HEIGHT h-32 */}
-      <div className="relative h-32 rounded-xl bg-gradient-to-br from-amber-200/60 via-orange-200/60 to-rose-200/60 overflow-hidden mb-4">
+      {/* Header with Violet Gradient Banner */}
+      <div className="relative h-24 sm:h-28 rounded-lg bg-gradient-to-br from-violet-200/60 via-fuchsia-200/60 to-pink-200/60 overflow-hidden mb-3">
         <div className="absolute inset-0 opacity-40" 
-             style={{backgroundImage: `radial-gradient(circle at 2px 2px, rgba(120,53,15,0.08) 1px, transparent 0)`, backgroundSize: '20px 20px'}} />
-        <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-amber-300/40 rounded-full blur-2xl" />
+             style={{backgroundImage: `radial-gradient(circle at 2px 2px, rgba(124,58,237,0.08) 1px, transparent 0)`, backgroundSize: '20px 20px'}} />
+        <div className="absolute -bottom-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 bg-violet-300/40 rounded-full blur-xl" />
         
-        {/* Status Badge - Warm */}
-        <div className="absolute top-3 left-3 bg-emerald-100/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-emerald-800 border border-emerald-200 flex items-center gap-1.5 shadow-sm">
-          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+        {/* Status Badge */}
+        <div className="absolute top-2 left-2 bg-emerald-100/80 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-semibold text-emerald-800 border border-emerald-200 flex items-center gap-1 shadow-sm">
+          <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
           Open
         </div>
         
-        {/* Title - Truncated with ellipsis */}
-        <div className="absolute bottom-3 left-3 right-3">
-          <h3 className="text-lg font-bold text-stone-900 drop-shadow-sm line-clamp-1 truncate group-hover:text-amber-800 transition-colors">
+        {/* Title */}
+        <div className="absolute bottom-2 left-2 right-2">
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 drop-shadow-sm line-clamp-1 truncate group-hover:text-violet-800 transition-colors">
             {project.title}
           </h3>
         </div>
@@ -44,45 +44,44 @@ const OpenProjectCard = ({ project, onApplyClick }) => (
 
       {/* Content */}
       <div className="flex flex-col flex-grow">
-        {/* Description - Truncated to 2 lines with ellipsis */}
-        <p className="text-stone-700 text-sm mb-4 line-clamp-2 leading-relaxed flex-grow overflow-hidden">
+        <p className="text-[11px] sm:text-xs text-slate-700 mb-3 line-clamp-2 leading-relaxed flex-grow overflow-hidden">
           {project.description}
         </p>
 
-        {/* College Badge - Warm */}
-        <div className="flex items-center gap-2 text-xs text-stone-600 mb-4 p-2.5 rounded-xl bg-amber-50/60 border border-amber-200">
-          <University size={14} className="text-amber-700 flex-shrink-0" />
-          <span className="font-medium truncate max-w-[120px]">{project.college}</span>
+        {/* College Badge */}
+        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-600 mb-3 p-2 rounded-lg bg-violet-50/60 border border-violet-200">
+          <University size={12} className="text-violet-700 flex-shrink-0" />
+          <span className="font-medium truncate max-w-[100px] sm:max-w-[120px]">{project.college}</span>
         </div>
 
         {/* Footer: Team + Apply */}
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-amber-200">
-          {/* Team Avatars - Warm */}
-          <div className="flex -space-x-2">
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-violet-200">
+          {/* Team Avatars */}
+          <div className="flex -space-x-1.5">
             {project.team?.slice(0, 2).map((member, i) => (
               <div key={i} 
-                className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 flex items-center justify-center text-[10px] font-bold text-white shadow-md" 
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center text-[8px] sm:text-[10px] font-bold text-white shadow-sm" 
                 title={member.name}
               >
                 {member.name?.charAt(0)?.toUpperCase()}
               </div>
             ))}
             {project.membersCount > 2 && (
-              <div className="w-8 h-8 rounded-full border-2 border-white bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-800 shadow-sm">
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white bg-violet-100 flex items-center justify-center text-[8px] sm:text-[10px] font-bold text-violet-800 shadow-sm">
                 +{project.membersCount - 2}
               </div>
             )}
           </div>
 
-          {/* Apply Button - Warm Gradient */}
+          {/* Apply Button */}
           <button
             onClick={() => onApplyClick(project._id)}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
-                     text-white text-xs font-semibold hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
-                     transition-all duration-300 flex items-center gap-2 shadow-md shadow-amber-200/60 
-                     hover:shadow-amber-300/70 group/btn whitespace-nowrap"
+            className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-violet-600 
+                     text-white text-[10px] sm:text-xs font-semibold hover:bg-violet-700 
+                     transition-all flex items-center gap-1 shadow-sm shadow-violet-200/60 group/btn whitespace-nowrap"
           >
-            Apply <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+            <span className="hidden sm:inline">Apply</span>
+            <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
           </button>
         </div>
       </div>
@@ -90,7 +89,7 @@ const OpenProjectCard = ({ project, onApplyClick }) => (
   </motion.div>
 );
 
-// --- 2. Completed Project Card Component (Fixed Height + Truncation) ---
+// --- 2. Completed Project Card Component ---
 const CompletedProjectCard = ({ project }) => {
   const navigate = useNavigate();
   const handleViewDetails = () => navigate(`/completed-project/${project.id || project._id}`);
@@ -98,43 +97,36 @@ const CompletedProjectCard = ({ project }) => {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -6 }}
-      className="group relative p-1 rounded-2xl bg-gradient-to-r from-amber-200/30 via-orange-200/30 to-rose-200/30 hover:from-amber-300/40 hover:via-orange-300/40 hover:to-rose-300/40 transition-all duration-300 cursor-pointer"
+      whileHover={{ y: -4 }}
+      className="group relative p-0.5 rounded-xl bg-gradient-to-r from-violet-200/30 via-fuchsia-200/30 to-pink-200/30 hover:from-violet-300/40 hover:via-fuchsia-300/40 hover:to-pink-300/40 transition-all duration-300 cursor-pointer"
       onClick={handleViewDetails}
     >
-      <div className="h-full p-5 rounded-2xl bg-white/80 border-2 border-amber-200 backdrop-blur-md flex flex-col shadow-lg shadow-amber-100/50">
+      <div className="h-full p-3 sm:p-4 rounded-xl bg-white/80 border border-slate-200 backdrop-blur-md flex flex-col shadow-sm shadow-violet-100/50">
         
-        {/* Screenshot / Hero Image - FIXED HEIGHT h-32 (same as OpenProjectCard) */}
-        <div className="relative h-32 rounded-xl bg-amber-50/60 overflow-hidden mb-4 border border-amber-200">
+        {/* Screenshot / Hero Image */}
+        <div className="relative h-24 sm:h-28 rounded-lg bg-violet-50/60 overflow-hidden mb-3 border border-violet-200">
           {project.screenshots && project.screenshots.length > 0 ? (
             <img src={project.screenshots[0]} alt={project.title}
               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 text-amber-400">
-              <ImageIcon size={32} className="opacity-60" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-fuchsia-50 text-violet-400">
+              <ImageIcon size={28} className="opacity-60" />
             </div>
           )}
           
           {/* Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-amber-100/80 via-transparent to-transparent opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-violet-100/80 via-transparent to-transparent opacity-50" />
           
-          {/* Completed Badge - Warm */}
-          <div className="absolute top-3 right-3 bg-emerald-100/80 backdrop-blur-sm text-emerald-800 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 flex items-center gap-1.5 shadow-sm">
-            <CheckCircle2 size={12} /> Completed
+          {/* Completed Badge */}
+          <div className="absolute top-2 right-2 bg-emerald-100/80 backdrop-blur-sm text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold border border-emerald-200 flex items-center gap-1 shadow-sm">
+            <CheckCircle2 size={10} /> <span className="hidden xs:inline">Completed</span>
           </div>
 
-          {/* Screenshot Count */}
-          {project.screenshots && project.screenshots.length > 1 && (
-            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-stone-700 text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 border border-amber-200 shadow-sm">
-              <ImageIcon size={10} /> {project.screenshots.length}
-            </div>
-          )}
-
-          {/* Hover Overlay - Warm */}
+          {/* Hover Overlay */}
           <div className="absolute inset-0 bg-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
-            <span className="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg transform translate-y-3 group-hover:translate-y-0 transition-all whitespace-nowrap">
+            <span className="bg-violet-600 text-white px-4 py-1.5 rounded-lg font-semibold text-[10px] sm:text-xs shadow-sm transform translate-y-2 group-hover:translate-y-0 transition-all whitespace-nowrap">
               View Details
             </span>
           </div>
@@ -142,71 +134,69 @@ const CompletedProjectCard = ({ project }) => {
 
         {/* Content */}
         <div className="flex flex-col flex-grow">
-          {/* Title - Truncated */}
-          <h3 className="text-lg font-bold text-stone-900 mb-2 leading-tight line-clamp-1 truncate group-hover:text-amber-800 transition-colors">
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5 leading-tight line-clamp-1 truncate group-hover:text-violet-800 transition-colors">
             {project.title}
           </h3>
-          {/* Description - Truncated to 2 lines */}
-          <p className="text-stone-700 text-xs mb-4 line-clamp-2 overflow-hidden">{project.description}</p>
+          <p className="text-[10px] sm:text-xs text-slate-700 mb-3 line-clamp-2 overflow-hidden">{project.description}</p>
 
-          {/* Tech Stack - Warm Tags (Truncated to 3 + "..." for more) */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          {/* Tech Stack */}
+          <div className="flex flex-wrap gap-1 mb-3">
             {project.techStack?.slice(0, 3).map((tech, i) => (
-              <span key={i} className={`px-2.5 py-1 text-[10px] font-medium rounded-lg border shadow-sm whitespace-nowrap
-                ${i % 3 === 0 ? 'bg-amber-100 text-amber-800 border-amber-200' : 
-                  i % 3 === 1 ? 'bg-orange-100 text-orange-800 border-orange-200' : 
-                  'bg-rose-100 text-rose-800 border-rose-200'}`}>
+              <span key={i} className={`px-2 py-0.5 text-[9px] sm:text-[10px] font-medium rounded border shadow-sm whitespace-nowrap
+                ${i % 3 === 0 ? 'bg-violet-100 text-violet-800 border-violet-200' : 
+                  i % 3 === 1 ? 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-200' : 
+                  'bg-pink-100 text-pink-800 border-pink-200'}`}>
                 {tech}
               </span>
             ))}
             {project.techStack?.length > 3 && (
-              <span className="px-2.5 py-1 bg-stone-100 text-stone-600 text-[10px] rounded-lg border border-stone-200">
+              <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[9px] sm:text-[10px] rounded border border-slate-200">
                 +{project.techStack.length - 3}
               </span>
             )}
           </div>
 
-          {/* Team - Warm */}
-          <div className="mb-5">
-            <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-              <Users size={10} className="text-amber-700" /> Built By
+          {/* Team */}
+          <div className="mb-4">
+            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <Users size={12} className="text-violet-700" /> Built By
             </p>
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-1.5">
                 {project.team?.slice(0, 3).map((member, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 flex items-center justify-center text-xs font-bold text-white shadow-md" title={member.name}>
+                  <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center text-[8px] font-bold text-white shadow-sm" title={member.name}>
                     {member.name?.charAt(0)?.toUpperCase()}
                   </div>
                 ))}
                 {project.team?.length > 3 && (
-                  <div className="w-8 h-8 rounded-full border-2 border-white bg-amber-100 flex items-center justify-center text-xs font-bold text-amber-800 shadow-sm">
+                  <div className="w-6 h-6 rounded-full border-2 border-white bg-violet-100 flex items-center justify-center text-[8px] font-bold text-violet-800 shadow-sm">
                     +{project.team.length - 3}
                   </div>
                 )}
               </div>
-              <span className="text-xs text-stone-600 font-medium whitespace-nowrap">
-                {project.team?.length} Members
+              <span className="text-[10px] text-slate-600 font-medium whitespace-nowrap">
+                {project.team?.length}
               </span>
             </div>
           </div>
 
-          {/* Action Buttons - Warm */}
-          <div className="mt-auto grid grid-cols-2 gap-3" onClick={(e) => e.stopPropagation()}>
+          {/* Action Buttons */}
+          <div className="mt-auto grid grid-cols-2 gap-2" onClick={(e) => e.stopPropagation()}>
             {project.liveLink && (
               <a href={project.liveLink} target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-amber-200/60 hover:shadow-amber-300/70 whitespace-nowrap"
+                className="flex items-center justify-center gap-1 px-2.5 py-1.5 bg-violet-600 hover:bg-violet-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm whitespace-nowrap"
               >
-                <ExternalLink size={14} /> Live
+                <ExternalLink size={12} /> <span className="hidden xs:inline">Live</span>
               </a>
             )}
             <button onClick={handleViewDetails}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${
+              className={`flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all border whitespace-nowrap ${
                 project.liveLink 
-                  ? 'bg-white/70 border-amber-200 text-stone-700 hover:bg-amber-50 hover:border-amber-400' 
-                  : 'bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 border-transparent text-white hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 w-full'
+                  ? 'bg-white/70 border-violet-200 text-slate-700 hover:bg-violet-50 hover:border-violet-400' 
+                  : 'bg-violet-600 border-transparent text-white hover:bg-violet-700 w-full'
               }`}
             >
-              Details <ArrowRight size={14} />
+              Details <ArrowRight size={12} />
             </button>
           </div>
         </div>
@@ -215,7 +205,7 @@ const CompletedProjectCard = ({ project }) => {
   );
 };
 
-// --- Main Dashboard Component (Warm Light Theme) ---
+// --- Main Dashboard Component ---
 const Dashboard = ({ user, projects, setProjects }) => {
   const navigate = useNavigate();
 
@@ -223,7 +213,6 @@ const Dashboard = ({ user, projects, setProjects }) => {
   const [filterType, setFilterType] = useState('All');
   const [filterCollege, setFilterCollege] = useState('');
   const [activeTab, setActiveTab] = useState('open');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const goToProjectDetails = (id) => {
     navigate(`/project/${id}`);
@@ -231,14 +220,14 @@ const Dashboard = ({ user, projects, setProjects }) => {
 
   const projectTypes = [
     { name: "All", icon: Layers },
-    { name: "App Development", icon: Code },
-    { name: "Web Development", icon: Globe },
+    { name: "App Dev", icon: Code },
+    { name: "Web Dev", icon: Globe },
     { name: "AI/ML", icon: Cpu },
     { name: "Blockchain", icon: Shield },
-    { name: "Data Science", icon: Database },
+    { name: "Data Sci", icon: Database },
   ];
 
-  // 🔍 Filtering Logic with Owner Exclusion
+  // 🔍 Filtering Logic
   const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.college?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -269,136 +258,140 @@ const Dashboard = ({ user, projects, setProjects }) => {
   };
 
   return (
-    // 🎨 Warm Theme Background
-    <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 
-                    text-stone-900 relative overflow-x-hidden pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 relative overflow-x-hidden pb-16 sm:pb-20">
       
-      {/* 🌈 Decorative Warm Blobs */}
+      {/* Decorative Violet Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+          animate={{ scale: [1, 1.1, 1], opacity: [0.12, 0.25, 0.12] }}
           transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] 
-                   bg-gradient-to-r from-amber-300/40 via-orange-300/30 to-rose-300/40 
-                   rounded-full blur-3xl"
+          className="absolute top-[-5%] right-[-5%] w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[600px] md:h-[600px] 
+                   bg-violet-200/30 rounded-full blur-2xl sm:blur-3xl"
         />
         <motion.div 
-          animate={{ scale: [1.1, 1, 1.1], opacity: [0.25, 0.45, 0.25] }}
+          animate={{ scale: [1.1, 1, 1.1], opacity: [0.08, 0.2, 0.08] }}
           transition={{ duration: 12, repeat: Infinity }}
-          className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] 
-                   bg-gradient-to-r from-orange-300/40 via-rose-300/30 to-red-300/30 
-                   rounded-full blur-3xl"
+          className="absolute top-[15%] left-[-5%] w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] 
+                   bg-fuchsia-200/20 rounded-full blur-2xl sm:blur-3xl"
         />
-        <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 14, repeat: Infinity }}
-          className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] 
-                   bg-gradient-to-r from-amber-300/30 via-orange-300/20 to-yellow-300/30 
-                   rounded-full blur-3xl"
-        />
-        {/* Warm Pattern Overlay */}
-        <div className="absolute inset-0 opacity-40" 
+        <div className="absolute inset-0 opacity-[0.03]" 
              style={{
-               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(120,53,15,0.08) 1px, transparent 0)`,
-               backgroundSize: '64px 64px'
+               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(124,58,237,0.08) 1px, transparent 0)`,
+               backgroundSize: '48px 48px'
              }} 
         />
       </div>
 
-      {/* ===== Sticky Header - Warm Theme ===== */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-amber-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 lg:h-20">
+      {/* ===== Sticky Header ===== */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
             
-            {/* Logo + Greeting - Warm */}
-            <div className="flex items-center gap-4">
-              <button 
-                className="lg:hidden p-2 text-stone-600 hover:text-amber-700 hover:bg-amber-100 rounded-lg transition-colors"
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-              >
-                <Layers size={22} />
-              </button>
-              
-              <div className="hidden lg:block">
-                <motion.h1
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="text-xl lg:text-2xl font-extrabold tracking-tight"
-                >
-                  Hello,{' '}
-                  <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">
-                    {user?.name || 'User'}
-                  </span>{' '}
-                  👋
-                </motion.h1>
-                <p className="text-xs text-stone-600 font-medium">Ready to build something amazing?</p>
-              </div>
-              <div className="lg:hidden">
-                <h1 className="text-lg font-bold text-stone-900">Hi, {user?.name?.split(' ')[0] || 'User'}!</h1>
-              </div>
-            </div>
+            {/* Greeting */}
+           <div className="flex items-center gap-3 sm:gap-4">
+  <div>
+    <motion.h1
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      className="text-base sm:text-lg lg:text-xl font-bold tracking-tight"
+    >
+      Hello,{' '}
+      <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+        {user?.name?.split(' ')[0] || 'User'}
+      </span>{' '}
+      👋
+    </motion.h1>
+    <p className="text-xs sm:text-sm text-slate-600 hidden sm:block font-medium">
+      Ready to build something amazing?
+    </p>
+  </div>
+</div>
 
-            {/* Header Right Actions - Warm */}
-            <div className="flex items-center gap-2">
+            {/* Header Right Actions */}
+            <div className="flex items-center gap-1 sm:gap-2">
               
-              {/* Messages - Warm Hover */}
+              {/* Messages - Fixed Icon Size */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/messages')}
-                className="relative p-2.5 text-stone-600 hover:text-amber-700 hover:bg-amber-100 rounded-xl transition-all"
+                className="relative p-2 text-slate-600 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-all"
                 title="Messages"
               >
-                <MessageSquare size={20} />
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
+                <MessageSquare size={18} />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
               </motion.button>
 
-              {/* Notifications - Warm Hover */}
+              {/* Notifications - Fixed Icon Size */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative p-2.5 text-stone-600 hover:text-amber-700 hover:bg-amber-100 rounded-xl transition-all"
+                className="relative p-2 text-slate-600 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-all"
                 title="Notifications"
               >
-                <Bell size={20} />
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>
+                <Bell size={18} />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-violet-500 border-2 border-white rounded-full"></span>
               </motion.button>
 
-              {/* Create Project - Desktop - Warm Gradient */}
+              {/* Create Project - Fixed Icon Size */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate('/create-project')}
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 text-white rounded-xl font-semibold shadow-lg shadow-amber-200/60 hover:shadow-amber-300/70 transition-all"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg font-semibold text-xs shadow-sm shadow-violet-600/25 hover:shadow-violet-600/40 hover:bg-violet-700 transition-all"
               >
                 <Plus size={18} strokeWidth={2.5} />
-                <span className="hidden lg:inline">Create Project</span>
+                <span className="hidden lg:inline">Create</span>
               </motion.button>
 
-              {/* Profile Dropdown - Warm */}
+              {/* 🔥 Profile Dropdown - ENHANCED FOR DESKTOP 🔥 */}
               <div className="relative group">
-                <button className="flex items-center gap-2 p-1 pr-3 rounded-xl hover:bg-amber-100 transition-colors">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 p-0.5">
-                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-amber-200">
-                      <span className="text-sm font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">
-                        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                      </span>
-                    </div>
+                <button className="flex items-center gap-2 p-1 pr-2 rounded-lg hover:bg-violet-50 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-xs">
+                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
-                  <ChevronDown size={16} className="text-stone-500 group-hover:text-stone-700 transition-colors hidden sm:block" />
+                  <ChevronDown size={14} className="text-slate-400 hidden sm:block" />
                 </button>
                 
-                {/* Dropdown Menu - Warm */}
-                <div className="absolute right-0 mt-2 w-48 py-2 rounded-xl bg-white/90 border-2 border-amber-200 backdrop-blur-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-amber-50 hover:text-amber-800 transition-colors">
-                    <User size={16} /> Profile
+                {/* ✅ ENHANCED Dropdown Menu - Larger for Desktop */}
+                <div className="absolute right-0 mt-2 w-56 sm:w-64 py-2 rounded-xl bg-white/95 border border-slate-200 backdrop-blur-md shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  
+                  {/* User Info Header */}
+                  <div className="px-4 py-3 border-b border-slate-100">
+                    <p className="text-sm font-bold text-slate-900 truncate">{user?.name || 'User'}</p>
+                    <p className="text-xs text-slate-500 truncate">{user?.email || 'user@college.edu'}</p>
+                  </div>
+                  
+                  {/* Menu Items - Larger & Spacious */}
+                  <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <User size={16} className="text-violet-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">My Profile</p>
+                      <p className="text-xs text-slate-400">View & edit your profile</p>
+                    </div>
+                    <ChevronDown size={14} className="text-slate-300 rotate-[-90deg]" />
                   </Link>
-                  <Link to="/settings" className="flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-amber-50 hover:text-amber-800 transition-colors">
-                    <Settings size={16} /> Settings
+                  
+                  <Link to="/settings" className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-fuchsia-100 flex items-center justify-center">
+                      <Settings size={16} className="text-fuchsia-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">Settings</p>
+                      <p className="text-xs text-slate-400">Account preferences</p>
+                    </div>
+                    <ChevronDown size={14} className="text-slate-300 rotate-[-90deg]" />
                   </Link>
-                  <hr className="my-2 border-amber-200" />
-                  <button className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-700 hover:bg-rose-50 transition-colors">
-                    <LogOut size={16} /> Logout
+                  
+                  <hr className="my-2 border-slate-200" />
+                  
+                  <button className="w-full flex items-center gap-3 px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center">
+                      <LogOut size={16} className="text-rose-600" />
+                    </div>
+                    <span className="font-medium">Logout</span>
                   </button>
                 </div>
               </div>
@@ -407,148 +400,148 @@ const Dashboard = ({ user, projects, setProjects }) => {
         </div>
       </header>
 
-      {/* ===== Main Content - Warm Theme ===== */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+      {/* ===== Main Content ===== */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
 
-        {/* Search & Filter Section - Warm */}
+        {/* Search & Filter Section */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8 space-y-4 lg:space-y-6"
+          className="mb-4 sm:mb-6 space-y-3 sm:space-y-4"
         >
-          {/* Search Bar - Warm Glow */}
+          {/* Search Bar */}
           <motion.div variants={itemVariants} className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-200/40 via-orange-200/40 to-rose-200/40 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-300" />
-            <div className="relative bg-white/70 border-2 border-amber-200 rounded-2xl flex items-center p-2 backdrop-blur-md shadow-sm">
-              <Search size={20} className="ml-3 text-stone-400" />
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-200/40 via-fuchsia-200/40 to-pink-200/40 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition duration-300" />
+            <div className="relative bg-white border border-slate-200 rounded-xl flex items-center p-2 backdrop-blur-md shadow-sm">
+              <Search size={18} className="ml-3 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search projects, colleges, or tech..."
-                className="w-full py-3 px-4 bg-transparent border-none focus:outline-none text-stone-900 placeholder-stone-400"
+                placeholder="Search projects, colleges..."
+                className="w-full py-2.5 px-3 bg-transparent border-none focus:outline-none text-sm text-slate-900 placeholder-slate-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               {searchTerm && (
                 <button 
                   onClick={() => setSearchTerm('')} 
-                  className="p-2 hover:bg-amber-100 rounded-lg text-stone-500 hover:text-rose-600 transition"
+                  className="p-2 hover:bg-violet-50 rounded-lg text-slate-500 hover:text-violet-600 transition"
                 >
-                  <RefreshCw size={18} />
+                  <RefreshCw size={16} />
                 </button>
               )}
             </div>
           </motion.div>
 
-          {/* Tabs & Filters Row - Warm */}
+          {/* Tabs & Filters Row */}
           <motion.div 
             variants={itemVariants}
-            className="flex flex-col lg:flex-row gap-4 items-center justify-between p-4 rounded-2xl bg-white/70 border-2 border-amber-200 backdrop-blur-md shadow-sm"
+            className="flex flex-col sm:flex-row gap-3 items-center justify-between p-3 rounded-xl bg-white border border-slate-200 backdrop-blur-md shadow-sm"
           >
-            {/* Custom Tabs - Warm Colors */}
-            <div className="flex p-1 bg-amber-100/60 rounded-xl w-full lg:w-auto border border-amber-200">
+            {/* Custom Tabs */}
+            <div className="flex p-0.5 bg-violet-100/60 rounded-lg w-full sm:w-auto border border-violet-200">
               {[
-                { id: 'open', label: 'Open Projects', icon: Zap, color: 'amber' },
-                { id: 'completed', label: 'Completed', icon: CheckCircle2, color: 'emerald' }
+                { id: 'open', label: 'Open', icon: Zap, color: 'violet' },
+                { id: 'completed', label: 'Done', icon: CheckCircle2, color: 'emerald' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-md text-xs font-semibold transition-all duration-300 ${
                     activeTab === tab.id
-                      ? `bg-white text-${tab.color}-700 shadow-sm border border-${tab.color}-300`
-                      : 'text-stone-600 hover:text-stone-800 hover:bg-amber-50'
+                      ? `bg-white text-${tab.color}-600 shadow-sm border border-${tab.color}-300`
+                      : 'text-slate-600 hover:text-slate-800 hover:bg-violet-50'
                   }`}
                 >
-                  <tab.icon size={16} className={activeTab === tab.id ? `text-${tab.color}-700` : ''} />
-                  {tab.label}
+                  <tab.icon size={14} className={activeTab === tab.id ? `text-${tab.color}-600` : ''} />
+                  <span className="hidden xs:inline">{tab.label}</span>
                 </button>
               ))}
             </div>
 
-            {/* Filters - Warm */}
-            <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0">
-              <div className="relative min-w-[150px]">
+            {/* Filters */}
+            <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+              <div className="relative min-w-[120px]">
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full appearance-none bg-white/70 border-2 border-amber-200 text-stone-700 py-2.5 pl-4 pr-10 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 cursor-pointer hover:border-amber-400"
+                  className="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2 pl-3 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-500 cursor-pointer hover:border-violet-300"
                 >
                   {projectTypes.map((type) => (
-                    <option key={type.name} value={type.name} className="bg-white">{type.name}</option>
+                    <option key={type.name} value={type.name} className="bg-white text-sm">{type.name}</option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
               
               <input
                 type="text"
-                placeholder="Filter College"
+                placeholder="College"
                 value={filterCollege}
                 onChange={(e) => setFilterCollege(e.target.value)}
-                className="w-full lg:w-40 bg-white/70 border-2 border-amber-200 text-stone-700 py-2.5 px-4 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-500 placeholder-stone-400 hover:border-amber-400"
+                className="w-24 sm:w-32 bg-white border border-slate-200 text-slate-700 py-2 px-3 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-500 placeholder-slate-400 hover:border-violet-300"
               />
               
               <button 
                 onClick={handleReset} 
-                className="p-2.5 text-stone-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                title="Reset filters"
+                className="p-2 text-slate-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                title="Reset"
               >
-                <RefreshCw size={18} />
+                <RefreshCw size={16} />
               </button>
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Section Header - Warm */}
+        {/* Section Header */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
         >
-          <h2 className="text-xl lg:text-2xl font-bold flex items-center gap-2.5">
+          <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
             {activeTab === 'open' ? (
               <>
-                <Sparkles className="text-amber-600" size={20} />
-                <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">
-                  Trending Open Projects
+                <Sparkles className="text-violet-600" size={16} />
+                <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                  Open Projects
                 </span>
               </>
             ) : (
               <>
-                <CheckCircle2 className="text-emerald-600" size={20} />
+                <CheckCircle2 className="text-emerald-600" size={16} />
                 <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  Completed Showcase
+                  Completed
                 </span>
               </>
             )}
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
               activeTab === 'open' 
-                ? 'bg-amber-100 text-amber-800 border border-amber-300' 
-                : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                ? 'bg-violet-100 text-violet-700 border border-violet-200' 
+                : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
             }`}>
               {filteredProjects.length}
             </span>
           </h2>
 
-          {/* Mobile Create Button - Warm */}
+          {/* Mobile Create Button */}
           <button
             onClick={() => navigate('/create-project')}
-            className="sm:hidden flex items-center justify-center w-11 h-11 bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 text-white rounded-xl shadow-lg shadow-amber-200/60"
+            className="sm:hidden flex items-center justify-center w-10 h-10 bg-violet-600 text-white rounded-lg shadow-sm shadow-violet-600/25"
           >
-            <Plus size={20} />
+            <Plus size={18} />
           </button>
         </motion.div>
 
-        {/* Projects Grid - Warm - Added items-stretch for equal heights */}
+        {/* Projects Grid */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6 items-stretch"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch"
         >
           <AnimatePresence mode='popLayout'>
             {filteredProjects.length > 0 ? (
-              filteredProjects.map((project, index) => (
+              filteredProjects.map((project) => (
                 <motion.div
                   key={project._id || project.id}
                   variants={itemVariants}
@@ -569,21 +562,21 @@ const Dashboard = ({ user, projects, setProjects }) => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="col-span-full py-16 lg:py-24 flex flex-col items-center justify-center text-center"
+                className="col-span-full py-12 sm:py-16 flex flex-col items-center justify-center text-center"
               >
-                <div className="relative w-40 h-40 lg:w-48 lg:h-48 mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-200/60 via-orange-200/60 to-rose-200/60 rounded-full animate-pulse" />
-                  <div className="absolute inset-2 bg-white/70 rounded-full border-2 border-amber-200 flex items-center justify-center backdrop-blur-md shadow-sm">
-                    <Search size={56} className="text-stone-400" />
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 mb-4">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-violet-200/60 via-fuchsia-200/60 to-pink-200/60 rounded-full animate-pulse" />
+                  <div className="absolute inset-2 bg-white rounded-full border border-slate-200 flex items-center justify-center backdrop-blur-md shadow-sm">
+                    <Search size={40} className="text-slate-400" />
                   </div>
                 </div>
-                <h3 className="text-xl lg:text-2xl font-bold text-stone-900 mb-2">No projects found</h3>
-                <p className="text-stone-600 max-w-md mb-8 px-4">
-                  Try adjusting your filters or check back later for more {activeTab} projects.
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1.5">No projects found</h3>
+                <p className="text-xs text-slate-600 max-w-sm mb-4 px-2">
+                  Try adjusting filters or check back later.
                 </p>
                 <button
                   onClick={handleReset}
-                  className="px-6 py-3 bg-white/70 border-2 border-amber-200 text-stone-700 font-semibold rounded-xl hover:bg-amber-50 hover:border-amber-400 transition-all shadow-sm"
+                  className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-violet-50 hover:border-violet-300 transition-all shadow-sm"
                 >
                   Clear Filters
                 </button>
@@ -592,16 +585,16 @@ const Dashboard = ({ user, projects, setProjects }) => {
           </AnimatePresence>
         </motion.div>
 
-        {/* Mobile FAB for Create Project - Warm */}
+        {/* Mobile FAB */}
         <motion.button
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/create-project')}
-          className="fixed bottom-6 right-6 sm:hidden w-14 h-14 bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 text-white rounded-full shadow-2xl shadow-amber-300/60 flex items-center justify-center z-40"
+          className="fixed bottom-4 right-4 sm:hidden w-12 h-12 bg-violet-600 text-white rounded-full shadow-lg shadow-violet-600/40 flex items-center justify-center z-40"
         >
-          <Plus size={24} strokeWidth={2.5} />
+          <Plus size={20} strokeWidth={2.5} />
         </motion.button>
 
       </main>
