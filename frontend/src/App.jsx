@@ -124,7 +124,7 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/dashboard"
-            element={user ? <LandingPage user={user} projects={projects} setProjects={setProjects} /> : <Navigate to="/login" />}
+            element={user ? <LandingPage user={user} setUser={setUser} projects={projects} setProjects={setProjects} /> : <Navigate to="/login" />}
           />
 
           <Route

@@ -7,15 +7,12 @@ import ApplicationsView from '../components/ApplicationsView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 
-const LandingPage = () => {
+const LandingPage = ({user,setUser,projects,setProjects}) => {
   const [activeView, setActiveView] = useState('dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Mock User (Replace with Auth Context later)
-  const user = { name: 'Rahul Sharma', email: 'rahul@college.edu', college: 'DTU' };
 
-  // Handle window resize for sidebar
   useEffect(() => {
     const handleResize = () => { if (window.innerWidth < 1024) setIsCollapsed(true); };
     window.addEventListener('resize', handleResize);
@@ -24,12 +21,12 @@ const LandingPage = () => {
 
   const renderView = () => {
     switch(activeView) {
-      case 'dashboard': return <DashboardView user={user} searchTerm={searchTerm} />;
-      case 'projects': return <ProjectsView searchTerm={searchTerm} />;
-      case 'applications': return <ApplicationsView />;
+      case 'dashboard': return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
+      case 'projects': return <ProjectsView user={user} searchTerm={searchTerm} projects={projects} />;
+      case 'applications': return <ApplicationsView user={user} projects={projects} />;
       case 'profile': return <ProfileView user={user} />;
-      case 'settings': return <SettingsView />;
-      default: return <DashboardView user={user} searchTerm={searchTerm} />;
+      case 'settings': return <SettingsView user={user} />;
+      default: return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
     }
   };
 
