@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, CheckCircle2, FileText, Plus, Users, Briefcase, Calendar } from 'lucide-react';
+import { Zap, CheckCircle2, FileText, Plus, Users, Briefcase, Calendar, ArrowRight } from 'lucide-react';
 
 const DashboardView = ({ user, projects, searchTerm }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('applied');
   const userIdStr = user?._id?.toString();
 
@@ -15,7 +17,6 @@ const DashboardView = ({ user, projects, searchTerm }) => {
     p.owner?.toString() === userIdStr
   );
   
-  // "Selected" = User accepted into the project (moved to teamMembers)
   const selectedProjects = projects.filter(p => 
     p.teamMembers?.some(m => m.userId?.toString() === userIdStr)
   );
@@ -34,7 +35,6 @@ const DashboardView = ({ user, projects, searchTerm }) => {
     { id: 'completed', label: 'Completed', icon: CheckCircle2, count: completedProjects.length, color: 'emerald' },
   ];
 
-  // 🎨 Static color mapping to avoid Tailwind JIT purging
   const tabColors = {
     violet: { active: 'bg-violet-50 text-violet-700 border-violet-200', badge: 'bg-violet-100 text-violet-700' },
     fuchsia: { active: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200', badge: 'bg-fuchsia-100 text-fuchsia-700' },
@@ -52,7 +52,6 @@ const DashboardView = ({ user, projects, searchTerm }) => {
       default: base = [];
     }
 
-    // Apply search filter if provided
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       base = base.filter(p => 
@@ -73,6 +72,10 @@ const DashboardView = ({ user, projects, searchTerm }) => {
       case 'Closed': return 'bg-slate-100 text-slate-600 border-slate-200';
       default: return 'bg-slate-100 text-slate-600 border-slate-200';
     }
+  };
+
+  const onViewProject = (proj) => {
+    navigate(`/project/${proj._id}`);
   };
 
   return (
@@ -99,7 +102,7 @@ const DashboardView = ({ user, projects, searchTerm }) => {
         ))}
       </div>
 
-      {/* Project Grid - Only Real Projects */}
+      {/* Project Grid */}
       {displayProjects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {displayProjects.map((proj) => (
@@ -153,11 +156,21 @@ const DashboardView = ({ user, projects, searchTerm }) => {
                   </span>
                 </div>
               </div>
+
+              {/* ✨ View Details Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onViewProject?.(proj)}
+                className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-xl transition-colors group/btn"
+              >
+                View Details
+                <ArrowRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
+              </motion.button>
             </motion.div>
           ))}
         </div>
       ) : (
-        /* Empty State */
         <motion.div 
           initial={{ opacity: 0, y: 10 }} 
           animate={{ opacity: 1, y: 0 }} 

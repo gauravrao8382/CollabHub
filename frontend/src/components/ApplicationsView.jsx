@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, Settings, ExternalLink, Edit3, Users, 
@@ -6,6 +7,7 @@ import {
 } from 'lucide-react';
 
 const ApplicationsView = ({ user, projects, onManageApplicants, onEditProject }) => {
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('all');
   const [expandedProject, setExpandedProject] = useState(null);
 
@@ -41,7 +43,9 @@ const ApplicationsView = ({ user, projects, onManageApplicants, onEditProject })
       default: return 'bg-slate-100 text-slate-600 border-slate-200';
     }
   };
-
+ const handleCreateProject = () => {
+    navigate('/create-project'); // Passing null indicates creating a new project
+  }
   const ProjectCard = ({ proj }) => {
     const isExpanded = expandedProject === proj._id;
     const applicantCount = proj.applicants?.length || 0;
@@ -260,7 +264,9 @@ const ApplicationsView = ({ user, projects, onManageApplicants, onEditProject })
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">My Projects</h1>
-        <button className="px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-violet-700 transition-colors shadow-sm">
+        <button 
+        onClick={handleCreateProject}
+        className="px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-2 hover:bg-violet-700 transition-colors shadow-sm">
           <Plus size={16} /> Create New
         </button>
       </div>
@@ -304,7 +310,9 @@ const ApplicationsView = ({ user, projects, onManageApplicants, onEditProject })
           <p className="text-sm font-medium text-slate-500">
             {statusFilter === 'all' ? "You haven't created any projects yet." : `No ${statusFilter.toLowerCase()} projects found.`}
           </p>
-          <button className="mt-4 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors">
+          <button
+            onClick={handleCreateProject}
+           className="mt-4 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors">
             + Create Your First Project
           </button>
         </motion.div>

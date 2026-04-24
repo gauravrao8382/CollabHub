@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import DashboardView from '../components/DashboardView';
@@ -12,7 +13,6 @@ const LandingPage = ({user,setUser,projects,setProjects}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-
   useEffect(() => {
     const handleResize = () => { if (window.innerWidth < 1024) setIsCollapsed(true); };
     window.addEventListener('resize', handleResize);
@@ -31,7 +31,9 @@ const LandingPage = ({user,setUser,projects,setProjects}) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50/30 to-fuchsia-50/30 flex">
+    // ✅ Removed gradient, using solid bg-slate-50
+    <div className="min-h-screen bg-slate-50 flex">
+      
       {/* Sidebar */}
       <div className={`${isCollapsed ? 'hidden lg:block' : 'block'} lg:block fixed lg:relative z-30`}>
         <Sidebar 
@@ -42,17 +44,26 @@ const LandingPage = ({user,setUser,projects,setProjects}) => {
         />
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen transition-all duration-300 lg:ml-[260px]">
+      {/* Main Content Area - ✅ DYNAMIC MARGIN based on isCollapsed */}
+      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 
+        ${isCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'}`}>
+        
         <Header 
           user={user} 
           onNavigate={setActiveView} 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm} 
+          onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
         />
         
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-          {renderView()}
+          <Routes>
+            <Route index element={<DashboardView user={user} projects={projects} />} />
+            <Route path="projects" element={<ProjectsView user={user} projects={projects} />} />
+            <Route path="applications" element={<ApplicationsView user={user} projects={projects} />} />
+            <Route path="profile" element={<ProfileView user={user} />} />
+            <Route path="settings" element={<SettingsView user={user} />} />
+          </Routes>
         </main>
       </div>
     </div>
