@@ -127,11 +127,10 @@ const ProjectDetails = ({ projects, user }) => {
   };
 
   return (
-    // 🎨 Clean Slate Background - No Gradients
     <div className="min-h-screen bg-slate-50 text-slate-900 relative">
 
-      {/* 🔗 TOP BAR - Clean Theme */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200/60 shadow-sm">
+      {/* 🔗 TOP BAR */}
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <motion.button whileHover={{ scale: 1.02, x: -2 }} whileTap={{ scale: 0.98 }} onClick={() => navigate(-1)}
@@ -147,16 +146,16 @@ const ProjectDetails = ({ projects, user }) => {
         </div>
       </header>
 
-      {/* 📐 CONTENT WRAPPER */}
-      <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
+      {/* 📐 CONTENT WRAPPER - Fixed Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col xl:flex-row gap-6">
 
-        {/* ← LEFT SIDE: Project Details (Scrollable) */}
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="w-full lg:w-3/5">
-          <div className="max-h-[calc(100vh-140px)] overflow-y-auto pr-2 custom-scrollbar">
-            <div className="space-y-6 pb-6">
+          {/* ← LEFT SIDE: Project Details */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="w-full xl:w-3/5">
+            <div className="space-y-6">
               
               {/* Project Header Card */}
-              <div className="p-6 rounded-3xl bg-white/80 border border-slate-200/60 backdrop-blur-md shadow-sm">
+              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
                 
                 {/* Status Badges */}
                 <div className="flex flex-wrap items-center gap-3 mb-5">
@@ -170,7 +169,7 @@ const ProjectDetails = ({ projects, user }) => {
                   )}
                 </div>
 
-                {/* Title - Solid Color */}
+                {/* Title */}
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 leading-tight">
                   {project.title}
                 </h1>
@@ -226,7 +225,7 @@ const ProjectDetails = ({ projects, user }) => {
                               className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200 hover:border-violet-300 transition-all cursor-pointer group"
                               onClick={(e) => handleMemberClick(memberId, e)} title={`View ${member.name || 'Profile'}`}
                             >
-                              {/* Avatar - Solid Violet */}
+                              {/* Avatar */}
                               <div className="relative flex-shrink-0">
                                 <div className="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center text-white text-sm font-semibold group-hover:bg-violet-700 transition-colors border-2 border-white">
                                   {(member.name?.charAt?.(0) || 'U').toUpperCase()}
@@ -258,7 +257,7 @@ const ProjectDetails = ({ projects, user }) => {
                   })()}
                 </div>
 
-                {/* Tech Stack - Clean Tags */}
+                {/* Tech Stack */}
                 <div>
                   <h3 className="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-wide">
                     <Code size={16} className="text-violet-600" /> Tech Stack
@@ -276,13 +275,12 @@ const ProjectDetails = ({ projects, user }) => {
                 </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* → RIGHT SIDE: Application Form / Status (Sticky) */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="w-full lg:w-2/5">
-          <div className="sticky top-24 lg:top-28 p-6 rounded-3xl bg-white/80 border border-slate-200/60 backdrop-blur-md shadow-sm max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
-            
+          {/* → RIGHT SIDE: Application Form / Status (Sticky) */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="w-full xl:w-2/5">
+            <div className="sticky top-24 p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
+              
             <AnimatePresence mode="wait">
               
               {/* 🔒 STATE: Hiring Closed */}
@@ -451,11 +449,12 @@ const ProjectDetails = ({ projects, user }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
-        </motion.div>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* ✨ Custom Scrollbar CSS - Clean Theme */}
+      {/* ✨ Custom Scrollbar CSS */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

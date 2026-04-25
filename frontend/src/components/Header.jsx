@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Bell, User, ChevronDown, Plus, LogOut, Settings, PanelLeft } from 'lucide-react';
 
 const Header = ({ user, onNavigate, onToggleSidebar, handleLogout}) => {
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const handleCreateProject = () => {
+    navigate('/create-project');
+  };
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-slate-200/60 px-4 md:px-6 h-16 flex items-center justify-between">
       
@@ -26,7 +30,7 @@ const Header = ({ user, onNavigate, onToggleSidebar, handleLogout}) => {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => onNavigate?.('create-project')}
+          onClick={handleCreateProject}
           className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 
                    bg-violet-600 hover:bg-violet-700 text-white text-xs md:text-sm 
                    font-medium rounded-xl transition-colors shadow-sm hover:shadow
