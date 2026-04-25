@@ -10,31 +10,27 @@ import { showSuccess, showError, showLoading, updateToastSuccess, updateToastErr
 
 const API = "http://localhost:5000";
 
-// ===== Warm Light Theme LabeledInput Component =====
+// ===== Clean Theme LabeledInput Component =====
 const LabeledInput = ({ 
   label, icon: Icon, type = "text", placeholder, value, onChange, 
   isTextArea = false, required = true, onKeyDown, error, disabled = false 
 }) => (
-  <motion.div 
-    initial={{ opacity: 0, x: -10 }}
-    animate={{ opacity: 1, x: 0 }}
-    className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center py-4 border-b border-amber-200 last:border-0"
-  >
-    {/* Label - Warm */}
-    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-stone-700 flex items-center gap-2 md:justify-end text-right">
-      <Icon className="text-amber-600 w-4 h-4 flex-shrink-0" /> 
+  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center py-4 border-b border-slate-200 last:border-0">
+    {/* Label - Clean */}
+    <label className="md:col-span-3 text-xs md:text-sm font-semibold text-slate-700 flex items-center gap-2 md:justify-end text-right">
+      <Icon className="text-violet-600 w-4 h-4 flex-shrink-0" /> 
       <span className="hidden md:inline">{label}</span>
       <span className="md:hidden">{label}</span>
       {required && <span className="text-rose-600 text-[10px] md:text-sm">*</span>}
     </label>
 
-    {/* Input - Warm Focus */}
+    {/* Input - Clean Focus */}
     <div className="md:col-span-9">
       {isTextArea ? (
         <textarea
           className={`w-full px-4 py-3 rounded-xl bg-white/70 border-2 ${
-            error ? 'border-rose-400 focus:ring-rose-400' : 'border-stone-200 focus:ring-amber-400 focus:border-amber-500'
-          } outline-none transition-all duration-300 text-stone-900 placeholder-stone-400 resize-none hover:border-amber-300 disabled:opacity-50 disabled:cursor-not-allowed`}
+            error ? 'border-rose-400 focus:ring-rose-400' : 'border-slate-200 focus:ring-violet-400 focus:border-violet-500'
+          } outline-none transition-all duration-300 text-slate-900 placeholder-slate-400 resize-none hover:border-violet-300 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder} rows={4} required={required} value={value}
           onChange={onChange} disabled={disabled}
         />
@@ -42,8 +38,8 @@ const LabeledInput = ({
         <input
           type={type}
           className={`w-full px-4 py-3 rounded-xl bg-white/70 border-2 ${
-            error ? 'border-rose-400 focus:ring-rose-400' : 'border-stone-200 focus:ring-amber-400 focus:border-amber-500'
-          } outline-none transition-all duration-300 text-stone-900 placeholder-stone-400 hover:border-amber-300 disabled:opacity-50 disabled:cursor-not-allowed`}
+            error ? 'border-rose-400 focus:ring-rose-400' : 'border-slate-200 focus:ring-violet-400 focus:border-violet-500'
+          } outline-none transition-all duration-300 text-slate-900 placeholder-slate-400 hover:border-violet-300 disabled:opacity-50 disabled:cursor-not-allowed`}
           placeholder={placeholder} required={required} value={value}
           onChange={onChange} onKeyDown={onKeyDown} disabled={disabled}
         />
@@ -60,7 +56,7 @@ const LabeledInput = ({
         )}
       </AnimatePresence>
     </div>
-  </motion.div>
+  </div>
 );
 
 const EditProject = () => {
@@ -74,7 +70,6 @@ const EditProject = () => {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // ===== Fetch existing project =====
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -97,7 +92,6 @@ const EditProject = () => {
     fetchProject();
   }, [projectId, navigate]);
 
-  // ===== Form Validation =====
   const validateForm = () => {
     const newErrors = {};
     if (!formData.title.trim()) newErrors.title = "Project name is required";
@@ -110,7 +104,6 @@ const EditProject = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ===== Update project =====
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (saving) return;
@@ -140,108 +133,51 @@ const EditProject = () => {
   const handleBack = () => navigate(-1);
   const handleKeyDown = (e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-  };
-
-  // ===== Loading State - Warm Theme =====
+  // ===== Loading State - Clean Theme =====
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 flex items-center justify-center">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="relative">
-          <div className="w-14 h-14 rounded-full border-4 border-amber-200 border-t-amber-500" />
-          <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-transparent border-t-orange-500 animate-spin" style={{ animationDuration: '0.8s' }} />
-        </motion.div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full border-4 border-slate-200 border-t-violet-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    // 🎨 Warm Theme Background
-    <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-rose-100 
-                    text-stone-900 py-8 px-4 relative overflow-hidden">
-      
-      {/* 🌈 Decorative Warm Blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 10, repeat: Infinity }}
-          className="absolute top-10 right-10 w-72 h-72 
-                   bg-gradient-to-r from-amber-300/40 via-orange-300/30 to-rose-300/40 
-                   rounded-full blur-3xl"
-        />
-        <motion.div 
-          animate={{ scale: [1.15, 1, 1.15], opacity: [0.25, 0.45, 0.25] }}
-          transition={{ duration: 12, repeat: Infinity }}
-          className="absolute bottom-10 left-10 w-80 h-80 
-                   bg-gradient-to-r from-orange-300/40 via-rose-300/30 to-red-300/30 
-                   rounded-full blur-3xl"
-        />
-        {/* Warm Pattern Overlay */}
-        <div className="absolute inset-0 opacity-40" 
-             style={{
-               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(120,53,15,0.08) 1px, transparent 0)`,
-               backgroundSize: '64px 64px'
-             }} 
-        />
-      </div>
+    // 🎨 Clean Slate Background - No Gradients, No Tilt Effect
+    <div className="min-h-screen bg-slate-50 text-slate-900 py-8 px-4">
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto relative z-10"
-      >
+      <div className="max-w-4xl mx-auto">
 
-        {/* 🔙 Header Card - Warm Theme ===== */}
-        <motion.div
-          variants={itemVariants}
-          className="p-5 md:p-7 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50 mb-6 relative overflow-hidden group"
-        >
-          {/* Warm Glow Effect */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-200/40 via-orange-200/30 to-rose-200/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          
-          <div className="relative z-10 flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05, x: -2 }} whileTap={{ scale: 0.95 }}
+        {/* 🔙 Header Card - Clean Theme (No Animation) */}
+        <div className="p-5 md:p-7 rounded-3xl bg-white/80 border border-slate-200/60 backdrop-blur-md shadow-sm mb-6">
+          <div className="flex items-center gap-4">
+            <button
               onClick={handleBack} type="button"
-              className="p-2.5 rounded-xl bg-white/70 border-2 border-amber-200 hover:bg-amber-50 hover:border-amber-400 transition-all flex items-center justify-center shadow-sm"
+              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-violet-50 hover:border-violet-300 transition-all flex items-center justify-center"
               aria-label="Go back"
             >
-              <ArrowLeft className="text-stone-600 hover:text-amber-700 transition-colors w-5 h-5" />
-            </motion.button>
+              <ArrowLeft className="text-slate-600 hover:text-violet-700 transition-colors w-5 h-5" />
+            </button>
             
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl md:text-2xl font-extrabold">
-                <span className="bg-gradient-to-r from-amber-700 via-orange-600 to-rose-600 bg-clip-text text-transparent">
-                  Edit Project
-                </span>
+              <h1 className="text-xl md:text-2xl font-bold text-slate-800">
+                Edit Project
               </h1>
-              <p className="text-stone-600 text-sm mt-0.5">Update your project details</p>
+              <p className="text-slate-500 text-sm mt-0.5">Update your project details</p>
             </div>
             
-            {/* Status Badge - Warm */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100/80 border border-amber-200">
-              <Sparkles className="w-4 h-4 text-amber-600" />
-              <span className="text-xs font-medium text-amber-800">Quick Edit</span>
+            {/* Status Badge - Clean */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200">
+              <Sparkles className="w-4 h-4 text-violet-600" />
+              <span className="text-xs font-medium text-violet-700">Quick Edit</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* 📝 Form Card - Warm Theme ===== */}
-        <motion.form
-          onSubmit={handleSubmit} variants={containerVariants} initial="hidden" animate="visible"
-          className="p-5 md:p-7 rounded-3xl bg-white/80 border-2 border-amber-200 backdrop-blur-md shadow-lg shadow-amber-100/50 relative overflow-hidden"
-        >
-          {/* Card Glow - Warm */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-amber-200/30 via-orange-200/20 to-rose-200/30 pointer-events-none" />
-          
+        {/* 📝 Form Card - Clean Theme (No Animation) */}
+        <form onSubmit={handleSubmit} className="p-5 md:p-7 rounded-3xl bg-white/80 border border-slate-200/60 backdrop-blur-md shadow-sm">
           {/* Form Fields */}
-          <div className="space-y-2 relative z-10">
+          <div className="space-y-2">
             <LabeledInput label="Project Name" icon={Briefcase} placeholder="e.g., AI Based Attendance System"
               value={formData.title} onChange={e => { setFormData({ ...formData, title: e.target.value }); if (errors.title) setErrors({ ...errors, title: '' }); }}
               error={errors.title} disabled={saving} />
@@ -264,54 +200,47 @@ const EditProject = () => {
               onKeyDown={handleKeyDown} error={errors.teamSize} disabled={saving} />
           </div>
 
-          {/* 🔘 Action Buttons - Warm Theme */}
-          <div className="mt-8 pt-6 border-t border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+          {/* 🔘 Action Buttons - Clean Theme */}
+          <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <button
               type="button" onClick={handleBack} disabled={saving}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/70 border-2 border-amber-200 
-                       text-stone-700 font-semibold hover:bg-amber-50 hover:border-amber-400 
-                       transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white border border-slate-200 
+                       text-slate-700 font-medium hover:bg-violet-50 hover:border-violet-300 
+                       transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <ArrowLeft size={18} /> Back
-            </motion.button>
+            </button>
 
-            <motion.button whileHover={{ scale: saving ? 1 : 1.02 }} whileTap={{ scale: saving ? 1 : 0.98 }}
+            <button
               type="submit" disabled={saving}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 
-                       text-white font-semibold hover:from-amber-700 hover:via-orange-700 hover:to-rose-700 
-                       transition-all duration-300 shadow-lg shadow-amber-200/60 hover:shadow-amber-300/70 
-                       disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group relative overflow-hidden"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-violet-600 
+                       text-white font-medium hover:bg-violet-700 
+                       transition-all duration-300 shadow-sm hover:shadow 
+                       disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {/* Button Glow - Warm */}
-              <span className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-rose-400/20 opacity-0 group-hover:opacity-100 transition-opacity" />
               {saving ? (
                 <><Loader2 className="w-5 h-5 animate-spin" /> Saving Changes...</>
               ) : (
-                <><Save className="w-5 h-5 group-hover:rotate-12 transition-transform" /> Update Project</>
+                <><Save className="w-5 h-5" /> Update Project</>
               )}
-            </motion.button>
+            </button>
           </div>
-        </motion.form>
+        </form>
 
-        {/* 💡 Helper Tips - Warm Theme */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
-        >
+        {/* 💡 Helper Tips - Clean Theme (No Animation) */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { icon: Code, text: "Use comma-separated values for skills (e.g., React, Node.js)", color: "text-amber-700", bg: "from-amber-100 to-orange-100" },
-            { icon: FileText, text: "Keep descriptions clear and concise for better visibility", color: "text-orange-700", bg: "from-orange-100 to-rose-100" }
+            { icon: Code, text: "Use comma-separated values for skills (e.g., React, Node.js)", color: "text-violet-700", bg: "bg-violet-50" },
+            { icon: FileText, text: "Keep descriptions clear and concise for better visibility", color: "text-fuchsia-700", bg: "bg-fuchsia-50" }
           ].map((tip, idx) => (
-            <motion.div key={idx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 + idx * 0.1 }}
-              className={`flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br ${tip.bg} border-2 border-amber-200 shadow-sm`}
-            >
+            <div key={idx} className={`flex items-center gap-3 p-4 rounded-xl ${tip.bg} border border-slate-200`}>
               <tip.icon className={`w-4 h-4 ${tip.color} flex-shrink-0`} />
-              <p className="text-xs text-stone-700">{tip.text}</p>
-            </motion.div>
+              <p className="text-xs text-slate-700">{tip.text}</p>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -76,9 +76,9 @@ function App() {
 
   // ✅ Logout handler
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.clear();
     setUser(null);
+    window.location.href = '/';
   };
 
   // ✅ Add project
@@ -124,7 +124,7 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/dashboard/*"
-            element={user ? <LandingPage user={user} setUser={setUser} projects={projects} setProjects={setProjects} /> : <Navigate to="/login" />}
+            element={user ? <LandingPage user={user} setUser={setUser} projects={projects} setProjects={setProjects} handleLogout={handleLogout} /> : <Navigate to="/login" />}
           />
 
           <Route

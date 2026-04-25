@@ -8,7 +8,7 @@ import ApplicationsView from '../components/ApplicationsView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 
-const LandingPage = ({user,setUser,projects,setProjects}) => {
+const LandingPage = ({user,setUser,projects,setProjects,handleLogout}) => {
   const [activeView, setActiveView] = useState('dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,6 +37,8 @@ const LandingPage = ({user,setUser,projects,setProjects}) => {
       {/* Sidebar */}
       <div className={`${isCollapsed ? 'hidden lg:block' : 'block'} lg:block fixed lg:relative z-30`}>
         <Sidebar 
+          setUser={setUser}
+          handleLogout={handleLogout}
           activeView={activeView} 
           onNavigate={(view) => { setActiveView(view); if(window.innerWidth < 1024) setIsCollapsed(true); }} 
           isCollapsed={isCollapsed} 
@@ -50,6 +52,7 @@ const LandingPage = ({user,setUser,projects,setProjects}) => {
         
         <Header 
           user={user} 
+          handleLogout={handleLogout}
           onNavigate={setActiveView} 
           searchTerm={searchTerm} 
           setSearchTerm={setSearchTerm} 

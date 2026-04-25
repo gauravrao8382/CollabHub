@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Bell, User, ChevronDown, Plus, LogOut, Settings, PanelLeft } from 'lucide-react';
 
-const Header = ({ user, onNavigate, onToggleSidebar }) => {
+const Header = ({ user, onNavigate, onToggleSidebar, handleLogout}) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -104,7 +104,7 @@ const Header = ({ user, onNavigate, onToggleSidebar }) => {
                 <hr className="my-1.5 border-slate-100" />
                 
                 <button 
-                  onClick={() => { /* handle logout */ }} 
+                  onClick={handleLogout} 
                   className="w-full text-left px-3 py-2 text-sm hover:bg-rose-50 text-rose-600 font-medium flex items-center gap-2"
                 >
                   <LogOut size={14} /> Logout

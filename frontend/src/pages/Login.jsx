@@ -160,33 +160,7 @@ const Login = ({ onLogin }) => {
             </motion.div>
           </form>
 
-          {/* Divider */}
-          <motion.div variants={itemVariants} className="relative my-3.5 sm:my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
-            </div>
-            <div className="relative flex justify-center text-[10px] sm:text-xs">
-              <span className="px-2.5 sm:px-3 bg-white text-slate-400">or</span>
-            </div>
-          </motion.div>
-
-          {/* Social Login */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-1.5 sm:gap-2">
-            <button type="button" onClick={() => showInfo('Google login coming soon!')}
-              className="flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-lg bg-white 
-                       border border-slate-200 text-slate-600 text-[10px] sm:text-xs font-medium 
-                       hover:bg-slate-50 hover:border-violet-300 transition-all duration-200"
-            >
-              <Chrome className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden xs:inline">Google</span><span className="xs:hidden">G</span>
-            </button>
-            <button type="button" onClick={() => showInfo('GitHub login coming soon!')}
-              className="flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-lg bg-white 
-                       border border-slate-200 text-slate-600 text-[10px] sm:text-xs font-medium 
-                       hover:bg-slate-50 hover:border-violet-300 transition-all duration-200"
-            >
-              <Github className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden xs:inline">GitHub</span><span className="xs:hidden">GH</span>
-            </button>
-          </motion.div>
+         
 
           {/* Sign Up Link */}
           <motion.p variants={itemVariants} className="mt-3 sm:mt-4 text-center text-[10px] sm:text-xs text-slate-500">

@@ -10,15 +10,9 @@ const menuItems = [
   { path: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
-const Sidebar = ({ isCollapsed, onToggle }) => {
+const Sidebar = ({ isCollapsed, onToggle,setUser,handleLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
 
   return (
     <aside className={`fixed left-0 top-0 h-full bg-white/95 backdrop-blur-xl border-r border-violet-200/60 shadow-xl z-30 transition-all duration-300 flex flex-col ${isCollapsed ? 'w-[72px]' : 'w-[260px]'}`}>
