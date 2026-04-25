@@ -108,7 +108,6 @@ export const createProject = async (req, res) => {
     // 🔥 Create project securely
     const owner = req.user.id; 
     const user = await User.findById(owner);
-    console.log(req.user.id);
     const project = await Project.create({
       title,
       description,
