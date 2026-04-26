@@ -45,7 +45,7 @@ const Header = ({ user, onNavigate, onToggleSidebar, handleLogout}) => {
         <motion.button 
           whileHover={{ scale: 1.05 }} 
           whileTap={{ scale: 0.95 }} 
-          onClick={() => onNavigate?.('messages')} 
+          onClick={() => navigate('/messages')} 
           className="p-2 md:p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-violet-50 hover:border-violet-300 transition relative"
           aria-label="Messages"
         >
@@ -53,15 +53,6 @@ const Header = ({ user, onNavigate, onToggleSidebar, handleLogout}) => {
           <span className="absolute top-1.5 md:top-2 right-1.5 md:right-2 w-2 h-2 bg-emerald-500 rounded-full border border-white animate-pulse" />
         </motion.button>
 
-        {/* Notifications */}
-        <button 
-          onClick={() => onNavigate?.('notifications')}
-          className="p-2 md:p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-violet-50 hover:border-violet-300 transition relative"
-          aria-label="Notifications"
-        >
-          <Bell size={16} className="md:w-4 md:h-4 text-slate-600" />
-          <span className="absolute top-1.5 md:top-2 right-1.5 md:right-2 w-2 h-2 bg-violet-500 rounded-full border border-white" />
-        </button>
 
         {/* Profile Dropdown */}
         <div className="relative">

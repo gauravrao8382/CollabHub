@@ -10,7 +10,15 @@ import SettingsView from '../components/SettingsView';
 
 const LandingPage = ({user,setUser,projects,setProjects,handleLogout}) => {
   const [activeView, setActiveView] = useState('dashboard');
-  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebar');
+    return saved !== null ? JSON.parse(saved) : window.innerWidth < 1024;
+  });
+  useEffect(() => {
+    localStorage.setItem('sidebar', JSON.stringify(isCollapsed));
+  }, [isCollapsed]);
+  
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {

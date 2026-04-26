@@ -40,7 +40,12 @@ const Sidebar = ({ isCollapsed, onToggle,setUser,handleLogout }) => {
           return (
             <button
               key={item.path}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                navigate(item.path);
+                if (window.innerWidth < 768) {
+                  setTimeout(() => {onToggle();}, 300);
+                }
+              }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 isActive
                   ? 'bg-violet-100 text-violet-700 border border-violet-200 shadow-sm'
@@ -56,18 +61,6 @@ const Sidebar = ({ isCollapsed, onToggle,setUser,handleLogout }) => {
 
       {/* Footer */}
       <div className="p-3 border-t border-violet-100 space-y-2">
-        
-        <button
-          onClick={() => navigate('/messages')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-violet-50 transition ${isCollapsed ? 'justify-center' : ''}`}
-        >
-          <div className="relative">
-            <MessageSquare size={20} />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 border border-white rounded-full animate-pulse" />
-          </div>
-          {!isCollapsed && <span className="font-medium text-sm">Messages</span>}
-        </button>
-
         <button
           onClick={handleLogout}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition ${isCollapsed ? 'justify-center' : ''}`}
