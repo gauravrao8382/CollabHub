@@ -89,8 +89,8 @@ const Messages = ({ user, projects }) => {
             </span>
           </div>
 
-          {/* Projects List - ✅ Scrollbar Hidden */}
-          <div className="divide-y divide-slate-100 max-h-[calc(100vh-220px)] overflow-y-auto scrollbar-hide">
+          {/* Projects */}
+          <div className="divide-y divide-slate-100 max-h-[calc(100vh-220px)] overflow-y-auto">
             {myProjects.length > 0 ? (
               myProjects.map((project) => (
                 <button 
@@ -154,17 +154,6 @@ const Messages = ({ user, projects }) => {
         </div>
 
       </main>
-
-      {/* ✅ CSS to Hide Scrollbar (Cross-browser) */}
-      <style>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;  /* Chrome, Safari, Opera */
-        }
-      `}</style>
     </div>
   );
 };

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, MessageSquare, Paperclip, ExternalLink, Info } from 'lucide-react';
 
 const ProjectChat = ({ user, projects }) => {
+  const API = "http://localhost:5000";
   const { projectId } = useParams();
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
@@ -10,11 +12,42 @@ const ProjectChat = ({ user, projects }) => {
   
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
 
   // Find current project
   const project = projects.find(p => p._id === projectId || p.id === projectId);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${API}/message/${projectId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          }
+        );
+
+        // 🔥 Backend se data ko UI format me convert karo
+        const formattedMessages = res.data.messages.map(msg => ({
+          _id: msg._id,
+          senderId: msg.userId,
+          senderName: msg.name,
+          text: msg.message,
+          timestamp: msg.createdAt
+        }));
+
+        setMessages(formattedMessages);
+
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+      }
+    };
+
+    if (projectId) {
+      fetchMessages();
+    }
+  }, [projectId]);
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,25 +58,52 @@ const ProjectChat = ({ user, projects }) => {
     inputRef.current?.focus();
   }, []);
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !project) return;
+const sendMessage = async (e) => {
+  e.preventDefault();
+  if (!newMessage.trim() || !project) return;
 
-    const messageData = {
-      _id: Date.now().toString(),
-      senderId: user?._id,
-      senderName: user?.name,
-      text: newMessage.trim(),
-      timestamp: new Date().toISOString()
-    };
-
-    setMessages(prev => [...prev, messageData]);
-    setNewMessage('');
-    setIsTyping(false);
-    
-    // Keep focus on input after sending (mobile friendly)
-    setTimeout(() => inputRef.current?.focus(), 100);
+  const tempMessage = {
+    _id: Date.now().toString(),
+    senderId: user?._id,
+    senderName: user?.name,
+    text: newMessage.trim(),
+    timestamp: new Date().toISOString()
   };
+
+  // 🔥 Optimistic UI
+  setMessages(prev => [...prev, tempMessage]);
+  setNewMessage('');
+
+  try {
+    const res = await axios.post(
+      `${API}/message/${projectId}`,
+      { message: tempMessage.text },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    const realMessage = res.data.message;
+
+    // 🔥 Replace temp message with DB message
+    setMessages(prev =>
+      prev.map(msg =>
+        msg._id === tempMessage._id ? realMessage : msg
+      )
+    );
+
+  } catch (err) {
+    console.error(err);
+
+    // ❌ rollback UI if error
+    setMessages(prev => prev.filter(msg => msg._id !== tempMessage._id));
+  }
+
+  // focus maintain
+  setTimeout(() => inputRef.current?.focus(), 100);
+};
 
   const formatTime = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -192,24 +252,6 @@ const ProjectChat = ({ user, projects }) => {
                     </div>
                   );
                 })}
-                
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="flex items-end gap-2">
-                      <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
-                        T
-                      </div>
-                      <div className="px-4 py-3 rounded-2xl bg-slate-100">
-                        <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </>
             ) : (
               /* Empty State */
@@ -243,7 +285,7 @@ const ProjectChat = ({ user, projects }) => {
                 ref={inputRef}
                 type="text" 
                 value={newMessage}
-                onChange={(e) => { setNewMessage(e.target.value); setIsTyping(e.target.value.length > 0); }}
+                onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(e); } }}
                 placeholder="Type a message..."
                 className="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm 
@@ -277,7 +319,6 @@ const ProjectChat = ({ user, projects }) => {
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
-        /* ✅ Fix for mobile keyboard overlay */
         @media (max-width: 640px) {
           input:focus {
             scroll-margin-bottom: 100px;

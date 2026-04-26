@@ -1,5 +1,7 @@
 import User from "../models/user.js";
 import Project from "../models/project.js";
+import Message from "../models/message.js";
+
 import { sendEmail } from "../utils/sendEmail.js";
 import { generateToken } from "../utils/signin.js";
 
@@ -388,3 +390,52 @@ export const completeProject = async (req, res) => {
     res.status(500).json({ message: "Error completing project" });
   }
 }
+
+
+
+export const sendMessage = async (req, res) => {
+  try {
+    const { message } = req.body;
+    const projectId = req.params.projectId;
+
+    const userId = req.user.id;
+
+    const user = await User.findById(userId); // 🔥 fetch user
+    const name = user.name; // ✅ correct
+
+    if (!message || message.trim() === "") {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const newMessage = await Message.create({
+      projectId,
+      userId,
+      name,
+      message
+    });
+
+    res.json({
+      success: true,
+      message: newMessage
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to send message" });
+  }
+};
+
+export const getMessages = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const messages = await Message.find({ projectId })
+      .sort({ createdAt: 1 }); // oldest → newest
+
+    res.json({ success: true, messages });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch messages" });
+  }
+};
