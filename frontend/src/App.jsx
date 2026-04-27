@@ -21,7 +21,7 @@ import ProjectChat from './pages/ProjectChat';
 
 
 function App() {
-  const API = "http://localhost:5000";
+  const API = "https://collab-hub-production-adae.up.railway.app";
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);

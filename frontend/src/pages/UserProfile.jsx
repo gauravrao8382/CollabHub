@@ -7,7 +7,7 @@ import {
   ExternalLink, AlertCircle, Trophy, Target, Star, CheckCircle2, User, Github
 } from 'lucide-react';
 
-const API = "http://localhost:5000";
+const API = "https://collab-hub-production-adae.up.railway.app";
 
 const UserProfile = () => {
   const { userId } = useParams();
