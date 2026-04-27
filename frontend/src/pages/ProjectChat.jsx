@@ -85,7 +85,13 @@ const sendMessage = async (e) => {
       }
     );
 
-    const realMessage = res.data.message;
+    const realMessage = {
+    _id: res.data.message._id,
+    senderId: res.data.message.userId,
+    senderName: res.data.message.name,
+    text: res.data.message.message,
+    timestamp: res.data.message.createdAt // ✅ important
+  };
 
     // 🔥 Replace temp message with DB message
     setMessages(prev =>

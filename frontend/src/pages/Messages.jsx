@@ -6,16 +6,19 @@ const Messages = ({ user, projects }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter projects where user is member or owner
+  // ✅ Filter: Only projects where user is in teamMembers array
   const myProjects = projects.filter((project) => {
-    const isTeamMember = project.team?.some(member =>
-      member._id === user?._id || member.id === user?._id || member.email === user?.email
-    );
-    const isOwner = project.owner === user?._id || project.owner === user?.id ||
-                    project.createdBy === user?._id || project.createdBy === user?.id;
+    const currentUserId = user?._id?.toString?.() || user?.id?.toString?.() || user?._id || user?.id;
+    
+    const isTeamMember = project.teamMembers?.some(member => {
+      const memberUserId = member.userId?.toString?.() || member.userId;
+      return memberUserId === currentUserId;
+    });
+    
     const matchesSearch = project.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           project.college?.toLowerCase().includes(searchTerm.toLowerCase());
-    return (isTeamMember || isOwner) && matchesSearch;
+    
+    return isTeamMember && matchesSearch;
   });
 
   const openProjectChat = (project) => {
@@ -28,7 +31,6 @@ const Messages = ({ user, projects }) => {
       {/* 🔗 Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
-          {/* Back Button */}
           <button 
             onClick={() => navigate('/dashboard')}
             className="p-2 rounded-lg hover:bg-slate-100 transition"
@@ -37,13 +39,11 @@ const Messages = ({ user, projects }) => {
             <ArrowLeft size={20} className="text-slate-600" />
           </button>
           
-          {/* Title */}
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold text-slate-900 truncate">Messages</h1>
             <p className="text-xs text-slate-500 hidden sm:block">Connect with your project teams</p>
           </div>
           
-          {/* User Avatar */}
           <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-semibold text-xs">
             {user?.name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
@@ -89,8 +89,10 @@ const Messages = ({ user, projects }) => {
             </span>
           </div>
 
-          {/* Projects */}
-          <div className="divide-y divide-slate-100 max-h-[calc(100vh-220px)] overflow-y-auto">
+          {/* ✅ Projects List with Hidden Scrollbar */}
+          <div className="divide-y divide-slate-100 max-h-[calc(100vh-220px)] overflow-y-auto 
+                        scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] 
+                        [&::-webkit-scrollbar]:hidden">
             {myProjects.length > 0 ? (
               myProjects.map((project) => (
                 <button 
@@ -100,7 +102,7 @@ const Messages = ({ user, projects }) => {
                 >
                   {/* Project Avatar */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center text-white font-bold text-sm">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                       {project.title?.charAt(0)?.toUpperCase() || 'P'}
                     </div>
                     {/* Status Badge */}
@@ -120,12 +122,15 @@ const Messages = ({ user, projects }) => {
                       {project.title}
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5 truncate">{project.description}</p>
-                    <div className="flex items-center gap-2.5 mt-2">
+                    <div className="flex items-center gap-2.5 mt-2 flex-wrap">
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-violet-50 text-violet-700 border border-violet-100">
+                        {project.techStack?.[0] || 'General'}
+                      </span>
                       <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                        {project.type || 'General'}
+                        {project.college}
                       </span>
                       <span className="text-[10px] text-slate-500 flex items-center gap-1">
-                        <Users size={10} /> {project.team?.length || 1}
+                        <Users size={10} /> {project.teamMembers?.length || project.teamSize || 1}
                       </span>
                     </div>
                   </div>
@@ -135,13 +140,13 @@ const Messages = ({ user, projects }) => {
                 </button>
               ))
             ) : (
-              /* Empty State */
+            
               <div className="p-8 text-center">
                 <div className="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare size={24} className="text-slate-400" />
                 </div>
                 <h3 className="text-sm font-medium text-slate-900 mb-1">No projects yet</h3>
-                <p className="text-xs text-slate-500 mb-4">Join or create a project to start messaging.</p>
+                <p className="text-xs text-slate-500 mb-4">Join a project to start messaging with your team.</p>
                 <button 
                   onClick={() => navigate('/dashboard')}
                   className="px-4 py-2 text-xs font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition"
