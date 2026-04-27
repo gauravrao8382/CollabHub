@@ -8,14 +8,10 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LandingPage from './pages/LandingPage';
-import Dashboard from './pages/Dashboard';
 import CreateProject from './pages/CreateProject';
 import ProjectDetails from './pages/ProjectDetails';
 import CompletedProjectDetails from './pages/CompletedProjectDetails';
 import ProjectCompletion from './pages/ProjectCompletion';
-import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';
-import Settings from './pages/Settings';
 import EditProject from './pages/EditProject';
 import ManageProject from './pages/ManageProject';
 import UserProfile from './pages/UserProfile';
@@ -132,16 +128,11 @@ function App() {
             element={user ? <CreateProject onAddProject={handleAddProject} /> : <Navigate to="/login" />}
           />
 
-          <Route
-            path="/profile"
-            element={user ? <Profile user={user} onLogout={handleLogout} projects={projects} /> : <Navigate to="/login" />}
-          />
+         
           <Route path="/project/:projectId/edit" element={user ? <EditProject /> : <Navigate to="/login" />} />
           <Route path="/project/:projectId/manage" element={user ? <ManageProject /> : <Navigate to="/login" />} />
           <Route path="/complete/:projectId" element={user ? <ProjectCompletion /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate to="/login" />} />
-          <Route path="/profile/edit" element={<EditProfile user={user}  onUserUpdate={handleUserUpdate}/>} />
-          <Route path="/settings" element={<Settings user={user} onUpdateUser={handleUserUpdate} />} />
           <Route path="/messages" element={<Messages user={user} projects={projects} />} />
           <Route path="/messages/:projectId" element={<ProjectChat user={user} projects={projects} />} />
           {/* Semi Public */}

@@ -74,7 +74,7 @@ const LabeledInput = ({
 );
 
 const CreateProject = ({ onAddProject }) => {
-  const API = "http://localhost:5000";
+  const API = "https://collab-hub-production-adae.up.railway.app";
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError } from '../utils/toast';
 
-const API = "http://localhost:5000";
+const API = "https://collab-hub-production-adae.up.railway.app";
 
 const ProjectCompletion = () => {
   const { projectId } = useParams();

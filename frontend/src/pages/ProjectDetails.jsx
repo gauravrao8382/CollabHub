@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from "axios";
 
 const ProjectDetails = ({ projects, user }) => {
-  const API = "http://localhost:5000";
+  const API = "https://collab-hub-production-adae.up.railway.app";
   const { id } = useParams();
   const navigate = useNavigate();
 

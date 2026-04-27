@@ -9,7 +9,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
-const API = "http://localhost:5000";
+const API = "https://collab-hub-production-adae.up.railway.app";
 
 const ManageProject = () => {
   const { projectId } = useParams();

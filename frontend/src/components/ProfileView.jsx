@@ -7,7 +7,7 @@ import {
 import { showSuccess, showError, showLoading, updateToastSuccess } from '../utils/toast';
 import axios from 'axios';
 
-const API = "http://localhost:5000";
+const API = "https://collab-hub-production-adae.up.railway.app";
 
 const ProfileView = ({ user, onUserUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
-const API = "http://localhost:5000";
+const API = "https://collab-hub-production-adae.up.railway.app";
 
 // ===== Clean Theme LabeledInput Component =====
 const LabeledInput = ({ 
