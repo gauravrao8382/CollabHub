@@ -1,7 +1,7 @@
 import User from "../models/user.js";
 import Project from "../models/project.js";
 import Message from "../models/message.js";
-
+import bcrypt from "bcryptjs";
 import { sendEmail } from "../utils/sendEmail.js";
 import { generateToken } from "../utils/signin.js";
 
@@ -52,42 +52,56 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
-
 export const completeSignup = async (req, res) => {
   try {
-    const { email, name, college, passingYear, skills } = req.body;
+    const { email, name, college, passingYear, skills, password } = req.body;
 
     const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     user.name = name;
     user.college = college;
     user.passingYear = passingYear;
     user.skills = skills;
+    user.password = hashedPassword;
     user.isVerified = true;
     user.otp = null;
 
     await user.save();
-    const  token = generateToken(user);
-      res.json({ message: "Signup completed", token, user} );
+
+    const token = generateToken(user);
+
+    res.json({ message: "Signup completed", token, user });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error completing signup" });
   }
 };
 
-
 export const login = async (req, res) => {
   try {
+    const { email, password } = req.body; 
 
-    const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-        console.log("User not found");
       return res.status(400).json({ message: "User not found" });
     }
 
     if (!user.isVerified) {
       return res.status(400).json({ message: "Please verify your email first" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Wrong password" });
     }
 
     const token = generateToken(user);
@@ -99,15 +113,14 @@ export const login = async (req, res) => {
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Login error" });
   }
 };
 
-
 export const createProject = async (req, res) => {
   try {
     const { title, description, techStack, teamSize, college } = req.body;
-    // 🔥 Create project securely
     const owner = req.user.id; 
     const user = await User.findById(owner);
     const project = await Project.create({
@@ -116,7 +129,6 @@ export const createProject = async (req, res) => {
       techStack,
       teamSize,
       college,
-
       owner: req.user.id,
       status: "Open",
       applicants: [],

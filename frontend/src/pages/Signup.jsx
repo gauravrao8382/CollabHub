@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, User, Building, GraduationCap, Tags, CheckCircle2, 
-  ArrowRight, Loader2, Home, ArrowLeft, Key, Sparkles 
+  ArrowRight, Loader2, Home, ArrowLeft, Key, Sparkles, Eye, EyeOff 
 } from 'lucide-react';
 import axios from "axios";
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
@@ -16,6 +16,7 @@ const Signup = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [showPassword, setShowPassword] = useState(false); // ✅ Password visibility toggle
 
   const [formData, setFormData] = useState({
     email: '',
@@ -23,7 +24,8 @@ const Signup = ({ onLogin }) => {
     name: '',
     college: '',
     passingYear: '',
-    skills: ''
+    skills: '',
+    password: ''  // ✅ Added password field
   });
 
   const otpInputRef = useRef(null);
@@ -83,16 +85,25 @@ const Signup = ({ onLogin }) => {
     if (!formData.college.trim()) { showError('Please enter your college name'); return; }
     if (!formData.passingYear) { showError('Please select your passing year'); return; }
     if (!formData.skills.trim()) { showError('Please add at least one skill'); return; }
+    if (!formData.password || formData.password.length < 6) { 
+      showError('Password must be at least 6 characters'); return; 
+    }
 
     setLoading(true);
     const toastId = showLoading('Creating your account...');
     try {
       await axios.post(`${API}/complete-signup`, {
-        name: formData.name, email: formData.email, college: formData.college,
+        name: formData.name, 
+        email: formData.email, 
+        college: formData.college,
         passingYear: formData.passingYear,
         skills: formData.skills.split(',').map(s => s.trim()).filter(s => s),
+        password: formData.password,  // ✅ Added password to signup
       });
-      const loginRes = await axios.post(`${API}/login`, { email: formData.email });
+      const loginRes = await axios.post(`${API}/login`, { 
+        email: formData.email,
+        password: formData.password  // ✅ Added password to login
+      });
       localStorage.setItem("token", loginRes.data.token);
       localStorage.setItem("user", JSON.stringify(loginRes.data.user));
       updateToastSuccess(toastId, 'Account created successfully! Welcome aboard 🎉');
@@ -138,7 +149,7 @@ const Signup = ({ onLogin }) => {
   const [[page, direction], setPage] = useState([0, 0]);
   const paginate = (newDirection) => setPage([page + newDirection, newDirection]);
 
-  // Helper to render current step - fixes JSX adjacent elements error
+  // Helper to render current step
   const renderStep = () => {
     switch(step) {
       case 1:
@@ -296,6 +307,7 @@ const Signup = ({ onLogin }) => {
           >
             <motion.div variants={containerVariants} initial="hidden" animate="visible">
               <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {/* Name Field */}
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="block text-[10px] sm:text-xs font-medium text-slate-600">Full Name</label>
                   <div className="relative">
@@ -314,6 +326,8 @@ const Signup = ({ onLogin }) => {
                     />
                   </div>
                 </div>
+                
+                {/* Passing Year Field */}
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="block text-[10px] sm:text-xs font-medium text-slate-600">Passing Year</label>
                   <div className="relative">
@@ -338,6 +352,7 @@ const Signup = ({ onLogin }) => {
                 </div>
               </motion.div>
 
+              {/* College Field */}
               <motion.div variants={itemVariants} className="space-y-1.5 sm:space-y-2 mt-3 sm:mt-4">
                 <label className="block text-[10px] sm:text-xs font-medium text-slate-600">College Name</label>
                 <div className="relative">
@@ -357,6 +372,7 @@ const Signup = ({ onLogin }) => {
                 </div>
               </motion.div>
 
+              {/* Skills Field */}
               <motion.div variants={itemVariants} className="space-y-1.5 sm:space-y-2">
                 <label className="block text-[10px] sm:text-xs font-medium text-slate-600">Skills</label>
                 <div className="relative">
@@ -376,6 +392,42 @@ const Signup = ({ onLogin }) => {
                 </div>
                 <p className="text-[9px] sm:text-xs text-slate-500">Separate multiple skills with commas</p>
               </motion.div>
+
+              {/* ✅ Password Field - NEW */}
+              <motion.div variants={itemVariants} className="space-y-1.5 sm:space-y-2">
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-600">Password</label>
+                <div className="relative">
+                  <Key className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400" />
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="••••••••"
+                    minLength={6}
+                    className="w-full pl-9 sm:pl-10 pr-10 py-2 sm:py-2.5 rounded-lg bg-slate-50 border border-slate-200 
+                             focus:ring-2 focus:ring-violet-400 focus:border-violet-500 
+                             outline-none transition-all text-sm text-slate-900 placeholder-slate-400 
+                             hover:border-violet-300"
+                    value={formData.password} 
+                    onChange={e => setFormData({ ...formData, password: e.target.value })} 
+                    disabled={loading} 
+                    required 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-600 transition-colors p-1"
+                    tabIndex={-1}
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                    ) : (
+                      <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-[9px] sm:text-xs text-slate-500">Minimum 6 characters required</p>
+              </motion.div>
+
             </motion.div>
 
             <motion.div variants={itemVariants} className="space-y-2 sm:space-y-3 pt-1 sm:pt-2">
@@ -415,10 +467,10 @@ const Signup = ({ onLogin }) => {
   };
 
   return (
-    // 🟣 Responsive Container - Violet/Slate Theme (Matching Login)
+    // 🟣 Responsive Container - Violet/Slate Theme
     <div className="min-h-screen w-full bg-slate-50 text-slate-900 flex items-center justify-center px-4 py-6 sm:py-8 relative overflow-hidden">
       
-      {/* 🟣 Decorative Blobs - Responsive Position (Violet/Fuchsia) */}
+      {/* 🟣 Decorative Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div 
           animate={{ scale: [1, 1.15, 1], opacity: [0.12, 0.25, 0.12] }}
@@ -441,14 +493,14 @@ const Signup = ({ onLogin }) => {
         />
       </div>
 
-      {/* 🔐 Signup Card - Responsive Width */}
+      {/* 🔐 Signup Card */}
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
         className="relative w-full max-w-xs sm:max-w-sm md:max-w-md z-10"
       >
-        {/* Clean Card - Matching Login Style */}
+        {/* Clean Card */}
         <div className="p-5 sm:p-7 md:p-8 rounded-2xl 
                       bg-white border border-slate-200 backdrop-blur-sm 
                       shadow-xl shadow-violet-200/20">
@@ -459,7 +511,7 @@ const Signup = ({ onLogin }) => {
               <Home size={16} className="sm:w-5 sm:h-5" />
             </Link>
             
-            {/* Step Indicator - Violet Theme */}
+            {/* Step Indicator */}
             <motion.div className="inline-flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl 
                           bg-violet-600 mb-2.5 sm:mb-3 shadow-lg shadow-violet-600/25 mx-auto">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -470,7 +522,7 @@ const Signup = ({ onLogin }) => {
               <span className="text-[10px] sm:text-xs font-medium text-violet-700">Step {step} of 3</span>
             </motion.div>
 
-            {/* Title - Violet Gradient */}
+            {/* Title */}
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">
               <span className="bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                 {step === 1 && "Create Account"}
@@ -485,7 +537,7 @@ const Signup = ({ onLogin }) => {
               {step === 3 && "Tell us more about yourself"}
             </p>
 
-            {/* Progress Bar - Violet Theme */}
+            {/* Progress Bar */}
             <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
               {[1, 2, 3].map((s) => (
                 <React.Fragment key={s}>
@@ -502,12 +554,12 @@ const Signup = ({ onLogin }) => {
             </div>
           </motion.div>
 
-          {/* ✅ FIXED: Using helper function to return single element per step */}
+          {/* Form Steps */}
           <AnimatePresence mode="wait" custom={direction}>
             {renderStep()}
           </AnimatePresence>
 
-          {/* Login Link - Violet Theme */}
+          {/* Login Link */}
           <motion.div className="mt-3 sm:mt-4 pt-4 sm:pt-6 border-t border-slate-200 text-center relative z-10">
             <p className="text-[10px] sm:text-xs text-slate-500">
               Already have an account?{' '}
@@ -518,7 +570,7 @@ const Signup = ({ onLogin }) => {
           </motion.div>
         </div>
 
-        {/* Footer Note - Always Visible */}
+        {/* Footer Note */}
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
           className="text-center text-[9px] sm:text-[10px] text-slate-400 mt-2.5 sm:mt-3 px-2"
         >

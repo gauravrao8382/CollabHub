@@ -3,10 +3,14 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
+  password: { type: String},
   name: String,
   college: String,
   passingYear: String,
   skills: [String],
+  about: { type: String, default: "" },
+  github: { type: String, default: "" },
+  linkedin: { type: String, default: "" },
   createdProjects: [{
     projectId: { 
     type: mongoose.Schema.Types.ObjectId, 
