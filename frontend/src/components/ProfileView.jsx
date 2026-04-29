@@ -74,9 +74,10 @@ const ProfileView = ({ user, onUserUpdate }) => {
     const toastId = showLoading('Saving profile...');
     
     try { 
+      const userId = user._id;
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${API}/user/profile`, 
+        `${API}/update/${userId}`, 
         { 
           ...formData, 
           passingYear: formData.passingYear.toString()  

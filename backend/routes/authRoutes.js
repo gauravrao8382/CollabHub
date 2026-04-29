@@ -16,7 +16,7 @@ router.post("/apply/:id", authMiddleware, applyToProject);
 router.get("/project/:id", authMiddleware, getProjectById);
 router.put("/project/:id/edit", authMiddleware, updateProject);
 
-router.put("/user/profile", authMiddleware, updateProfile);
+router.put("/update/:userId", authMiddleware, updateProfile);
 router.get("/profile/:userId", authMiddleware, userProfile);
 
 router.patch("/accept/:projectId/:userId", authMiddleware, acceptApplicant);

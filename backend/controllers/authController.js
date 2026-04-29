@@ -258,7 +258,7 @@ export const userProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.params.userId;
 
     const { name, college, passingYear, skills, about, github, linkedin } = req.body;
 
