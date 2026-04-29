@@ -8,7 +8,7 @@ import ApplicationsView from '../components/ApplicationsView';
 import ProfileView from '../components/ProfileView';
 import SettingsView from '../components/SettingsView';
 
-const LandingPage = ({user,setUser,projects,setProjects,handleLogout}) => {
+const LandingPage = ({user,setUser,projects,setProjects,handleLogout,handleUserUpdate}) => {
   const [activeView, setActiveView] = useState('dashboard');
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -32,7 +32,7 @@ const LandingPage = ({user,setUser,projects,setProjects,handleLogout}) => {
       case 'dashboard': return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
       case 'projects': return <ProjectsView user={user} searchTerm={searchTerm} projects={projects} />;
       case 'applications': return <ApplicationsView user={user} projects={projects} />;
-      case 'profile': return <ProfileView user={user} />;
+      case 'profile': return <ProfileView user={user} onUserUpdate={handleUserUpdate}/>;
       case 'settings': return <SettingsView user={user} />;
       default: return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
     }
