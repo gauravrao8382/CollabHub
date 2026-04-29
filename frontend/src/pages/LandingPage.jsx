@@ -27,16 +27,6 @@ const LandingPage = ({user,setUser,projects,setProjects,handleLogout,handleUserU
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const renderView = () => {
-    switch(activeView) {
-      case 'dashboard': return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
-      case 'projects': return <ProjectsView user={user} searchTerm={searchTerm} projects={projects} />;
-      case 'applications': return <ApplicationsView user={user} projects={projects} />;
-      case 'profile': return <ProfileView user={user} onUserUpdate={handleUserUpdate}/>;
-      case 'settings': return <SettingsView user={user} />;
-      default: return <DashboardView user={user} projects={projects} searchTerm={searchTerm} />;
-    }
-  };
 
   return (
     // ✅ Removed gradient, using solid bg-slate-50
@@ -72,8 +62,8 @@ const LandingPage = ({user,setUser,projects,setProjects,handleLogout,handleUserU
             <Route index element={<DashboardView user={user} projects={projects} />} />
             <Route path="projects" element={<ProjectsView user={user} projects={projects} />} />
             <Route path="applications" element={<ApplicationsView user={user} projects={projects} />} />
-            <Route path="profile" element={<ProfileView user={user} />} />
-            <Route path="settings" element={<SettingsView user={user} />} />
+            <Route path="profile" element={<ProfileView user={user} onUserUpdate={handleUserUpdate} />} />
+            <Route path="settings" element={<SettingsView user={user} onUserUpdate={handleUserUpdate}/>} />
           </Routes>
         </main>
       </div>
