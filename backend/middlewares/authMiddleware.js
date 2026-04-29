@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-export const authMiddleware = (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -8,14 +9,20 @@ export const authMiddleware = (req, res, next) => {
     }
 
     try {
-        // 🔥 "Bearer TOKEN" → TOKEN extract karo
         const token = authHeader.split(" ")[1];
-        
+
         const decoded = jwt.verify(token, process.env.JWT_KEY);
 
-        console.log("Decoded user:", decoded); // debug
+        console.log("Decoded:", decoded);
 
-        req.user = decoded;
+        // 🔥 REAL FIX
+        const user = await User.findById(decoded.id || decoded._id);
+
+        if (!user) {
+            return res.status(401).json({ message: "User not found in token" });
+        }
+
+        req.user = user; // ✅ full user attach
 
         next();
     } catch (err) {
