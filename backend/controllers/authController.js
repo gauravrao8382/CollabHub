@@ -258,28 +258,33 @@ export const userProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log("Updating profile for user ID:", userId);
-    const { name, college, passingYear, skills } = req.body;
+    const userId = req.user.id;
+
+    const { name, college, passingYear, skills, about, github, linkedin } = req.body;
+
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
-    } 
-    if (user._id.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Unauthorized" });
     }
-    user.name = name;
-    user.college = college;
-    user.passingYear = passingYear;
-    user.skills = skills;
+
+    // ✅ Safe updates
+    if (name) user.name = name;
+    if (college) user.college = college;
+    if (passingYear) user.passingYear = Number(passingYear); // 🔥 ensure number
+    if (skills) user.skills = [...new Set(skills)]; // duplicates remove
+    if (about !== undefined) user.about = about;
+    if (github !== undefined) user.github = github;
+    if (linkedin !== undefined) user.linkedin = linkedin;
+
     await user.save();
+
     res.json({ message: "Profile updated successfully", user });
   } catch (err) {
     console.error("Error updating profile:", err);
     res.status(500).json({ message: "Error updating profile" });
   }
-}
+};
 
 export const acceptApplicant = async (req, res) => {
   try {
