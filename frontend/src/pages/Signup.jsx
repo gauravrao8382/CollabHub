@@ -9,7 +9,7 @@ import axios from "axios";
 import { showSuccess, showError, showLoading, updateToastSuccess, updateToastError, showInfo } from '../utils/toast';
 
 const Signup = ({ onLogin }) => {
-  const API = "https://collab-hub-production-adae.up.railway.app";
+  const API = "https://collabhub-f4t3.onrender.com";
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);

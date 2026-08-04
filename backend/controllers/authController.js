@@ -158,7 +158,6 @@ export const createProject = async (req, res) => {
 export const getProjects = async (req, res) => {
   try {
     const projects = await Project.find();
-    console.log("Fetched projects:", projects);
     res.json({ message: "Projects fetched successfully", projects });
   } catch (err) {
     console.error("Error fetching projects:", err);
